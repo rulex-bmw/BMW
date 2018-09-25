@@ -40,11 +40,11 @@ public class BmwApplicationTests {
 //        Options options = new Options();
 //        factory.destroy(new File("data"), options);
 //        factory.destroy(new File("flag"), options);
-//        LevelDBDao levelDBDao = new LevelDBDaoImpl();
-//        ByteString flag = ByteString.copyFrom(bytes("1"));
-//        ByteString param = ByteString.copyFrom(bytes("2234b4323334fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"));
-//        ParamBean.Param build = ParamBean.Param.newBuilder().setFlag(flag).setParam(param).build();
-//        levelDBDao.set(build);
+        LevelDBDao levelDBDao = new LevelDBDaoImpl();
+        ByteString flag = ByteString.copyFrom(bytes("1"));
+        ByteString param = ByteString.copyFrom(bytes("2234b4323334fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"));
+        ParamBean.Param build = ParamBean.Param.newBuilder().setFlag(flag).setParam(param).build();
+        levelDBDao.set(build);
 ////
         Options options = new Options();
         options.createIfMissing(true);
