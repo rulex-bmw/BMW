@@ -1,0 +1,9 @@
+package com.eroc.bmw.pojo;
+
+option java_outer_classname = "HeaderBean";
+
+message Header {
+  required bytes param = 1;
+  required bytes ts = 2;
+  required bytes vn_1 = 3;
+}

@@ -1,0 +1,8 @@
+package com.eroc.bmw.pojo;
+
+option java_outer_classname = "RecordBean";
+
+message Record {
+  required bytes param = 1;
+  required bytes ts = 2;
+}

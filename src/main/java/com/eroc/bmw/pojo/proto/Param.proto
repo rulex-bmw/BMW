@@ -1,0 +1,8 @@
+package com.eroc.bmw.pojo;
+
+option java_outer_classname = "ParamBean";
+
+message Param {
+  required bytes param = 1;
+  required bytes flag = 2;
+}
