@@ -16,4 +16,3 @@ The other important component is DSM, it enables developers to put parts of thei
 The DBA module Is to enable the front-end application regardless of mobile apps or web ones to access the BSB service via JSON-RPC or gRPC (i.e., encoded in protocol buffer format), which is very useful for an app that has very simple backend logic to migrate to blockchain, a.k.a., make it blockchain ready.
 
 
-
