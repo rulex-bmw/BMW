@@ -1,5 +1,5 @@
 Rulex – A Blockchain Middleware
-
+===
 Although "decentralize everything" and/or "decentralize all the things" are viral buzzwords in blockchain world, our viewpoint of the blockchain ecosystem is a bit different.
 
 In the understanding of most people, "decentralize everything" means that every decentralized app should be created specifically for blockchain from scratch, and its business logic should be fully or partially implemented as smart contracts, and as a result, through years of endeavor, in totally there are only less than 800 or so dApps has been developed on Ethereum, while only 4 ones have 500 and more daily active users.  
