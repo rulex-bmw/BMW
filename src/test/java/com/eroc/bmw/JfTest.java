@@ -5,6 +5,8 @@ import com.eroc.bmw.dao.LevelDBDao;
 import com.eroc.bmw.dao.LevelDBDaoImpl;
 import com.eroc.bmw.pojo.ParamBean;
 import com.google.protobuf.ByteString;
+import org.iq80.leveldb.DB;
+import org.iq80.leveldb.DBIterator;
 import org.iq80.leveldb.Options;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,15 +35,29 @@ public class JfTest {
 
         LevelDBDao levelDBDao = new LevelDBDaoImpl();
 
-        ByteString flag = ByteString.copyFrom(bytes("1"));
-        ByteString param = ByteString.copyFrom(bytes("1111b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"));
+        ByteString flag = ByteString.copyFrom(bytes("11"));
+        ByteString param = ByteString.copyFrom(bytes("1234567890"));
         ParamBean.Param build = ParamBean.Param.newBuilder().setFlag(flag).setParam(param).build();
         levelDBDao.set(build);
 
 
+    }
 
 
 
+    @Test
+    public void xtLoads() throws IOException {
+        Options options = new Options();
+        options.createIfMissing(true);
+        DB dataDB = null;
+        dataDB = factory.open(new File("data"), options);
+        DBIterator iterator = dataDB.iterator();
+        for (iterator.seekToFirst(); iterator.hasNext(); iterator.next()) {
+            String s = asString(iterator.peekNext().getKey());
+            String asString = asString(iterator.peekNext().getValue());
+            System.out.println(s + "--------" + asString);
+
+        }
 
     }
 
