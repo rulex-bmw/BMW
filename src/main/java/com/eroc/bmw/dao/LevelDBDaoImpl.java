@@ -1,7 +1,6 @@
 package com.eroc.bmw.dao;
 
 import com.eroc.bmw.pojo.DataBean;
-import com.eroc.bmw.pojo.RecordBean;
 import com.eroc.bmw.util.DataException;
 import com.eroc.bmw.util.SHA256;
 import com.google.protobuf.ByteString;
