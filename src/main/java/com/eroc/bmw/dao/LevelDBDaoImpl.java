@@ -3,6 +3,7 @@ package com.eroc.bmw.dao;
 import com.eroc.bmw.pojo.DataBean;
 import com.eroc.bmw.util.DataException;
 import com.eroc.bmw.util.SHA256;
+import com.eroc.bmw.util.TypeUtils;
 import com.google.protobuf.ByteString;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.DBIterator;
@@ -54,11 +55,12 @@ public class LevelDBDaoImpl implements LevelDBDao {
             //generation timestamp
             byte[] ts = bytes(new DateTime().toString("yyyyMMddHHmmssSSSS"));
             ByteString timestamp = ByteString.copyFrom(ts);
-            ByteString serial = ByteString.copyFrom(bytes(String.valueOf(i)));
+            ByteString serial = ByteString.copyFrom(bytes(TypeUtils.doubleToString(i)));
             DataBean.Data build = DataBean.Data.newBuilder().setParam(ByteString.copyFrom(CREATION_DATA)).setTs(timestamp).setSerial(serial).build();
             String hash = SHA256.getSHA256(build.toString());
             DataBean.Data mata = DataBean.Data.newBuilder().setPrevHash(ByteString.copyFrom(bytes(hash))).setSerial(serial).build();
             flagDB.put(WRITEPOSITION, mata.toByteArray());
+            flagDB.put(READPOSITION, mata.toByteArray());
             LevelDBDaoImpl levelDBDao = new LevelDBDaoImpl();
             levelDBDao.setHeaderData(build, dataDB);
             dataDB.put(bytes(hash), build.toByteArray());
@@ -109,7 +111,7 @@ public class LevelDBDaoImpl implements LevelDBDao {
             String s = writeposition.getSerial().toStringUtf8();
             Double i = Double.valueOf(s);
             i++;
-            ByteString serial = ByteString.copyFrom(bytes(String.valueOf(i)));
+            ByteString serial = ByteString.copyFrom(bytes(TypeUtils.doubleToString(i)));
             //Set up herderVelue
             DataBean.Data record = DataBean.Data.newBuilder().setParam(p).setTs(timestamp).setSerial(serial).build();
             setHeaderData(record, dataDB);
