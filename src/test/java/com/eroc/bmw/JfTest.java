@@ -52,7 +52,7 @@ public class JfTest {
         Options options = new Options();
         options.createIfMissing(true);
         DB dataDB = null;
-        dataDB = factory.open(new File("mata"), options);
+        dataDB = factory.open(new File("data"), options);
         DBIterator iterator = dataDB.iterator();
         String s = null;
         String asString = null;
