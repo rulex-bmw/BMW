@@ -3,7 +3,6 @@ package com.eroc.bmw;
 
 import com.eroc.bmw.dao.LevelDBDao;
 import com.eroc.bmw.dao.LevelDBDaoImpl;
-import com.eroc.bmw.pojo.ParamBean;
 import com.google.protobuf.ByteString;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.DBIterator;

@@ -4,6 +4,7 @@
 *target/
 *data/
 *flag/
+*mata/
 .classpath
 .project
 .settings     

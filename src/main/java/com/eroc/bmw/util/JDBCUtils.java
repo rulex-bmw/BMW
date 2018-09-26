@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * jdbc数据库连接
  *
- * @author wangyong
+ * @author admin
  */
 public class JDBCUtils {
 
@@ -31,7 +31,7 @@ public class JDBCUtils {
         return connection;
     }
 
-    public static int executeUpdate(String sql, Object[] obj) {
+    public static int edit(String sql, Object[] obj) {
         Connection conn = null;
         PreparedStatement preparedStatement = null;
         int result = -1;
