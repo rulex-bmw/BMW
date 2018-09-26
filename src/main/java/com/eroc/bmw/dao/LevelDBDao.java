@@ -1,6 +1,6 @@
 package com.eroc.bmw.dao;
 
-import com.eroc.bmw.pojo.ParamBean;
+import com.eroc.bmw.pojo.DataBean;
 import org.iq80.leveldb.DB;
 
 import java.io.IOException;
@@ -8,7 +8,9 @@ import java.io.IOException;
 public interface LevelDBDao {
 
 
-    void set(ParamBean.Param param) throws IOException;
+    void set(DataBean.Data param) throws IOException;
+
+    void origin();
 
     DB getDb(String fileName);
 
