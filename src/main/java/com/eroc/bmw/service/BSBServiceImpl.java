@@ -8,10 +8,12 @@ import java.io.IOException;
 
 public class BSBServiceImpl implements BSBService {
 
+
+    private LevelDBDao levelDBDao = new LevelDBDaoImpl();
+
     @Override
     public void producer(DataBean.Data data) {
         try {
-            LevelDBDao levelDBDao = new LevelDBDaoImpl();
             levelDBDao.origin();
             levelDBDao.set(data);
         } catch (IOException e) {
@@ -22,6 +24,7 @@ public class BSBServiceImpl implements BSBService {
 
     @Override
     public void customer() {
+
 
 
     }
