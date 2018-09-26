@@ -192,8 +192,8 @@ public class LevelDBDaoImpl implements LevelDBDao {
                     break;
                 }
                 DataBean.Data data = DataBean.Data.parseFrom(db.get(prveKey));
-                prveKey = bytes(String.valueOf(data.getPrevHash()));
-                if (asString(prveKey).equals(asString(HEADER_KEY))) {
+                prveKey = data.getPrevHash().toByteArray();
+                if (prveKey.length == 0 || prveKey == null) {
                     break;
                 }
                 stack.push(prveKey);
@@ -202,13 +202,13 @@ public class LevelDBDaoImpl implements LevelDBDao {
             //从数据库读取header的值
             //ead the value of the header from the database
             headerValue = asString(db.get(HEADER_KEY));
-            db.close();
+//            db.close();
 
             //验算header值
             //Check the header values
             while (!stack.isEmpty()) {
                 byte[] value = stack.pop();
-                DataBean.Data data = DataBean.Data.parseFrom(value);
+                DataBean.Data data = DataBean.Data.parseFrom(db.get(value));
                 if (startValue == null) {
                     DataBean.Data record = DataBean.Data.newBuilder().setParam(data.getParam()).setTs(data.getTs()).setSerial(data.getSerial()).build();
 
