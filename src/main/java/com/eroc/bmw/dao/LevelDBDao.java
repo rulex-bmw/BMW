@@ -12,7 +12,5 @@ public interface LevelDBDao {
 
     void origin();
 
-    DB getDb(String fileName);
-
     void verifyHeaderData() throws IOException;
 }

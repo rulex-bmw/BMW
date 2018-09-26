@@ -2,6 +2,7 @@ package com.eroc.bmw.dao;
 
 import com.eroc.bmw.pojo.DataBean;
 import com.eroc.bmw.util.DataException;
+import com.eroc.bmw.util.LevelDBUtil;
 import com.eroc.bmw.util.SHA256;
 import com.google.protobuf.ByteString;
 import org.iq80.leveldb.DB;
@@ -11,6 +12,7 @@ import org.joda.time.DateTime;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Stack;
 
 import static org.fusesource.leveldbjni.JniDBFactory.*;
 
@@ -152,71 +154,77 @@ public class LevelDBDaoImpl implements LevelDBDao {
 
 
     /**
-     * Connect to the database
-     */
-    public DB getDb(String fileName) {
-
-        Options options = getOptions();
-        DB db = null;
-        try {
-            db = factory.open(new File(fileName), options);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return db;
-    }
-
-    /**
      * Verify the offset structure header
      *
      * @throws IOException
      */
     public void verifyHeaderData() throws IOException {
 
-        Options options = null;
-        options = getOptions();
         DB db = null;
-        DBIterator iterator = null;
-        String vi = null;
-        String value = null;
+        String startValue = null;
+        String headerValue = null;
         try {
-            db = factory.open(new File(DATA_PATH), options);
-            iterator = db.iterator();
-            for(iterator.seekToFirst(); iterator.hasNext(); iterator.next()) {
+            //从数据库读取最后一条记录的key
+            // Read the key of the last record from the database
+            db = LevelDBUtil.getDb(FLAG_PATH);
+            DataBean.Data hash = DataBean.Data.parseFrom(db.get(WRITEPOSITION));
+            byte[] lastKey = hash.getPrevHash().toByteArray();
+            db.close();
 
-                //get the first record from the database with the key of "000000".
-                if (asString(iterator.peekNext().getKey()).equals(asString(HEADER_KEY))) {
-
-                    vi = asString(iterator.peekNext().getValue());
-
-                } else {
-
-                    DataBean.Data data = DataBean.Data.parseFrom(iterator.peekNext().getValue());
-
-                    RecordBean.Record.Builder recordBuilder = RecordBean.Record.newBuilder();
-                    recordBuilder.setParam(data.getParam());
-                    recordBuilder.setTs(data.getTs());
-
-                    RecordBean.Record record = recordBuilder.build();
-                    //Superposition record value.
-                    if (value == null) {
-
-                        value = SHA256.getSHA256(record.toString());
-                    } else {
-                        value = SHA256.getSHA256(record.toString() + value);
+            byte[] prveKey = lastKey;
+            Stack<byte[]> stack = new Stack<byte[]>();
+            stack.push(lastKey);
+            //从数据库读取所需的记录，并保存所有的key
+            //Read the required records from the database and save all the keys
+            db = LevelDBUtil.getDb(DATA_PATH);
+            while (true) {
+                byte[] value = db.get(prveKey);
+                //value为null说明数据被篡改，抛出错误
+                // A value of null indicates that the data has been tampered with and an error has been thrown
+                if (value == null) {
+                    try {
+                        throw new DataException("Sorry, the database data is abnormal, please check whether the data has been tampered！");
+                    } catch (DataException e) {
+                        e.printStackTrace();
                     }
+                    break;
                 }
+                DataBean.Data data = DataBean.Data.parseFrom(db.get(prveKey));
+                prveKey = bytes(String.valueOf(data.getPrevHash()));
+                if (asString(prveKey).equals(asString(HEADER_KEY))) {
+                    break;
+                }
+                stack.push(prveKey);
             }
 
+            //从数据库读取header的值
+            //ead the value of the header from the database
+            headerValue = asString(db.get(HEADER_KEY));
+            db.close();
+
+            //验算header值
+            //Check the header values
+            while (!stack.isEmpty()) {
+                byte[] value = stack.pop();
+                DataBean.Data data = DataBean.Data.parseFrom(value);
+                if (startValue == null) {
+                    DataBean.Data record = DataBean.Data.newBuilder().setParam(data.getParam()).setTs(data.getTs()).setSerial(data.getSerial()).build();
+
+                    startValue = SHA256.getSHA256(record.toString());
+                } else {
+
+                    DataBean.Data record = DataBean.Data.newBuilder().setParam(data.getParam()).setTs(data.getTs()).setSerial(data.getSerial()).setVn1(ByteString.copyFrom(bytes(startValue))).build();
+
+                    startValue = SHA256.getSHA256(record.toString());
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            // Make sure you close the db.
-            iterator.close();
-            db.close();
         }
-        // Compare the calculated headerValue with the one in the database. If not,the data is modified and an exception is thrown
-        if (!value.equals(vi)) {
+        //如果算出来的header值与数据库中保存的不一样，说明数据被篡改，抛出错误
+        //If the calculated header value is different from what is stored in the database, the data is tampered with and an error is thrown
+        if (!headerValue.equals(startValue)) {
+
             try {
                 throw new DataException("Sorry, the database data is abnormal, please check whether the data has been tampered！");
             } catch (DataException e) {
@@ -225,5 +233,6 @@ public class LevelDBDaoImpl implements LevelDBDao {
         } else {
             System.out.println("Verify that headerValue is correct.");
         }
+
     }
 }

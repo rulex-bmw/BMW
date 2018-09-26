@@ -2,6 +2,7 @@ package com.eroc.bmw.service;
 
 import com.eroc.bmw.dao.LevelDBDao;
 import com.eroc.bmw.dao.LevelDBDaoImpl;
+import com.eroc.bmw.util.LevelDBUtil;
 import org.iq80.leveldb.DB;
 
 import java.io.IOException;
@@ -16,7 +17,7 @@ public class Verify {
     static {
         LevelDBDao levelDBDao = new LevelDBDaoImpl();
         try {
-            DB db = levelDBDao.getDb("data");
+            DB db = LevelDBUtil.getDb("data");
             String value = asString(db.get(bytes("000000")));
             db.close();
             if (value != null) {

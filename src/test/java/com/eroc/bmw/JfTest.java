@@ -3,6 +3,9 @@ package com.eroc.bmw;
 
 import com.eroc.bmw.dao.LevelDBDao;
 import com.eroc.bmw.dao.LevelDBDaoImpl;
+import com.eroc.bmw.pojo.DataBean;
+import com.eroc.bmw.service.BSBService;
+import com.eroc.bmw.service.BSBServiceImpl;
 import com.google.protobuf.ByteString;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.DBIterator;
@@ -27,17 +30,16 @@ public class JfTest {
 
     @Test
     public void contextLoads() throws IOException {
-        Options options = new Options();
-        factory.destroy(new File("data"), options);
-        factory.destroy(new File("flag"), options);
+//        Options options = new Options();
+//        factory.destroy(new File("data"), options);
+//        factory.destroy(new File("mata"), options);
 
 
-        LevelDBDao levelDBDao = new LevelDBDaoImpl();
-
-        ByteString flag = ByteString.copyFrom(bytes("11"));
-        ByteString param = ByteString.copyFrom(bytes("1234567890"));
-        ParamBean.Param build = ParamBean.Param.newBuilder().setFlag(flag).setParam(param).build();
-        levelDBDao.set(build);
+        BSBService bsbService = new BSBServiceImpl();
+        ByteString flag = ByteString.copyFrom(bytes("3"));
+        ByteString param = ByteString.copyFrom(bytes("3b4323334fce19d6b804eff54325747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"));
+        DataBean.Data build = DataBean.Data.newBuilder().setFlag(flag).setParam(param).build();
+        bsbService.producer(build);
 
 
     }
@@ -46,17 +48,27 @@ public class JfTest {
 
     @Test
     public void xtLoads() throws IOException {
+        //查询数据
         Options options = new Options();
         options.createIfMissing(true);
         DB dataDB = null;
-        dataDB = factory.open(new File("data"), options);
+        dataDB = factory.open(new File("mata"), options);
         DBIterator iterator = dataDB.iterator();
-        for (iterator.seekToFirst(); iterator.hasNext(); iterator.next()) {
-            String s = asString(iterator.peekNext().getKey());
-            String asString = asString(iterator.peekNext().getValue());
-            System.out.println(s + "--------" + asString);
-
+        String s = null;
+        String asString = null;
+        for(iterator.seekToFirst(); iterator.hasNext(); iterator.next()) {
+            s = asString(iterator.peekNext().getKey());
+            if (asString(iterator.peekNext().getKey()).equalsIgnoreCase(asString(LevelDBDaoImpl.HEADER_KEY))) {
+                asString = asString(iterator.peekNext().getValue());
+            } else {
+                DataBean.Data data = DataBean.Data.parseFrom(iterator.peekNext().getValue());
+                asString = data.toString();
+            }
+            System.out.println(s + "=========================" + asString);
+            System.out.println("--------------------------------------------------------------------------------------------------------------------");
         }
+        iterator.close();
+        dataDB.close();
 
     }
 
