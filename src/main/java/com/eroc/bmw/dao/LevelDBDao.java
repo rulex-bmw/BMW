@@ -4,6 +4,7 @@ import com.eroc.bmw.pojo.DataBean;
 import org.iq80.leveldb.DB;
 
 import java.io.IOException;
+import java.util.Map;
 
 public interface LevelDBDao {
 
@@ -12,5 +13,5 @@ public interface LevelDBDao {
 
     void origin();
 
-    void verifyHeaderData() throws IOException;
+    Map<byte[], byte[]> verifyHeaderData() throws IOException;
 }
