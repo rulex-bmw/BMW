@@ -4,6 +4,7 @@ import com.eroc.bmw.dao.LevelDBDaoImpl;
 import com.eroc.bmw.pojo.DataBean;
 import com.eroc.bmw.service.BSBService;
 import com.eroc.bmw.service.BSBServiceImpl;
+import com.eroc.bmw.service.Verify;
 import com.google.protobuf.ByteString;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.DBIterator;
@@ -24,6 +25,7 @@ public class BmwApplicationTests {
 
     @Test
     public void contextLoads() throws IOException {
+        Verify verify = new Verify();
         //存入levelDB
         BSBService bsbService = new BSBServiceImpl();
         ByteString flag = ByteString.copyFrom(bytes("1"));
