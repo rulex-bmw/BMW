@@ -1,4 +1,4 @@
-package com.eroc.bmw.util;
+package com.rulex.bmw.util;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
