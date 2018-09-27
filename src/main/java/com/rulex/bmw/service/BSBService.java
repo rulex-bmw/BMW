@@ -1,6 +1,6 @@
-package com.eroc.bmw.service;
+package com.rulex.bmw.service;
 
-import com.eroc.bmw.pojo.DataBean;
+import com.rulex.bmw.pojo.DataBean;
 
 public interface BSBService {
 

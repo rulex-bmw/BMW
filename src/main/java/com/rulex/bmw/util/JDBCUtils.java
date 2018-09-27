@@ -1,4 +1,4 @@
-package com.eroc.bmw.util;
+package com.rulex.bmw.util;
 
 import java.sql.*;
 import java.util.ArrayList;
