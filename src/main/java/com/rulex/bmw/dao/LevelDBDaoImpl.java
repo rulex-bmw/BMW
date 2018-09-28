@@ -193,8 +193,10 @@ public class LevelDBDaoImpl implements LevelDBDao {
             //从数据库读取所需的记录，并保存所有的key
             //Read the required records from the database and save all the keys
             db = LevelDBUtil.getDb(DATA_PATH);
-
             boolean flag = true;
+            if (asString(prveKey).equals(asString(readKey))) {
+                flag = false;
+            }
             while (true) {
                 //mapValue为map的vale值,map的value为数据库数据的key,map的key为上一条数据库数据的key
                 //The value of the map
@@ -263,6 +265,72 @@ public class LevelDBDaoImpl implements LevelDBDao {
             }
         } else {
             System.out.println("Verify that headerValue is correct.");
+        }
+        return map;
+    }
+
+
+    /**
+     * Get the hash map
+     *
+     * @return Map<byte[], byte[]> data库的key.
+     * map的value为数据库数据的key,map的key为上一条数据库数据的key
+     * The value of the key.
+     * map of the data base is the key of the database data, and the key of the map is the key of the last database data
+     * @throws IOException
+     */
+    public static Map<String, String> getHashMap() throws IOException {
+
+        DB db = null;
+        Map<String, String> map = new HashMap<String, String>();
+        try {
+            //从数据库读取最后一条记录的key
+            // Read the key of the last record from the database
+            db = LevelDBUtil.getDb(FLAG_PATH);
+            DataBean.Data hash = DataBean.Data.parseFrom(db.get(WRITEPOSITION));
+            byte[] lastKey = hash.getPrevHash().toByteArray();
+            //从数据库读取readPosition的key
+            // Read the key for readPosition from the database
+            byte[] readKey = null;
+            if (db.get(READPOSITION) != null) {
+                DataBean.Data hash2 = DataBean.Data.parseFrom(db.get(READPOSITION));
+                readKey = hash2.getPrevHash().toByteArray();
+            }
+            db.close();
+
+            byte[] prveKey = lastKey;
+            //从数据库读取所需的记录，并保存所有的key
+            //Read the required records from the database and save all the keys
+            db = LevelDBUtil.getDb(DATA_PATH);
+            boolean flag = true;
+            if (asString(readKey).equals(asString(prveKey))) {
+                flag = false;
+            }
+            while (flag) {
+                //mapValue为map的vale值,map的value为数据库数据的key,map的key为上一条数据库数据的key
+                //The value of the map
+                byte[] mapValue = prveKey;
+                DataBean.Data data = DataBean.Data.parseFrom(db.get(prveKey));
+                prveKey = data.getPrevHash().toByteArray();
+
+                if (prveKey.length == 0 || prveKey == null) {
+                    break;
+                }
+
+                //将LevelDB数据库的key保存进map里
+                //Save the key of LevelDB database into map
+                if (flag) {
+                    map.put(asString(prveKey), asString(mapValue));
+                }
+                //排除掉已上区块链的数据
+                //Exclude data that is already on the blockChain
+                if (asString(prveKey).equals(asString(readKey))) {
+                    flag = false;
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return map;
     }
