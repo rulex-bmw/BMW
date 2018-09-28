@@ -183,13 +183,13 @@ public final class DataBean {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return DataBean.internal_static_com_eroc_bmw_pojo_Data_descriptor;
+      return DataBean.internal_static_com_rulex_bmw_pojo_Data_descriptor;
     }
 
     @Override
     protected FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return DataBean.internal_static_com_eroc_bmw_pojo_Data_fieldAccessorTable
+      return DataBean.internal_static_com_rulex_bmw_pojo_Data_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
               Data.class, Builder.class);
     }
@@ -566,13 +566,13 @@ public final class DataBean {
         DataOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return DataBean.internal_static_com_eroc_bmw_pojo_Data_descriptor;
+        return DataBean.internal_static_com_rulex_bmw_pojo_Data_descriptor;
       }
 
       @Override
       protected FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return DataBean.internal_static_com_eroc_bmw_pojo_Data_fieldAccessorTable
+        return DataBean.internal_static_com_rulex_bmw_pojo_Data_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
                 Data.class, Builder.class);
       }
@@ -615,7 +615,7 @@ public final class DataBean {
       @Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return DataBean.internal_static_com_eroc_bmw_pojo_Data_descriptor;
+        return DataBean.internal_static_com_rulex_bmw_pojo_Data_descriptor;
       }
 
       @Override
@@ -1063,10 +1063,10 @@ public final class DataBean {
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_com_eroc_bmw_pojo_Data_descriptor;
+    internal_static_com_rulex_bmw_pojo_Data_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_com_eroc_bmw_pojo_Data_fieldAccessorTable;
+      internal_static_com_rulex_bmw_pojo_Data_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -1076,10 +1076,10 @@ public final class DataBean {
       descriptor;
   static {
     String[] descriptorData = {
-      "\n\nData.proto\022\021com.rulex.bmw.pojo\"n\n\004Data\022" +
-      "\r\n\005param\030\001 \001(\014\022\n\n\002ts\030\002 \001(\014\022\016\n\006serial\030\003 \001" +
-      "(\014\022\021\n\tprev_hash\030\004 \001(\014\022\014\n\004vn_1\030\005 \001(\014\022\014\n\004f" +
-      "lag\030\006 \001(\014\022\014\n\004sign\030\007 \001(\014B\nB\010DataBean"
+      "\n\nData.proto\022\022com.rulex.bmw.pojo\"n\n\004Data" +
+      "\022\r\n\005param\030\001 \001(\014\022\n\n\002ts\030\002 \001(\014\022\016\n\006serial\030\003 " +
+      "\001(\014\022\021\n\tprev_hash\030\004 \001(\014\022\014\n\004vn_1\030\005 \001(\014\022\014\n\004" +
+      "flag\030\006 \001(\014\022\014\n\004sign\030\007 \001(\014B\nB\010DataBean"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -1093,11 +1093,11 @@ public final class DataBean {
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
         }, assigner);
-    internal_static_com_eroc_bmw_pojo_Data_descriptor =
+    internal_static_com_rulex_bmw_pojo_Data_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_com_eroc_bmw_pojo_Data_fieldAccessorTable = new
+    internal_static_com_rulex_bmw_pojo_Data_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_com_eroc_bmw_pojo_Data_descriptor,
+        internal_static_com_rulex_bmw_pojo_Data_descriptor,
         new String[] { "Param", "Ts", "Serial", "PrevHash", "Vn1", "Flag", "Sign", });
   }
 
