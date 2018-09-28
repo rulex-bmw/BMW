@@ -4,7 +4,6 @@ import com.rulex.bmw.dao.LevelDBDaoImpl;
 import com.rulex.bmw.pojo.DataBean;
 import com.rulex.bmw.service.BSBService;
 import com.rulex.bmw.service.BSBServiceImpl;
-import com.rulex.bmw.service.Verify;
 import com.google.protobuf.ByteString;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.DBIterator;
@@ -25,11 +24,11 @@ public class BmwApplicationTests {
 
     @Test
     public void contextLoads() throws IOException {
-        Verify verify = new Verify();
+//        Verify verify = new Verify();
         //存入levelDB
         BSBService bsbService = new BSBServiceImpl();
         ByteString flag = ByteString.copyFrom(bytes("1"));
-        ByteString param = ByteString.copyFrom(bytes("1b4323334fce19d6b804eff54325747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"));
+        ByteString param = ByteString.copyFrom(bytes("6b4323334fce19d6b804eff54325747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"));
         DataBean.Data build = DataBean.Data.newBuilder().setFlag(flag).setParam(param).build();
         bsbService.producer(build);
         //查询数据
