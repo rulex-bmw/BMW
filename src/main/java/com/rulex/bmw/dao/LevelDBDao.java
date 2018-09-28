@@ -3,6 +3,7 @@ package com.rulex.bmw.dao;
 import com.rulex.bmw.pojo.DataBean;
 
 import java.io.IOException;
+import java.util.Map;
 
 public interface LevelDBDao {
 
@@ -11,5 +12,5 @@ public interface LevelDBDao {
 
     void origin();
 
-    void verifyHeaderData() throws IOException;
+    Map<String, String> verifyHeaderData() throws IOException;
 }

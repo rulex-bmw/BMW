@@ -35,8 +35,8 @@ public class JfTest {
 
 
         BSBService bsbService = new BSBServiceImpl();
-        ByteString flag = ByteString.copyFrom(bytes("3"));
-        ByteString param = ByteString.copyFrom(bytes("3b4323334fce19d6b804eff54325747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"));
+        ByteString flag = ByteString.copyFrom(bytes("4"));
+        ByteString param = ByteString.copyFrom(bytes("eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"));
         DataBean.Data build = DataBean.Data.newBuilder().setFlag(flag).setParam(param).build();
         bsbService.producer(build);
 
@@ -57,14 +57,14 @@ public class JfTest {
         String asString = null;
         for(iterator.seekToFirst(); iterator.hasNext(); iterator.next()) {
             s = asString(iterator.peekNext().getKey());
-            if (asString(iterator.peekNext().getKey()).equalsIgnoreCase(asString(LevelDBDaoImpl.HEADER_KEY))) {
-                asString = asString(iterator.peekNext().getValue());
-            } else {
-                DataBean.Data data = DataBean.Data.parseFrom(iterator.peekNext().getValue());
-                asString = data.toString();
-            }
-            System.out.println(s + "=========================" + asString);
-            System.out.println("--------------------------------------------------------------------------------------------------------------------");
+//            if (asString(iterator.peekNext().getKey()).equalsIgnoreCase(asString(LevelDBDaoImpl.HEADER_KEY))) {
+//                asString = asString(iterator.peekNext().getValue());
+//            } else {
+//                DataBean.Data data = DataBean.Data.parseFrom(iterator.peekNext().getValue());
+//                asString = data.toString();
+//            }
+            System.out.println(s );
+//            System.out.println("--------------------------------------------------------------------------------------------------------------------");
         }
         iterator.close();
         dataDB.close();
