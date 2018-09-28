@@ -31,12 +31,12 @@ public class BSBServiceImpl implements BSBService {
     }
 
     /**
-     * 从readposition中读取m并去map中寻找m+1
+     * 从readposition中读取m并去map中寻找m+1       m:已经上链，m+1:未上链
      * 从levelDB中取出DATA,将不可变信息存入数据库
      */
     @Override
     public void customer() {
-        Map<byte[], byte[]> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
 
 
     }

@@ -32,25 +32,15 @@ public class LevelDBDaoImpl implements LevelDBDao {
     private static final byte[] CREATION_DATA = bytes("Rulex BMW (Blockchain Middleware) is accelerating the landing of blockchain technology by migrating existed app ecosystem to public blockchains");
 
     /**
-     * setup connection
-     */
-    private Options getOptions() {
-        Options options = new Options();
-        options.createIfMissing(true);
-        return options;
-    }
-
-    /**
      * 设置创世区块
      */
     public void origin() {
         double i = 0;
-        Options options = new Options();
         DB dataDB = null;
         DB flagDB = null;
         try {
-            dataDB = factory.open(new File("data"), options);
-            flagDB = factory.open(new File("mata"), options);
+            dataDB = LevelDBUtil.getDb(DATA_PATH);
+            flagDB = LevelDBUtil.getDb(FLAG_PATH);
             if (dataDB.get(HEADER_KEY) != null) {
                 return;
             }
@@ -88,22 +78,15 @@ public class LevelDBDaoImpl implements LevelDBDao {
      * @throws IOException
      */
     public synchronized void set(DataBean.Data param) throws IOException {
-//        try {
-//            throw new DataException("测试异常");
-//        } catch (DataException e) {
-//            e.printStackTrace();
-//        }
         if (param.getParam() == null && !(param.getParam().toByteArray().length <= 256)) {
             return;
         }
-        Options options = null;
-        options = getOptions();
         DB dataDB = null;
         DB flagDB = null;
         DBIterator iterator = null;
         try {
-            dataDB = factory.open(new File(DATA_PATH), options);
-            flagDB = factory.open(new File(FLAG_PATH), options);
+            dataDB = LevelDBUtil.getDb(DATA_PATH);
+            flagDB = LevelDBUtil.getDb(FLAG_PATH);
             //generation timestamp
             byte[] ts = bytes(new DateTime().toString("yyyyMMddHHmmssSSSS"));
             ByteString timestamp = ByteString.copyFrom(ts);
