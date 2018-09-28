@@ -12,5 +12,5 @@ public interface LevelDBDao {
 
     void origin();
 
-    Map<byte[], byte[]> verifyHeaderData() throws IOException;
+    Map<String, String> verifyHeaderData() throws IOException;
 }

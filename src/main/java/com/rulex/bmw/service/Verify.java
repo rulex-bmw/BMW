@@ -15,7 +15,7 @@ import static org.fusesource.leveldbjni.JniDBFactory.bytes;
 
 public class Verify {
 
-    public static Map<byte[], byte[]> hashKey = new HashMap<byte[], byte[]>();
+    public static Map<String, String> hashKey = new HashMap<String, String>();
 
     /**
      * Verify the partial structure header static code block
@@ -37,10 +37,13 @@ public class Verify {
     public static void main(String[] args) {
 
         System.out.println("start");
-        Iterator<Map.Entry<byte[], byte[]>> entries = hashKey.entrySet().iterator();
+
+
+        Iterator<Map.Entry<String, String>> entries = hashKey.entrySet().iterator();
         while (entries.hasNext()) {
-            Map.Entry<byte[], byte[]> entry = entries.next();
-            System.out.println("Key = " + asString(entry.getKey()) + ", Value = " + asString(entry.getValue()));
+            Map.Entry<String, String> entry = entries.next();
+
+            System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
         }
     }
 

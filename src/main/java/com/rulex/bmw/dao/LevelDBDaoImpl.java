@@ -166,12 +166,12 @@ public class LevelDBDaoImpl implements LevelDBDao {
      * map of the data base is the key of the database data, and the key of the map is the key of the last database data
      * @throws IOException
      */
-    public Map<byte[], byte[]> verifyHeaderData() throws IOException {
+    public Map<String, String> verifyHeaderData() throws IOException {
 
         DB db = null;
         String startValue = null;
         String headerValue = null;
-        Map<byte[], byte[]> map = new HashMap<byte[], byte[]>();
+        Map<String, String> map = new HashMap<String, String>();
         try {
             //从数据库读取最后一条记录的key
             // Read the key of the last record from the database
@@ -219,7 +219,7 @@ public class LevelDBDaoImpl implements LevelDBDao {
                 //将LevelDB数据库的key保存进map里
                 //Save the key of LevelDB database into map
                 if (flag) {
-                    map.put(prveKey, mapValue);
+                    map.put(asString(prveKey), asString(mapValue));
                 }
                 //排除掉已上区块链的数据
                 //Exclude data that is already on the blockChain
