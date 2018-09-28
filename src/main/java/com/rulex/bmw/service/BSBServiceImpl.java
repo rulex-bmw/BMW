@@ -4,7 +4,11 @@ import com.rulex.bmw.dao.LevelDBDao;
 import com.rulex.bmw.dao.LevelDBDaoImpl;
 import com.rulex.bmw.pojo.DataBean;
 
+import javax.security.auth.callback.Callback;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Callable;
 
 /**
  * BSB业务处理总线程
@@ -32,7 +36,25 @@ public class BSBServiceImpl implements BSBService {
      */
     @Override
     public void customer() {
+        Map<byte[], byte[]> map = new HashMap<>();
 
 
+    }
+}
+
+
+class customer implements Callable<DataBean.Data> {
+    @Override
+    public DataBean.Data call() throws Exception {
+        //将数据保存至区块链
+        return null;
+    }
+}
+
+class producer implements Callable<DataBean.Data> {
+    @Override
+    public DataBean.Data call() throws Exception {
+        //本地数据持久化
+        return null;
     }
 }
