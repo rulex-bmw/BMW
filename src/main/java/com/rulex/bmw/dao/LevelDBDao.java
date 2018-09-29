@@ -13,4 +13,10 @@ public interface LevelDBDao {
     void origin();
 
     Map<String, String> verifyHeaderData() throws IOException;
+
+    DataBean.Data getReadposition();
+
+    boolean setStatus(String  key);
+
+//    void editReadposition(String currentKey);
 }

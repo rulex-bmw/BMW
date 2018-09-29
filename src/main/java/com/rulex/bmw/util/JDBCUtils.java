@@ -22,7 +22,7 @@ public class JDBCUtils {
         Connection connection = null;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/demo", "root", "root");
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/blockchain", "root", "root");
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {

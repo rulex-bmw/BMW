@@ -5,6 +5,9 @@ import com.rulex.bmw.pojo.DataBean;
 import com.rulex.bmw.service.BSBService;
 import com.rulex.bmw.service.BSBServiceImpl;
 import com.google.protobuf.ByteString;
+import com.rulex.bmw.service.Verify;
+import com.rulex.bmw.util.JDBCUtils;
+import com.rulex.bmw.util.LevelDBUtil;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.DBIterator;
 import org.iq80.leveldb.Options;
@@ -24,18 +27,18 @@ public class BmwApplicationTests {
 
     @Test
     public void contextLoads() throws IOException {
-//        Verify verify = new Verify();
+        Verify verify = new Verify();
+
+
         //存入levelDB
         BSBService bsbService = new BSBServiceImpl();
         ByteString flag = ByteString.copyFrom(bytes("1"));
-        ByteString param = ByteString.copyFrom(bytes("6b4323334fce19d6b804eff54325747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"));
+        ByteString param = ByteString.copyFrom(bytes("3b4323334fce19d6b804eff54325747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"));
         DataBean.Data build = DataBean.Data.newBuilder().setFlag(flag).setParam(param).build();
         bsbService.producer(build);
         //查询数据
-        Options options = new Options();
-        options.createIfMissing(true);
         DB dataDB = null;
-        dataDB = factory.open(new File("data"), options);
+        dataDB = LevelDBUtil.getDb("data");
         DBIterator iterator = dataDB.iterator();
         String s = null;
         String asString = null;
@@ -53,6 +56,19 @@ public class BmwApplicationTests {
         iterator.close();
         dataDB.close();
 
+    }
+
+
+    @Test
+    public void jdbcTest(){
+        String hashey="123456";
+        ByteString flag = ByteString.copyFrom(bytes("1"));
+        ByteString param = ByteString.copyFrom(bytes("3b4323334fce19d6b804eff54325747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"));
+        DataBean.Data build = DataBean.Data.newBuilder().setFlag(flag).setParam(param).build();
+        String sql = "insert into bmw_chain (key,value) values (?,?);";
+        Object[] obj = {bytes(hashey), build.toByteArray()};
+        int edit = JDBCUtils.edit(sql, obj);
+        System.out.println(edit);
     }
 
 

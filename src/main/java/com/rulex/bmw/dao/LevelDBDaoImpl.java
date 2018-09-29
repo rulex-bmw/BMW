@@ -1,23 +1,19 @@
 package com.rulex.bmw.dao;
 
-import com.rulex.bmw.pojo.DataBean;
-import com.rulex.bmw.util.DataException;
-import com.rulex.bmw.util.LevelDBUtil;
-import com.rulex.bmw.util.SHA256;
-import com.rulex.bmw.util.TypeUtils;
 import com.google.protobuf.ByteString;
+import com.rulex.bmw.pojo.DataBean;
+import com.rulex.bmw.util.*;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.DBIterator;
-import org.iq80.leveldb.Options;
 import org.joda.time.DateTime;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-import static org.fusesource.leveldbjni.JniDBFactory.*;
+import static org.fusesource.leveldbjni.JniDBFactory.asString;
+import static org.fusesource.leveldbjni.JniDBFactory.bytes;
 
 /**
  * Data persistence layer
@@ -50,15 +46,25 @@ public class LevelDBDaoImpl implements LevelDBDao {
             byte[] ts = bytes(new DateTime().toString("yyyyMMddHHmmssSSSS"));
             ByteString timestamp = ByteString.copyFrom(ts);
             ByteString serial = ByteString.copyFrom(bytes(TypeUtils.doubleToString(i)));
-            DataBean.Data build = DataBean.Data.newBuilder().setParam(ByteString.copyFrom(CREATION_DATA)).setTs(timestamp).setSerial(serial).build();
-            String hash = SHA256.getSHA256(build.toString());
-            DataBean.Data mata = DataBean.Data.newBuilder().setPrevHash(ByteString.copyFrom(bytes(hash))).setSerial(serial).build();
+            DataBean.Data origin = DataBean.Data.newBuilder().setParam(ByteString.copyFrom(CREATION_DATA)).setTs(timestamp).setSerial(serial).build();
+            String key = SHA256.getSHA256(origin.toString());
+            DataBean.Data mata = DataBean.Data.newBuilder().setPrevHash(ByteString.copyFrom(bytes(key))).setSerial(serial).build();
             flagDB.put(WRITEPOSITION, mata.toByteArray());
-            flagDB.put(READPOSITION, mata.toByteArray());
             LevelDBDaoImpl levelDBDao = new LevelDBDaoImpl();
-            levelDBDao.setHeaderData(build, dataDB);
-            dataDB.put(bytes(hash), build.toByteArray());
+            levelDBDao.setHeaderData(origin, dataDB);
+            dataDB.put(bytes(key), origin.toByteArray());
+            //将创世数据加入区块链
+            String sql = "insert into bmw_chain (key,value) values (*,*)";
+            Object[] obj = {bytes(key), origin.toByteArray()};
+            int edit = JDBCUtils.edit(sql, obj);
+            if (edit == 1) {
+                flagDB.put(READPOSITION, mata.toByteArray());
+            } else {
+                throw new DataException("Data write blockchain failure");
+            }
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (DataException e) {
             e.printStackTrace();
         } finally {
             try {
@@ -139,6 +145,79 @@ public class LevelDBDaoImpl implements LevelDBDao {
         }
     }
 
+    /**
+     * 获取readposition
+     *
+     * @return
+     */
+    @Override
+    public DataBean.Data getReadposition() {
+        DB mataDB = null;
+        DataBean.Data data = null;
+        try {
+            mataDB = LevelDBUtil.getDb(FLAG_PATH);
+            byte[] readposition = mataDB.get(READPOSITION);
+            data = DataBean.Data.parseFrom(readposition);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+
+
+    /**
+     * 根据key查询出当前值，并将记录加入区块链
+     *
+     * @param hashey
+     */
+    public boolean setStatus(String hashey) {
+        DB dataDB = null;
+        DB flagDB = null;
+        try {
+            dataDB = LevelDBUtil.getDb(DATA_PATH);
+            byte[] bytes = dataDB.get(bytes(hashey));
+            DataBean.Data data = DataBean.Data.parseFrom(bytes);
+            DataBean.Data chainData = DataBean.Data.newBuilder().setParam(data.getParam()).setSerial(data.getSerial()).setTs(data.getTs()).setPrevHash(data.getPrevHash()).build();
+            String sql = "insert into bmw_chain (key,value) values (*,*)";
+            Object[] obj = {bytes(hashey), chainData.toByteArray()};
+            int edit = JDBCUtils.edit(sql, obj);
+            if (edit == 1) {
+                //修改readposition
+                DataBean.Data readposition = DataBean.Data.newBuilder().setPrevHash(ByteString.copyFrom(bytes(hashey))).setSerial(data.getSerial()).build();
+                flagDB.put(READPOSITION,readposition.toByteArray());
+                return true;
+            } else {
+                throw new DataException("Data write blockchain failure");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (DataException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+    /**
+     * 暂时无用
+     *
+     *
+     * 修改readposition
+     *
+     * @param currentKey
+     */
+//    @Override
+//    public void editReadposition(String currentKey) {
+//        DB db = null;
+//        try {
+//            db = LevelDBUtil.getDb(DATA_PATH);
+//            byte[] bytes = db.get(bytes(currentKey));
+//            DataBean.Data data = DataBean.Data.parseFrom(bytes);
+//            DataBean.Data mata = DataBean.Data.newBuilder().setPrevHash(ByteString.copyFrom(bytes(currentKey))).setSerial(data.getSerial()).build();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     /**
      * Verify the offset structure header
