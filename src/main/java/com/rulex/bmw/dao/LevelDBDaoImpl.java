@@ -56,7 +56,8 @@ public class LevelDBDaoImpl implements LevelDBDao {
             //将创世数据加入区块链
             String sql = "insert into bmw_chain (key,value) values (*,*)";
             Object[] obj = {bytes(key), origin.toByteArray()};
-            int edit = JDBCUtils.edit(sql, obj);
+//            int edit = JDBCUtils.edit(sql, obj);
+            int edit = 1;
             if (edit == 1) {
                 flagDB.put(READPOSITION, mata.toByteArray());
             } else {
@@ -180,7 +181,8 @@ public class LevelDBDaoImpl implements LevelDBDao {
             DataBean.Data chainData = DataBean.Data.newBuilder().setParam(data.getParam()).setSerial(data.getSerial()).setTs(data.getTs()).setPrevHash(data.getPrevHash()).build();
             String sql = "insert into bmw_chain (key,value) values (*,*)";
             Object[] obj = {bytes(hashey), chainData.toByteArray()};
-            int edit = JDBCUtils.edit(sql, obj);
+//            int edit = JDBCUtils.edit(sql, obj);
+            int edit = 1;
             if (edit == 1) {
                 //修改readposition
                 DataBean.Data readposition = DataBean.Data.newBuilder().setPrevHash(ByteString.copyFrom(bytes(hashey))).setSerial(data.getSerial()).build();

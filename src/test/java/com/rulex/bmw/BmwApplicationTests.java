@@ -6,17 +6,16 @@ import com.rulex.bmw.service.BSBService;
 import com.rulex.bmw.service.BSBServiceImpl;
 import com.google.protobuf.ByteString;
 import com.rulex.bmw.service.Verify;
-import com.rulex.bmw.util.JDBCUtils;
 import com.rulex.bmw.util.LevelDBUtil;
+import com.sun.xml.internal.ws.util.xml.ContentHandlerToXMLStreamWriter;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.DBIterator;
-import org.iq80.leveldb.Options;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.File;
+import javax.annotation.Resource;
 import java.io.IOException;
 
 import static org.fusesource.leveldbjni.JniDBFactory.*;
@@ -24,6 +23,9 @@ import static org.fusesource.leveldbjni.JniDBFactory.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class BmwApplicationTests {
+
+    @Resource
+    private LevelDBUtil levelDBUtil;
 
     @Test
     public void contextLoads() throws IOException {
@@ -63,12 +65,13 @@ public class BmwApplicationTests {
     public void jdbcTest(){
         String hashey="123456";
         ByteString flag = ByteString.copyFrom(bytes("1"));
-        ByteString param = ByteString.copyFrom(bytes("3b4323334fce19d6b804eff54325747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"));
+        ByteString param = ByteString.copyFrom(bytes("2b4323334fce19d6b804eff54325747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"));
         DataBean.Data build = DataBean.Data.newBuilder().setFlag(flag).setParam(param).build();
-        String sql = "insert into bmw_chain (key,value) values (?,?);";
-        Object[] obj = {bytes(hashey), build.toByteArray()};
-        int edit = JDBCUtils.edit(sql, obj);
-        System.out.println(edit);
+//        String sql = "insert into bmw_chain (key,value) values (?,?);";
+        int setstatus = levelDBUtil.setstatus(bytes(hashey), build.toByteArray());
+        System.out.println(setstatus);
+//        int edit = JDBCUtils.edit(sql, obj);
+//        System.out.println(edit);
     }
 
 
