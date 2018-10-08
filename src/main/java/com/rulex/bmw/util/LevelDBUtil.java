@@ -4,6 +4,7 @@ import org.iq80.leveldb.DB;
 import org.iq80.leveldb.Options;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -32,7 +33,7 @@ public class LevelDBUtil {
     /**
      * Connect to the LevelDB database
      */
-    public static DB getDb(String fileName) throws IOException {
+    public static  DB getDb(String fileName) throws IOException {
 
         Options options = new Options();
         options.createIfMissing(true);

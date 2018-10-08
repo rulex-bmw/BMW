@@ -1,23 +1,25 @@
 package com.rulex.bmw.service;
 
-import com.google.protobuf.ByteString;
 import com.rulex.bmw.dao.LevelDBDao;
-import com.rulex.bmw.dao.LevelDBDaoImpl;
 import com.rulex.bmw.pojo.DataBean;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.Map;
-import java.util.concurrent.Callable;
+
+import static org.fusesource.leveldbjni.JniDBFactory.asString;
 
 /**
  * BSB业务处理总线程
  *
  * @author admin
  */
+@Service
 public class BSBServiceImpl implements BSBService {
 
-
-    private LevelDBDao levelDBDao = new LevelDBDaoImpl();
+    @Resource
+    private LevelDBDao levelDBDao;
 
     @Override
     public void producer(DataBean.Data data) {
@@ -35,44 +37,93 @@ public class BSBServiceImpl implements BSBService {
      * 从levelDB中取出DATA,将不可变信息存入数据库
      */
     @Override
-    public void customer() {
+    public Integer customer() {
+        int i = 0;
         String currentHash = null;
         String prevHash = null;
-        Map<String, String> hashKey = Verify.hashKey;
-        if (hashKey.size() == 0) {
-            return;
+        Map<String, String> keyMap = Verify.hashKey;
+        if (keyMap.size() == 0) {
+            return i;
         }
         //get readposition
         DataBean.Data readposition = levelDBDao.getReadposition();
         //从第m+1项上链
-        prevHash = readposition.getPrevHash().toString();
+        prevHash = asString(readposition.getPrevHash().toByteArray());
         while (true) {
-            currentHash = hashKey.get(prevHash.toString());
-            if (currentHash == null) {
+            currentHash = keyMap.get(prevHash);
+            if (currentHash == null || currentHash.equals("")) {
                 break;
             }
             if (levelDBDao.setStatus(currentHash)) {
+                //调用消息通知机制，提示其他线程完成上链
+
                 prevHash = currentHash;
+                i++;
+                System.out.println("customer run with " + i);
             }
         }
+        return i;
     }
 
 
 }
 
+//@Service
+//class Producer implements Callable<Integer> {
+//    @Resource
+//    private LevelDBDao levelDBDao;
+//
+//    private DataBean.Data data;
+//
+//    public Producer(DataBean.Data data) {
+//        this.data = data;
+//    }
+//
+//    @Override
+//    public Integer call() throws Exception {
+//        //将数据保存至区块链
+//        try {
+//            levelDBDao.origin();
+//            levelDBDao.set(data);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return null;
+//    }
+//}
 
-class customer implements Callable<DataBean.Data> {
-    @Override
-    public DataBean.Data call() throws Exception {
-        //将数据保存至区块链
-        return null;
-    }
-}
-
-class producer implements Callable<DataBean.Data> {
-    @Override
-    public DataBean.Data call() throws Exception {
-        //本地数据持久化
-        return null;
-    }
-}
+//@Service
+//class Customer implements Callable<Integer> {
+//    @Resource
+//    private LevelDBDao levelDBDao;
+//
+//    @Override
+//    public Integer call() throws Exception {
+//        int num = 0;
+//        //本地数据持久化
+//        String currentHash = null;
+//        String prevHash = null;
+//        Map<String, String> keyMap = Verify.hashKey;
+//        if (keyMap.size() == 0) {
+//            return null;
+//        }
+//        //get readposition
+//        DataBean.Data readposition = levelDBDao.getReadposition();
+//        //从第m+1项上链
+//        prevHash = asString(readposition.getPrevHash().toByteArray());
+//        while (true) {
+//            currentHash = keyMap.get(prevHash);
+//            if (currentHash == null || currentHash.equals("")) {
+//                break;
+//            }
+//            if (levelDBDao.setStatus(currentHash)) {
+//                //调用消息通知机制，提示其他线程完成上链
+//
+//                prevHash = currentHash;
+//                num++;
+//            }
+//        }
+//        return num;
+//    }
+//}

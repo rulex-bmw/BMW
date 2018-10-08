@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
 
 public class TypeUtils {
@@ -43,5 +44,99 @@ public class TypeUtils {
         return in2b;
     }
 
+
+    /**
+     * 将boolean转成byte[]
+     *
+     * @param val
+     * @return byte[]
+     */
+    public static byte[] Boolean2ByteArray(boolean val) {
+        int tmp = (val == false) ? 0 : 1;
+        return ByteBuffer.allocate(4).putInt(tmp).array();
+    }
+
+
+    /**
+     * 将byte[]转成boolean
+     *
+     * @param data
+     * @return boolean
+     */
+    public static boolean ByteArray2Boolean(byte[] data) {
+        if (data == null || data.length < 4) {
+            return false;
+        }
+        int tmp = ByteBuffer.wrap(data, 0, 4).getInt();
+        return (tmp == 0) ? false : true;
+    }
+
+
+    /**
+     * 将int转成byte[]
+     *
+     * @param val
+     * @return byte[]
+     */
+    public static byte[] Int2ByteArray(int val) {
+        return ByteBuffer.allocate(4).putInt(val).array();
+    }
+
+
+    /**
+     * 将byte[]转成int
+     *
+     * @param data
+     * @return int
+     */
+    public static int ByteArray2Int(byte[] data) {
+        if (data == null || data.length < 4) {
+            return 0xDEADBEEF;
+        }
+        return ByteBuffer.wrap(data, 0, 4).getInt();
+    }
+
+    /**
+     * 将float转成byte[]
+     *
+     * @param val
+     * @return byte[]
+     */
+    public static byte[] Float2ByteArray(float val) {
+        return ByteBuffer.allocate(4).putFloat(val).array();
+    }
+
+
+    /**
+     * 将byte[]转成float
+     *
+     * @param data
+     * @return float
+     */
+    public static float ByteArray2Float(byte[] data) {
+        if (data == null || data.length < 4) {
+            return -1234.0f;
+        }
+        return ByteBuffer.wrap(data).getFloat();
+    }
+
+
+    public static byte[] double2Bytes(double d) {
+        long value = Double.doubleToRawLongBits(d);
+        byte[] byteRet = new byte[8];
+        for(int i = 0; i < 8; i++) {
+            byteRet[i] = (byte) ((value >> 8 * i) & 0xff);
+        }
+        return byteRet;
+    }
+
+
+    public static double bytes2Double(byte[] arr) {
+        long value = 0;
+        for(int i = 0; i < 8; i++) {
+            value |= ((long) (arr[i] & 0xff)) << (8 * i);
+        }
+        return Double.longBitsToDouble(value);
+    }
 
 }

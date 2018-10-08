@@ -6,6 +6,6 @@ public interface BSBService {
 
     void producer(DataBean.Data data);
 
-    void customer();
+    Integer customer();
 
 }
