@@ -258,31 +258,31 @@ public class LevelDBDaoImpl implements LevelDBDao {
      */
     public Map<String, String> verifyHeaderData() throws IOException {
 
-        DB db = null;
+//        DB db = null;
         String startValue = null;
         String headerValue = null;
         Map<String, String> map = new HashMap<String, String>();
         try {
             //从数据库读取最后一条记录的key
             // Read the key of the last record from the database
-            db = LevelDBUtil.getDb(FLAG_PATH);
-            DataBean.Data hash = DataBean.Data.parseFrom(db.get(WRITEPOSITION));
+//            db = LevelDBUtil.getDb(FLAG_PATH);
+            DataBean.Data hash = DataBean.Data.parseFrom(mataDB.get(WRITEPOSITION));
             byte[] lastKey = hash.getPrevHash().toByteArray();
             //从数据库读取readPosition的key
             // Read the key for readPosition from the database
             byte[] readKey = null;
-            if (db.get(READPOSITION) != null) {
-                DataBean.Data hash2 = DataBean.Data.parseFrom(db.get(READPOSITION));
+            if (mataDB.get(READPOSITION) != null) {
+                DataBean.Data hash2 = DataBean.Data.parseFrom(mataDB.get(READPOSITION));
                 readKey = hash2.getPrevHash().toByteArray();
             }
-            db.close();
+//            db.close();
 
             byte[] prveKey = lastKey;
             Stack<byte[]> stack = new Stack<byte[]>();
             stack.push(lastKey);
             //从数据库读取所需的记录，并保存所有的key
             //Read the required records from the database and save all the keys
-            db = LevelDBUtil.getDb(DATA_PATH);
+//            db = LevelDBUtil.getDb(DATA_PATH);
             boolean flag = true;
             if (asString(prveKey).equals(asString(readKey))) {
                 flag = false;
@@ -291,7 +291,7 @@ public class LevelDBDaoImpl implements LevelDBDao {
                 //mapValue为map的vale值,map的value为数据库数据的key,map的key为上一条数据库数据的key
                 //The value of the map
                 byte[] mapValue = prveKey;
-                byte[] value = db.get(prveKey);
+                byte[] value = dataDB.get(prveKey);
                 //value为null说明数据被篡改，抛出错误
                 // A value of null indicates that the data has been tampered with and an error has been thrown
                 if (value == null) {
@@ -302,7 +302,7 @@ public class LevelDBDaoImpl implements LevelDBDao {
                     }
                     break;
                 }
-                DataBean.Data data = DataBean.Data.parseFrom(db.get(prveKey));
+                DataBean.Data data = DataBean.Data.parseFrom(dataDB.get(prveKey));
                 prveKey = data.getPrevHash().toByteArray();
                 if (prveKey.length == 0 || prveKey == null) {
                     break;
@@ -322,13 +322,13 @@ public class LevelDBDaoImpl implements LevelDBDao {
 
             //从数据库读取header的值
             //Read the value of the header from the database
-            headerValue = asString(db.get(HEADER_KEY));
+            headerValue = asString(dataDB.get(HEADER_KEY));
 
             //验算header值
             //Check the header values
             while (!stack.isEmpty()) {
                 byte[] value = stack.pop();
-                DataBean.Data data = DataBean.Data.parseFrom(db.get(value));
+                DataBean.Data data = DataBean.Data.parseFrom(dataDB.get(value));
                 if (startValue == null) {
                     DataBean.Data record = DataBean.Data.newBuilder().setParam(data.getParam()).setTs(data.getTs()).setSerial(data.getSerial()).build();
 
@@ -340,7 +340,7 @@ public class LevelDBDaoImpl implements LevelDBDao {
                     startValue = SHA256.getSHA256(record.toString());
                 }
             }
-            db.close();
+//            db.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -371,27 +371,27 @@ public class LevelDBDaoImpl implements LevelDBDao {
      */
     public static Map<String, String> getHashMap() throws IOException {
 
-        DB db = null;
+//        DB db = null;
         Map<String, String> map = new HashMap<String, String>();
         try {
             //从数据库读取最后一条记录的key
             // Read the key of the last record from the database
-            db = LevelDBUtil.getDb(FLAG_PATH);
-            DataBean.Data hash = DataBean.Data.parseFrom(db.get(WRITEPOSITION));
+//            db = LevelDBUtil.getDb(FLAG_PATH);
+            DataBean.Data hash = DataBean.Data.parseFrom(mataDB.get(WRITEPOSITION));
             byte[] lastKey = hash.getPrevHash().toByteArray();
             //从数据库读取readPosition的key
             // Read the key for readPosition from the database
             byte[] readKey = null;
-            if (db.get(READPOSITION) != null) {
-                DataBean.Data hash2 = DataBean.Data.parseFrom(db.get(READPOSITION));
+            if (mataDB.get(READPOSITION) != null) {
+                DataBean.Data hash2 = DataBean.Data.parseFrom(mataDB.get(READPOSITION));
                 readKey = hash2.getPrevHash().toByteArray();
             }
-            db.close();
+//            db.close();
 
             byte[] prveKey = lastKey;
             //从数据库读取所需的记录，并保存所有的key
             //Read the required records from the database and save all the keys
-            db = LevelDBUtil.getDb(DATA_PATH);
+//            db = LevelDBUtil.getDb(DATA_PATH);
             boolean flag = true;
             if (asString(readKey).equals(asString(prveKey))) {
                 flag = false;
@@ -400,7 +400,7 @@ public class LevelDBDaoImpl implements LevelDBDao {
                 //mapValue为map的vale值,map的value为数据库数据的key,map的key为上一条数据库数据的key
                 //The value of the map
                 byte[] mapValue = prveKey;
-                DataBean.Data data = DataBean.Data.parseFrom(db.get(prveKey));
+                DataBean.Data data = DataBean.Data.parseFrom(dataDB.get(prveKey));
                 prveKey = data.getPrevHash().toByteArray();
 
                 if (prveKey.length == 0 || prveKey == null) {
