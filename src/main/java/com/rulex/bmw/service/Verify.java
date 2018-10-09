@@ -22,10 +22,15 @@ public class Verify {
      */
     static {
         LevelDBDao levelDBDao = new LevelDBDaoImpl();
+        DB db = null;
         try {
-            DB db = LevelDBUtil.getDb("data");
+            if (LevelDBDaoImpl.dataDB == null) {
+                db = LevelDBUtil.getDb("data");
+            } else {
+                db = LevelDBDaoImpl.dataDB;
+            }
             String value = asString(db.get(bytes("000000")));
-            db.close();
+//            db.close();
             if (value != null) {
                 hashKey = levelDBDao.verifyHeaderData();
             }

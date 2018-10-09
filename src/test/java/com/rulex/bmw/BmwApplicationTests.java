@@ -36,10 +36,16 @@ public class BmwApplicationTests {
 //        bsbService.producer(build);
         //查询数据
         DB dataDB = null;
-        dataDB = LevelDBUtil.getDb("data");
+        if (LevelDBDaoImpl.dataDB == null) {
+            dataDB = LevelDBUtil.getDb("data");
+        } else {
+            dataDB = LevelDBDaoImpl.dataDB;
+        }
+//        dataDB = LevelDBUtil.getDb("data");
         DBIterator iterator = dataDB.iterator();
         String s = null;
         String asString = null;
+        int i = 0;
         for(iterator.seekToFirst(); iterator.hasNext(); iterator.next()) {
             s = asString(iterator.peekNext().getKey());
             if (asString(iterator.peekNext().getKey()).equalsIgnoreCase(asString(LevelDBDaoImpl.HEADER_KEY))) {
@@ -49,11 +55,18 @@ public class BmwApplicationTests {
                 asString = data.toString();
             }
             System.out.println(s + "--------\n" + asString);
-            System.out.println("--------------------------------------------------------------------------------------------------------------------");
+            i++;
+            System.out.println("----------------------------------------------------");
         }
+        System.out.println("当前共有" + i + "条payload");
         iterator.close();
         dataDB.close();
-
+        if (LevelDBDaoImpl.mataDB != null) {
+            LevelDBDaoImpl.mataDB.close();
+        }
+        if (LevelDBDaoImpl.dataDB != null) {
+            LevelDBDaoImpl.dataDB.close();
+        }
     }
 
 
@@ -70,11 +83,11 @@ public class BmwApplicationTests {
             int i;
             Verify verify = new Verify();
             //存入levelDB
-            for(i = 1; i <= 3; i++) {
+            for(i = 1; i <= 10; i++) {
                 ByteString param = ByteString.copyFrom(bytes(i + "4543afds255sgds522987eff54325747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"));
                 DataBean.Data build = DataBean.Data.newBuilder().setParam(param).build();
                 bsbService.producer(build);
-                System.out.println("producer run with "+i);
+                System.out.println("producer run with " + i);
             }
             //查询数据
 //            DB dataDB = null;
@@ -115,25 +128,33 @@ public class BmwApplicationTests {
         ExecutorService ES = Executors.newCachedThreadPool();
         Callable<Integer> customer = new Customer();
         Callable<Integer> producer = new Producer();
-        Future<Integer> producerResult = ES.submit(producer);
         Future<Integer> customerResult = ES.submit(customer);
+        Future<Integer> producerResult = ES.submit(producer);
         ES.shutdown();
         try {
-            Integer p = producerResult.get();
             Integer c = customerResult.get();
+            Integer p = producerResult.get();
             System.out.println(p + "---------------------------" + c);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-
-
+        try {
+            if (LevelDBDaoImpl.mataDB != null) {
+                LevelDBDaoImpl.mataDB.close();
+            }
+            if (LevelDBDaoImpl.dataDB != null) {
+                LevelDBDaoImpl.dataDB.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
     @Test
-    public void exceptions(){
+    public void exceptions() {
         try {
             DB data = LevelDBUtil.getDb("data");
             DB data1 = LevelDBUtil.getDb("mata");

@@ -34,16 +34,17 @@ public class LevelDBDaoImpl implements LevelDBDao {
     public static final String DATA_PATH = "data";
     public static final String FLAG_PATH = "mata";
     public static final byte[] HEADER_KEY = bytes("000000");
-    private static final byte[] WRITEPOSITION = bytes("writePosition");
-    private static final byte[] READPOSITION = bytes("readPosition");
-    private static final byte[] CREATION_DATA = bytes("Rulex BMW (Blockchain Middleware) is accelerating the landing of blockchain technology by migrating existed app ecosystem to public blockchains");
+    public static final byte[] WRITEPOSITION = bytes("writePosition");
+    public static final byte[] READPOSITION = bytes("readPosition");
+    public static final byte[] CREATION_DATA = bytes("Rulex BMW (Blockchain Middleware) is accelerating the landing of blockchain technology by migrating existed app ecosystem to public blockchains");
 
-    static DB dataDB = null;
-    static DB mataDB = null;
-    {
+    public static DB dataDB = null;
+    public static DB mataDB = null;
+
+    static {
         try {
-            dataDB = LevelDBUtil.getDb(DATA_PATH);
-            mataDB = LevelDBUtil.getDb(FLAG_PATH);
+            if (dataDB == null) dataDB = LevelDBUtil.getDb(DATA_PATH);
+            if (mataDB == null) mataDB = LevelDBUtil.getDb(FLAG_PATH);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -60,23 +61,23 @@ public class LevelDBDaoImpl implements LevelDBDao {
 //        try {
 //            dataDB = LevelDBUtil.getDb(DATA_PATH);
 //            flagDB = LevelDBUtil.getDb(FLAG_PATH);
-            if (dataDB.get(HEADER_KEY) != null) {
-                return;
-            }
-            //generation timestamp
-            byte[] ts = bytes(new DateTime().toString("yyyyMMddHHmmssSSSS"));
-            ByteString timestamp = ByteString.copyFrom(ts);
-            ByteString serial = ByteString.copyFrom(bytes(TypeUtils.doubleToString(i)));
-            //生成创世数据
-            DataBean.Data origin = DataBean.Data.newBuilder().setParam(ByteString.copyFrom(CREATION_DATA)).setTs(timestamp).setSerial(serial).build();
-            String key = SHA256.getSHA256(origin.toString());
-            //生成标签
-            DataBean.Data mata = DataBean.Data.newBuilder().setPrevHash(ByteString.copyFrom(bytes(key))).setSerial(serial).build();
-            mataDB.put(WRITEPOSITION, mata.toByteArray());
-            LevelDBDaoImpl levelDBDao = new LevelDBDaoImpl();
-            levelDBDao.setHeaderData(origin, dataDB);
-            dataDB.put(bytes(key), origin.toByteArray());
-            mataDB.put(READPOSITION, mata.toByteArray());
+        if (dataDB.get(HEADER_KEY) != null) {
+            return;
+        }
+        //generation timestamp
+        byte[] ts = bytes(new DateTime().toString("yyyyMMddHHmmssSSSS"));
+        ByteString timestamp = ByteString.copyFrom(ts);
+        ByteString serial = ByteString.copyFrom(bytes(TypeUtils.doubleToString(i)));
+        //生成创世数据
+        DataBean.Data origin = DataBean.Data.newBuilder().setParam(ByteString.copyFrom(CREATION_DATA)).setTs(timestamp).setSerial(serial).build();
+        String key = SHA256.getSHA256(origin.toString());
+        //生成标签
+        DataBean.Data mata = DataBean.Data.newBuilder().setPrevHash(ByteString.copyFrom(bytes(key))).setSerial(serial).build();
+        mataDB.put(WRITEPOSITION, mata.toByteArray());
+        LevelDBDaoImpl levelDBDao = new LevelDBDaoImpl();
+        levelDBDao.setHeaderData(origin, dataDB);
+        dataDB.put(bytes(key), origin.toByteArray());
+        mataDB.put(READPOSITION, mata.toByteArray());
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        } finally {
@@ -108,33 +109,33 @@ public class LevelDBDaoImpl implements LevelDBDao {
 //        try {
 //            dataDB = LevelDBUtil.getDb(DATA_PATH);
 //            flagDB = LevelDBUtil.getDb(FLAG_PATH);
-            //generation timestamp
-            byte[] ts = bytes(new DateTime().toString("yyyyMMddHHmmssSSSS"));
-            ByteString timestamp = ByteString.copyFrom(ts);
-            ByteString p = param.getParam();
-            //获取上一个hash
-            DataBean.Data writeposition = DataBean.Data.parseFrom(mataDB.get(WRITEPOSITION));
-            String s = writeposition.getSerial().toStringUtf8();
-            Double i = Double.valueOf(s);
-            i++;
-            ByteString serial = ByteString.copyFrom(bytes(TypeUtils.doubleToString(i)));
-            //Set up herderVelue
-            DataBean.Data record = DataBean.Data.newBuilder().setParam(p).setTs(timestamp).setSerial(serial).build();
-            setHeaderData(record, dataDB);
-            //seek key=HASH(value)
-            // Take a hash of data
-            DataBean.Data hash = DataBean.Data.newBuilder().setParam(p).setTs(timestamp).setSerial(serial).setPrevHash(writeposition.getPrevHash()).build();
-            byte[] hashkey = bytes(SHA256.getSHA256(hash.toString()));
-            //从signature获取签名
-            ByteString sign = ByteString.copyFrom(bytes("1"));
-            //Save a data
-            DataBean.Data data = DataBean.Data.newBuilder().setParam(p).setTs(timestamp).setPrevHash(writeposition.getPrevHash()).setSerial(serial).setSign(sign).setFlag(ByteString.copyFrom(TypeUtils.Boolean2ByteArray(false))).build();
-            dataDB.put(hashkey, data.toByteArray());
-            DataBean.Data mata = DataBean.Data.newBuilder().setPrevHash(ByteString.copyFrom(hashkey)).setSerial(serial).build();
-            mataDB.put(WRITEPOSITION, mata.toByteArray());
+        //generation timestamp
+        byte[] ts = bytes(new DateTime().toString("yyyyMMddHHmmssSSSS"));
+        ByteString timestamp = ByteString.copyFrom(ts);
+        ByteString p = param.getParam();
+        //获取上一个hash
+        DataBean.Data writeposition = DataBean.Data.parseFrom(mataDB.get(WRITEPOSITION));
+        String s = writeposition.getSerial().toStringUtf8();
+        Double i = Double.valueOf(s);
+        i++;
+        ByteString serial = ByteString.copyFrom(bytes(TypeUtils.doubleToString(i)));
+        //Set up herderVelue
+        DataBean.Data record = DataBean.Data.newBuilder().setParam(p).setTs(timestamp).setSerial(serial).build();
+        setHeaderData(record, dataDB);
+        //seek key=HASH(value)
+        // Take a hash of data
+        DataBean.Data hash = DataBean.Data.newBuilder().setParam(p).setTs(timestamp).setSerial(serial).setPrevHash(writeposition.getPrevHash()).build();
+        byte[] hashkey = bytes(SHA256.getSHA256(hash.toString()));
+        //从signature获取签名
+        ByteString sign = ByteString.copyFrom(bytes("1"));
+        //Save a data
+        DataBean.Data data = DataBean.Data.newBuilder().setParam(p).setTs(timestamp).setPrevHash(writeposition.getPrevHash()).setSerial(serial).setSign(sign).setFlag(ByteString.copyFrom(TypeUtils.Boolean2ByteArray(false))).build();
+        dataDB.put(hashkey, data.toByteArray());
+        DataBean.Data mata = DataBean.Data.newBuilder().setPrevHash(ByteString.copyFrom(hashkey)).setSerial(serial).build();
+        mataDB.put(WRITEPOSITION, mata.toByteArray());
 //        } finally {
-            // Make sure you close the db to shutdown the
-            // database and avoid resource leaks.
+        // Make sure you close the db to shutdown the
+        // database and avoid resource leaks.
 //            dataDB.close();
 //            flagDB.close();
 //        }
