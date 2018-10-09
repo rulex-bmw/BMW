@@ -88,6 +88,8 @@ public class BmwApplicationTests {
                 DataBean.Data build = DataBean.Data.newBuilder().setParam(param).build();
                 bsbService.producer(build);
                 System.out.println("producer run with " + i);
+                System.out.println("producer的线程=" + Thread.currentThread().getId());
+                Thread.sleep(1000);
             }
             //查询数据
 //            DB dataDB = null;
@@ -131,6 +133,7 @@ public class BmwApplicationTests {
         Future<Integer> customerResult = ES.submit(customer);
         Future<Integer> producerResult = ES.submit(producer);
         ES.shutdown();
+        System.out.println("当前主线程id=" + Thread.currentThread().getId());
         try {
             Integer c = customerResult.get();
             Integer p = producerResult.get();

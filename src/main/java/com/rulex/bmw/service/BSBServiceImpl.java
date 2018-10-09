@@ -60,6 +60,12 @@ public class BSBServiceImpl implements BSBService {
                 prevHash = currentHash;
                 i++;
                 System.out.println("customer run with " + i);
+                System.out.println("customer的线程为=" + Thread.currentThread().getId());
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return i;
