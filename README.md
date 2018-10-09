@@ -14,6 +14,6 @@ The key component of Rulex middleware is BSB (Blockchain Service Bus). BBS conne
 
 The other important component is DSM. DSM enables developers to put parts of their data vertically (a subset of fields) and horizontally (a subset of records) to blockchain with a configuration file with the help of very small snippets of codes.
 
-The DBA module Is to enable the front-end application regardless of mobile apps or web ones to access the BSB service via JSON-RPC or gRPC (i.e., encoded in protocol buffer format), which is very useful for an app that has very simple backend logic to migrate to blockchain, a.k.a., make it blockchain ready.
+The DBA module is to enable the front-end application regardless of mobile apps or web ones to access the BSB service via JSON-RPC or gRPC (i.e., encoded in protocol buffer format), which is very useful for an app that has very simple backend logic to migrate to blockchain, a.k.a., make it blockchain ready.
 
 
