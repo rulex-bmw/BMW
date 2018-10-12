@@ -1,6 +1,7 @@
 package com.rulex.bmw.service;
 
 import com.rulex.bmw.dao.LevelDBDao;
+import com.rulex.bmw.dao.LevelDBDaoImpl;
 import com.rulex.bmw.pojo.DataBean;
 import org.springframework.stereotype.Service;
 
@@ -37,11 +38,12 @@ public class BSBServiceImpl implements BSBService {
      * 从levelDB中取出DATA,将不可变信息存入数据库
      */
     @Override
-    public Integer customer() {
+    public Integer customer() throws IOException {
         int i = 0;
         String currentHash = null;
         String prevHash = null;
-        Map<String, String> keyMap = Verify.hashKey;
+        Map<String, String> keyMap = LevelDBDaoImpl.getHashMap();
+//        Map<String, String> keyMap = Verify.hashKey;
         if (keyMap.size() == 0) {
             return i;
         }
@@ -60,9 +62,8 @@ public class BSBServiceImpl implements BSBService {
                 prevHash = currentHash;
                 i++;
                 System.out.println("customer run with " + i);
-                System.out.println("customer的线程为=" + Thread.currentThread().getId());
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(5000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
