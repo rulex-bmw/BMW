@@ -9,7 +9,7 @@
     <packaging>jar</packaging>
 
     <name>bmw</name>
-    <description>Demo project for Spring Boot</description>
+    <description>A Blockchain Middleware</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
