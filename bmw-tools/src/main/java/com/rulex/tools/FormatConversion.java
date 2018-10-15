@@ -20,11 +20,13 @@ public class FormatConversion {
 
         //将.proto文件转化成.java文件
         ExecuteCmdUtil.executeCmd(proto_CMD);
-
+        System.out.println(classOut);
         //将.java文件转化成.class文件
         if (JavaCompilerUtil.CompilerJavaFile(javaSource, classOut)) {
 
             System.out.println("Compiler successfully");
+        } else {
+            System.out.println("Compiler failure");
         }
 
         //将.class文件打成jar包
@@ -35,11 +37,19 @@ public class FormatConversion {
 
     public static void main(String[] args) {
         try {
-            formatConversion();
+            System.out.println(ExecuteCmdUtil.executeCmd("cmd.exe /c dir"));
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+//        try {
+//            formatConversion();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//    }
     }
 }
