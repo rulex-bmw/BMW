@@ -199,7 +199,7 @@ public class LevelDBDaoImpl implements LevelDBDao {
             byte[] bytes = dataDB.get(key);
             DataBean.Data data = DataBean.Data.parseFrom(bytes);
             DataBean.Data chainData = DataBean.Data.newBuilder().setParam(data.getParam()).build();
-            int edit = levelDBUtil.setstatus(key, chainData.toByteArray());
+            int edit = levelDBUtil.putstatus(key, chainData.toByteArray());
             if (edit == 1) {
                 //修改readposition
                 DataBean.Data readposition = DataBean.Data.newBuilder().setPrevHash(ByteString.copyFrom(key)).setSerial(data.getSerial()).build();

@@ -42,7 +42,7 @@ public class LevelDBUtil {
     }
 
 
-    public int setstatus(byte[] key, byte[] value) {
+    public int putstatus(byte[] key, byte[] value) {
         InputStream hash = TypeUtils.byte2Input(key);
         InputStream payload = TypeUtils.byte2Input(value);
         String sql = "insert into bmw_chain (key_hash,payload)values (?,?);";
