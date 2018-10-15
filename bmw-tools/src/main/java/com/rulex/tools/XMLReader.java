@@ -17,14 +17,12 @@ import static org.fusesource.leveldbjni.JniDBFactory.bytes;
 
 public class XMLReader {
 
-    private static final String XML_PATH = "C:\\Users\\admin\\Desktop\\pojo.xml";
-    private static final String PROTO_PATH = "C:\\Users\\admin\\Desktop\\pojo.proto";
-
 
     public Document readerXML() throws DocumentException {
+
         // 读取xml文件
         SAXReader sr = new SAXReader();
-        File file = new File(XML_PATH);
+        File file = new File(PathSet.xmlPath + "pojo.xml");
         Document doc = sr.read(file);
         return doc;
     }
@@ -39,8 +37,8 @@ public class XMLReader {
     public static void parse() throws DocumentException, IOException {
         XMLReader xmlReader = new XMLReader();
         Document doc = xmlReader.readerXML();
-        File file = new File(PROTO_PATH);
-        String protocol = String.format("package com.rulex.bmw.pojo;\noption java_outer_classname = %1$s;", "\"RulexBean\"");
+        File file = new File(PathSet.xmlPath + "pojo.proto");
+        String protocol = String.format("package %1$s;\noption java_outer_classname = %2$s;", PathSet.packagePath, "\"RulexBean\"");
         //解析根节点
         Element root = doc.getRootElement();
         //解析record节点
