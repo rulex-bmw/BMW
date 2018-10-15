@@ -56,11 +56,6 @@ public class LevelDBDaoImpl implements LevelDBDao {
      */
     public void origin() {
         double i = 0;
-//        DB dataDB = null;
-//        DB flagDB = null;
-//        try {
-//            dataDB = LevelDBUtil.getDb(DATA_PATH);
-//            flagDB = LevelDBUtil.getDb(FLAG_PATH);
         if (dataDB.get(HEADER_KEY) != null) {
             return;
         }
@@ -78,16 +73,6 @@ public class LevelDBDaoImpl implements LevelDBDao {
         levelDBDao.setHeaderData(origin, dataDB);
         dataDB.put(bytes(key), origin.toByteArray());
         mataDB.put(READPOSITION, mata.toByteArray());
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } finally {
-//            try {
-//                dataDB.close();
-//                mataDB.close();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
     }
 
 
@@ -103,12 +88,7 @@ public class LevelDBDaoImpl implements LevelDBDao {
         if (param.getParam() == null && !(param.getParam().toByteArray().length <= 256)) {
             return;
         }
-//        DB dataDB = null;
-//        DB flagDB = null;
         DBIterator iterator = null;
-//        try {
-//            dataDB = LevelDBUtil.getDb(DATA_PATH);
-//            flagDB = LevelDBUtil.getDb(FLAG_PATH);
         //generation timestamp
         byte[] ts = bytes(new DateTime().toString("yyyyMMddHHmmssSSSS"));
         ByteString timestamp = ByteString.copyFrom(ts);
@@ -133,12 +113,6 @@ public class LevelDBDaoImpl implements LevelDBDao {
         dataDB.put(hashkey, data.toByteArray());
         DataBean.Data mata = DataBean.Data.newBuilder().setPrevHash(ByteString.copyFrom(hashkey)).setSerial(serial).build();
         mataDB.put(WRITEPOSITION, mata.toByteArray());
-//        } finally {
-        // Make sure you close the db to shutdown the
-        // database and avoid resource leaks.
-//            dataDB.close();
-//            flagDB.close();
-//        }
     }
 
     /**
@@ -166,20 +140,12 @@ public class LevelDBDaoImpl implements LevelDBDao {
      */
     @Override
     public DataBean.Data getReadposition() {
-//        DB mataDB = null;
         DataBean.Data data = null;
         try {
-//            mataDB = LevelDBUtil.getDb(FLAG_PATH);
             byte[] readposition = mataDB.get(READPOSITION);
             data = DataBean.Data.parseFrom(readposition);
         } catch (IOException e) {
             e.printStackTrace();
-//        } finally {
-//            try {
-//                mataDB.close();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
         }
         return data;
     }
@@ -191,10 +157,7 @@ public class LevelDBDaoImpl implements LevelDBDao {
      * @param hashey
      */
     public boolean setStatus(String hashey) {
-//        DB dataDB = null;
-//        DB flagDB = null;
         try {
-//            dataDB = LevelDBUtil.getDb(DATA_PATH);
             byte[] key = bytes(hashey);
             byte[] bytes = dataDB.get(key);
             DataBean.Data data = DataBean.Data.parseFrom(bytes);
@@ -215,38 +178,10 @@ public class LevelDBDaoImpl implements LevelDBDao {
             e.printStackTrace();
         } catch (DataException e) {
             e.printStackTrace();
-//        } finally {
-//            try {
-//                dataDB.close();
-//                flagDB.close();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
         }
         return false;
     }
 
-
-    /**
-     * 暂时无用
-     *
-     *
-     * 修改readposition
-     *
-     * @param currentKey
-     */
-//    @Override
-//    public void editReadposition(String currentKey) {
-//        DB db = null;
-//        try {
-//            db = LevelDBUtil.getDb(DATA_PATH);
-//            byte[] bytes = db.get(bytes(currentKey));
-//            DataBean.Data data = DataBean.Data.parseFrom(bytes);
-//            DataBean.Data mata = DataBean.Data.newBuilder().setPrevHash(ByteString.copyFrom(bytes(currentKey))).setSerial(data.getSerial()).build();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
     /**
      * Verify the offset structure header
