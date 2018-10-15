@@ -7,7 +7,9 @@ import java.io.IOException;
 
 public class FormatConversion {
 
-    public static String proto_CMD = "protoc.exe -I=. --java_out=./target/classes ./target/classes/Pojo.proto";
+//    public static String proto_CMD = "protoc.exe -I=. --java_out=./target/classes ./target/classes/Pojo.proto";
+public static String proto_CMD = "protoc.exe -I=. --java_out=./target/classes "+PathSet.xmlPath+"pojo.proto";
+
 
     public static String javaSource = FormatConversion.class.getClass().getResource("/").getPath() + "Pojo.java";
 
@@ -17,7 +19,7 @@ public class FormatConversion {
 
 
     public static void formatConversion() throws IOException, InterruptedException {
-
+        System.out.println(proto_CMD);
         //将.proto文件转化成.java文件
         ExecuteCmdUtil.executeCmd(proto_CMD);
         System.out.println(classOut);
@@ -36,20 +38,21 @@ public class FormatConversion {
 
 
     public static void main(String[] args) {
-        try {
-            System.out.println(ExecuteCmdUtil.executeCmd("cmd.exe /c dir"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 //        try {
-//            formatConversion();
+//            System.out.println(ExecuteCmdUtil.executeCmd("cmd.exe /c dir"));
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        }
-//    }
+        System.out.println(PathSet.xmlPath);
+        try {
+            formatConversion();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
-}
+
+    }
