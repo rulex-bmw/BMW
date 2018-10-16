@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public class FormatConversion {
 
-    public static String path1 = PathSet.packagePath.replace(".","/");
+    public static String path1 = PathSet.packagePath.replace(".", "/");
 
     public static String path2 = "bmw-tools/target/classes/entity";
 
@@ -17,8 +17,8 @@ public class FormatConversion {
 
     public static String classOut = PathSet.xmlPath;
 
-    public static String jar_CMD = "jar cvf bean.jar -C " + path2 + "/" + path1 + " RulexBean.class";
-
+//    public static String jar_CMD = "jar cvf bean.jar -C " + path2 + "/" + path1 + " RulexBean.class";
+public static String jar_CMD = "jar cvf bean.jar -C " + path2  + " com";
 
     public static void formatConversion() throws IOException, InterruptedException {
 
@@ -31,7 +31,6 @@ public class FormatConversion {
         } else {
             System.out.println("Compiler failure");
         }
-
         //将.class文件打成jar包
         ExecuteCmdUtil.executeCmd(jar_CMD);
     }
