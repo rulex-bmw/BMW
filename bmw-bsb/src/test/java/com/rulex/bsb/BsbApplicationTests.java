@@ -2,7 +2,6 @@ package com.rulex.bsb;
 
 import com.google.protobuf.ByteString;
 import com.rulex.bsb.dao.LevelDBDaoImpl;
-import com.rulex.bsb.pojo.DataBean;
 import com.rulex.bsb.service.BSBService;
 import com.rulex.bsb.service.Verify;
 import com.rulex.bsb.utils.LevelDBUtil;

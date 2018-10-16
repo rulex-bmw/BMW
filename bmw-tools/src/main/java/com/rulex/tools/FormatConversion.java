@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public class FormatConversion {
 
-    public static String path1 = "com/rulex/bmw/pojo";
+    public static String path1 = PathSet.packagePath.replace(".","/");
 
     public static String path2 = "bmw-tools/target/classes/entity";
 
