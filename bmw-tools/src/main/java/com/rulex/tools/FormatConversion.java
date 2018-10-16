@@ -7,13 +7,17 @@ import java.io.IOException;
 
 public class FormatConversion {
 
-    public static String proto_CMD = "protoc.exe -I=. --java_out=./target/classes ./target/classes/Pojo.proto";
+    public static String path1 = "com/rulex/bmw/pojo";
 
-    public static String javaSource = FormatConversion.class.getClass().getResource("/").getPath() + "Pojo.java";
+    public static String path2 = "bmw-tools/target/classes/entity";
 
-    public static String classOut = FormatConversion.class.getClass().getResource("/").getPath();
+    public static String proto_CMD = "protoc.exe -I=. --java_out=./" + path2 + " ./" + path2 + "/pojo.proto";
 
-    public static String jar_CMD = "jar cvf Pojo.jar -C target/classes/ Pojo.class";
+    public static String javaSource = PathSet.xmlPath + path1 + "/RulexBean.java";
+
+    public static String classOut = PathSet.xmlPath;
+
+    public static String jar_CMD = "jar cvf bean.jar -C " + path2 + "/" + path1 + " RulexBean.class";
 
 
     public static void formatConversion() throws IOException, InterruptedException {
@@ -23,17 +27,18 @@ public class FormatConversion {
 
         //将.java文件转化成.class文件
         if (JavaCompilerUtil.CompilerJavaFile(javaSource, classOut)) {
-
             System.out.println("Compiler successfully");
+        } else {
+            System.out.println("Compiler failure");
         }
 
         //将.class文件打成jar包
         ExecuteCmdUtil.executeCmd(jar_CMD);
-
     }
 
 
     public static void main(String[] args) {
+
         try {
             formatConversion();
         } catch (IOException e) {
