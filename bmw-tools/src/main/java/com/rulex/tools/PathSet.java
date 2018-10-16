@@ -6,4 +6,7 @@ public class PathSet {
 
     public static String packagePath = "com.rulex.tools.pojo";
 
+    public static String javaPath = XMLReader.class.getClass().getResource("/").getPath();
+
+
 }
