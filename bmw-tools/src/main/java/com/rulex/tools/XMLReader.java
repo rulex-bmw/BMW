@@ -11,7 +11,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 import static org.fusesource.leveldbjni.JniDBFactory.bytes;
 
@@ -41,7 +40,7 @@ public class XMLReader {
         XMLReader xmlReader = new XMLReader();
         Document doc = xmlReader.readerXML();
         File file = new File(PathSet.xmlPath + "pojo.proto");
-        String protocol = String.format("package %1$s;\noption java_outer_classname = %2$s;", PathSet.packagePath, "\"RulexBean\"");
+        String protocol = String.format("package %1$s;\noption optimize_for = LITE_RUNTIME;\noption java_outer_classname = %2$s;", PathSet.packagePath, "\"RulexBean\"");
         //解析根节点
         Element root = doc.getRootElement();
         //解析record节点
@@ -117,21 +116,23 @@ public class XMLReader {
         FileOutputStream out = new FileOutputStream(file);
         out.write(bytes(protocol));
         out.close();
+        System.out.println("xml读取完毕");
     }
 
 
     public static void main(String[] args) {
         try {
             XMLReader.parse();
+            FormatConversion.formatConversion();
         } catch (DocumentException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-
-
     }
 
 }
