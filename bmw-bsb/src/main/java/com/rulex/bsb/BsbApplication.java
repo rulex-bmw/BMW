@@ -9,5 +9,6 @@ public class BsbApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(BsbApplication.class, args);
+		RulexBean.One.newBuilder().setAge(1).setBuy("买手机").setTall(180).setUsername("zzf").build();
 	}
 }

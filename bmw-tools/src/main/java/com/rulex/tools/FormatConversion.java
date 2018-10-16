@@ -18,7 +18,7 @@ public class FormatConversion {
     public static String classOut = PathSet.xmlPath;
 
 //    public static String jar_CMD = "jar cvf bean.jar -C " + path2 + "/" + path1 + " RulexBean.class";
-public static String jar_CMD = "jar cvf bean.jar -C " + path2  + " com";
+public static String jar_CMD = "jar cvf rulex.jar -C " + path2  + " com";
 
     public static void formatConversion() throws IOException, InterruptedException {
 
