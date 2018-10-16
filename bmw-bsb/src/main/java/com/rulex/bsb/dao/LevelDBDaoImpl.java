@@ -1,7 +1,6 @@
 package com.rulex.bsb.dao;
 
 import com.google.protobuf.ByteString;
-import com.rulex.bsb.pojo.DataBean;
 import com.rulex.bsb.utils.DataException;
 import com.rulex.bsb.utils.LevelDBUtil;
 import com.rulex.bsb.utils.SHA256;

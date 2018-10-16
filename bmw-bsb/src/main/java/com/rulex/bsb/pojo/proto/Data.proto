@@ -1,5 +1,5 @@
 package com.rulex.bsb.pojo;
-
+option optimize_for = LITE_RUNTIME;
 option java_outer_classname = "DataBean";
 
 message Data {
