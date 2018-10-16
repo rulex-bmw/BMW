@@ -35,16 +35,4 @@ public class FormatConversion {
         //将.class文件打成jar包
         ExecuteCmdUtil.executeCmd(jar_CMD);
     }
-
-
-    public static void main(String[] args) {
-
-        try {
-            formatConversion();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
 }
