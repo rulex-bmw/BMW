@@ -11,11 +11,14 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import static org.fusesource.leveldbjni.JniDBFactory.bytes;
 
 
 public class XMLReader {
+
+//    public static List<List<Map<String,Object>>>
 
 
     public Document readerXML() throws DocumentException {
@@ -90,6 +93,14 @@ public class XMLReader {
                         maxvalue = field.attributeValue("maxvalue");
                         minvalue = field.attributeValue("minvalue");
                         protocol += "int64 ";
+                    } else if (type.equals("Float")) {
+                        maxvalue = field.attributeValue("maxvalue");
+                        minvalue = field.attributeValue("minvalue");
+                        protocol += "float ";
+                    } else if (type.equals("Double")) {
+                        maxvalue = field.attributeValue("maxvalue");
+                        minvalue = field.attributeValue("minvalue");
+                        protocol += "double ";
                     } else if (type.equals("String")) {
                         maxsize = field.attributeValue("maxsize");
                         minsize = field.attributeValue("minsize");
@@ -99,12 +110,8 @@ public class XMLReader {
                     protocol += paramName + " = " + i + ";";
                     length = field.attributeValue("length");
                     transforable = field.attributeValue("transforable");
-
                 }
-
             }
-
-
             protocol += "\n}";
         }
         FileOutputStream out = new FileOutputStream(file);
