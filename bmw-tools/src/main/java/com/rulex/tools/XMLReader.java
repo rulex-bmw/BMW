@@ -40,7 +40,7 @@ public class XMLReader {
         XMLReader xmlReader = new XMLReader();
         Document doc = xmlReader.readerXML();
         File file = new File(PathSet.xmlPath + "pojo.proto");
-        String protocol = String.format("package %1$s;\noption optimize_for = LITE_RUNTIME;\noption java_outer_classname = %2$s;", PathSet.packagePath, "\"RulexBean\"");
+        String protocol = String.format("package %1$s;\noption java_outer_classname = %2$s;", PathSet.packagePath, "\"RulexBean\"");
         //解析根节点
         Element root = doc.getRootElement();
         //解析record节点
