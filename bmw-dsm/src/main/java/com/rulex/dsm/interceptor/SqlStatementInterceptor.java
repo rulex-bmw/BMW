@@ -78,8 +78,22 @@ public class SqlStatementInterceptor implements Interceptor {
     public void setProperties(Properties arg0) {
     }
 
+    /**
+     * 拦截判断
+     *
+     * @param boundSql   获取参数
+     * @param tableName  数据库表名
+     * @param columnName 数据库字段名
+     * @param sources    xml解析拦截对象
+     * @return byte[] 返回payload值
+     */
+    public static byte[] judge(BoundSql boundSql, String tableName, List<String> columnName, List<Source> sources) {
 
-    public static byte[] judge(String tableName, List<String> columnName, List<Source> sources) {
+        for (Source source :sources
+             ){
+
+        }
+
 
         return new byte[0];
     }
