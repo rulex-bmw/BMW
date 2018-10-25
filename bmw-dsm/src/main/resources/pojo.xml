@@ -1,0 +1,24 @@
+<configuration version="">
+    <source name="one" groupable="true" table="">
+        <field name="username" column="username" type="String" maxsize="" minsize="" isnull="" transforable="true"
+               length=""></field>
+        <field name="age" type="Integer" isnull="" transforable="false" minvalue="" maxvalue=""
+               length=""></field>
+        <field name="tall" type="Integer" isnull="" transforable="false" minvalue="" maxvalue=""
+               length=""></field>
+        <field name="buy" type="String" maxsize="" minsize="" isnull="" transforable="false"
+               length=""></field>
+    </source>
+    <!--<source name="two" groupable="false" table="">-->
+        <!--<field name="" type="" maxsize="" minsize="" isnull="" transforable="true/false" minvalue="" maxvalue=""-->
+               <!--length=""></field>-->
+        <!--<field name="" type="" maxsize="" minsize="" isnull="" transforable="true/false" minvalue="" maxvalue=""-->
+               <!--length=""></field>-->
+    <!--</source>-->
+    <!--<source name="three" groupable="false" table="">-->
+        <!--<field name="" type="" maxsize="" minsize="" isnull="" transforable="true/false" minvalue="" maxvalue=""-->
+               <!--length=""></field>-->
+        <!--<field name="" type="" maxsize="" minsize="" isnull="" transforable="true/false" minvalue="" maxvalue=""-->
+               <!--length=""></field>-->
+    <!--</source>-->
+</configuration>
