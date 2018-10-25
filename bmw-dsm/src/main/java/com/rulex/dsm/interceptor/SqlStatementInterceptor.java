@@ -1,6 +1,5 @@
 package com.rulex.dsm.interceptor;
 
-import com.rulex.dsm.pojo.User;
 import org.apache.ibatis.executor.statement.RoutingStatementHandler;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
@@ -76,4 +75,7 @@ public class SqlStatementInterceptor implements Interceptor {
     @Override
     public void setProperties(Properties arg0) {
     }
+
+
+
 }
