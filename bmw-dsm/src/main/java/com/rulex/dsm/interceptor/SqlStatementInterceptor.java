@@ -79,7 +79,7 @@ public class SqlStatementInterceptor implements Interceptor {
     }
 
 
-    public static byte[] judge(String tableName, List<String> columnName, Source source) {
+    public static byte[] judge(String tableName, List<String> columnName, List<Source> sources) {
 
         return new byte[0];
     }
