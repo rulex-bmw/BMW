@@ -1,5 +1,6 @@
 package com.rulex.dsm.interceptor;
 
+import com.rulex.dsm.bean.Source;
 import org.apache.ibatis.executor.statement.RoutingStatementHandler;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.sql.Statement;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -76,6 +78,11 @@ public class SqlStatementInterceptor implements Interceptor {
     public void setProperties(Properties arg0) {
     }
 
+
+    public static byte[] judge(String tableName, List<String> columnName, Source source) {
+
+        return new byte[0];
+    }
 
 
 }
