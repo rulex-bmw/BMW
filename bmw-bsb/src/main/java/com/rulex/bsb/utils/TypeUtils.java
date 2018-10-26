@@ -139,4 +139,10 @@ public class TypeUtils {
         return Double.longBitsToDouble(value);
     }
 
+    public static String transform(String lower) {
+        char[] cs = lower.toCharArray();
+        cs[0] -= 32;
+        return String.valueOf(cs);
+    }
+
 }

@@ -5,6 +5,7 @@ import java.util.List;
 public class Source {
 
     private String name;
+    private String pojo;
     private String table;
     private Boolean groupable;
     private List<Field> fields;
@@ -15,6 +16,14 @@ public class Source {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getPojo() {
+        return pojo;
+    }
+
+    public void setPojo(String pojo) {
+        this.pojo = pojo;
     }
 
     public String getTable() {
@@ -45,6 +54,7 @@ public class Source {
     public String toString() {
         return "Source{" +
                 "name='" + name + '\'' +
+                ", pojo='" + pojo + '\'' +
                 ", table='" + table + '\'' +
                 ", groupable=" + groupable +
                 ", fields=" + fields +
