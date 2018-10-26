@@ -1,5 +1,6 @@
 package com.rulex.bsb.utils;
 
+import org.apache.commons.lang.StringUtils;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.Options;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -29,14 +30,17 @@ public class LevelDBUtil {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+
+
     /**
      * Connect to the LevelDB database
      */
-    public static  DB getDb(String fileName) throws IOException {
+    public static DB getDb(String fileName) throws IOException {
 
         Options options = new Options();
         options.createIfMissing(true);
-        DB db = factory.open(new File(fileName), options);
+        String path = System.getProperty("user.dir");
+        DB db = factory.open(new File(path.substring(0, StringUtils.lastIndexOf(path, File.separator)) + File.separator + fileName), options);
 
         return db;
     }

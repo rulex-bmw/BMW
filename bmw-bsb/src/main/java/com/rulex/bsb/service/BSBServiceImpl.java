@@ -3,7 +3,6 @@ package com.rulex.bsb.service;
 import com.rulex.bsb.dao.LevelDBDao;
 import com.rulex.bsb.dao.LevelDBDaoImpl;
 import com.rulex.bsb.pojo.DataBean;
-import com.rulex.bsb.utils.LevelDBUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -43,7 +42,7 @@ public class BSBServiceImpl implements BSBService {
         int i = 0;
         String currentHash = null;
         String prevHash = null;
-        if (null == LevelDBUtil.getDb(LevelDBDaoImpl.FLAG_PATH).get(LevelDBDaoImpl.WRITEPOSITION)) {
+        if (null == LevelDBDaoImpl.mataDB.get(LevelDBDaoImpl.WRITEPOSITION)) {
             return -1;
         }
         Map<String, String> keyMap = LevelDBDaoImpl.getHashMap();
@@ -67,7 +66,7 @@ public class BSBServiceImpl implements BSBService {
                 i++;
                 System.out.println("customer run with " + i);
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(3000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

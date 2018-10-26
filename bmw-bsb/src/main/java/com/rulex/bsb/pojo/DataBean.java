@@ -4,879 +4,954 @@
 package com.rulex.bsb.pojo;
 
 public final class DataBean {
-  private DataBean() {}
-  public static void registerAllExtensions(
-      com.google.protobuf.ExtensionRegistryLite registry) {
-  }
-  public interface DataOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:com.rulex.bsb.pojo.Data)
-      com.google.protobuf.MessageLiteOrBuilder {
-
-    /**
-     * <code>optional bytes param = 1;</code>
-     */
-    boolean hasParam();
-    /**
-     * <code>optional bytes param = 1;</code>
-     */
-    com.google.protobuf.ByteString getParam();
-
-    /**
-     * <code>optional bytes ts = 2;</code>
-     */
-    boolean hasTs();
-    /**
-     * <code>optional bytes ts = 2;</code>
-     */
-    com.google.protobuf.ByteString getTs();
-
-    /**
-     * <code>optional bytes serial = 3;</code>
-     */
-    boolean hasSerial();
-    /**
-     * <code>optional bytes serial = 3;</code>
-     */
-    com.google.protobuf.ByteString getSerial();
-
-    /**
-     * <code>optional bytes prev_hash = 4;</code>
-     */
-    boolean hasPrevHash();
-    /**
-     * <code>optional bytes prev_hash = 4;</code>
-     */
-    com.google.protobuf.ByteString getPrevHash();
-
-    /**
-     * <code>optional bytes vn_1 = 5;</code>
-     */
-    boolean hasVn1();
-    /**
-     * <code>optional bytes vn_1 = 5;</code>
-     */
-    com.google.protobuf.ByteString getVn1();
-
-    /**
-     * <code>optional bytes flag = 6;</code>
-     */
-    boolean hasFlag();
-    /**
-     * <code>optional bytes flag = 6;</code>
-     */
-    com.google.protobuf.ByteString getFlag();
-
-    /**
-     * <code>optional bytes sign = 7;</code>
-     */
-    boolean hasSign();
-    /**
-     * <code>optional bytes sign = 7;</code>
-     */
-    com.google.protobuf.ByteString getSign();
-  }
-  /**
-   * Protobuf type {@code com.rulex.bsb.pojo.Data}
-   */
-  public  static final class Data extends
-      com.google.protobuf.GeneratedMessageLite<
-          Data, Data.Builder> implements
-      // @@protoc_insertion_point(message_implements:com.rulex.bsb.pojo.Data)
-      DataOrBuilder {
-    private Data() {
-      param_ = com.google.protobuf.ByteString.EMPTY;
-      ts_ = com.google.protobuf.ByteString.EMPTY;
-      serial_ = com.google.protobuf.ByteString.EMPTY;
-      prevHash_ = com.google.protobuf.ByteString.EMPTY;
-      vn1_ = com.google.protobuf.ByteString.EMPTY;
-      flag_ = com.google.protobuf.ByteString.EMPTY;
-      sign_ = com.google.protobuf.ByteString.EMPTY;
-    }
-    private int bitField0_;
-    public static final int PARAM_FIELD_NUMBER = 1;
-    private com.google.protobuf.ByteString param_;
-    /**
-     * <code>optional bytes param = 1;</code>
-     */
-    @Override
-    public boolean hasParam() {
-      return ((bitField0_ & 0x00000001) == 0x00000001);
-    }
-    /**
-     * <code>optional bytes param = 1;</code>
-     */
-    @Override
-    public com.google.protobuf.ByteString getParam() {
-      return param_;
-    }
-    /**
-     * <code>optional bytes param = 1;</code>
-     */
-    private void setParam(com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000001;
-      param_ = value;
-    }
-    /**
-     * <code>optional bytes param = 1;</code>
-     */
-    private void clearParam() {
-      bitField0_ = (bitField0_ & ~0x00000001);
-      param_ = getDefaultInstance().getParam();
+    private DataBean() {
     }
 
-    public static final int TS_FIELD_NUMBER = 2;
-    private com.google.protobuf.ByteString ts_;
-    /**
-     * <code>optional bytes ts = 2;</code>
-     */
-    @Override
-    public boolean hasTs() {
-      return ((bitField0_ & 0x00000002) == 0x00000002);
-    }
-    /**
-     * <code>optional bytes ts = 2;</code>
-     */
-    @Override
-    public com.google.protobuf.ByteString getTs() {
-      return ts_;
-    }
-    /**
-     * <code>optional bytes ts = 2;</code>
-     */
-    private void setTs(com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000002;
-      ts_ = value;
-    }
-    /**
-     * <code>optional bytes ts = 2;</code>
-     */
-    private void clearTs() {
-      bitField0_ = (bitField0_ & ~0x00000002);
-      ts_ = getDefaultInstance().getTs();
+    public static void registerAllExtensions(
+            com.google.protobuf.ExtensionRegistryLite registry) {
     }
 
-    public static final int SERIAL_FIELD_NUMBER = 3;
-    private com.google.protobuf.ByteString serial_;
-    /**
-     * <code>optional bytes serial = 3;</code>
-     */
-    @Override
-    public boolean hasSerial() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
-    }
-    /**
-     * <code>optional bytes serial = 3;</code>
-     */
-    @Override
-    public com.google.protobuf.ByteString getSerial() {
-      return serial_;
-    }
-    /**
-     * <code>optional bytes serial = 3;</code>
-     */
-    private void setSerial(com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000004;
-      serial_ = value;
-    }
-    /**
-     * <code>optional bytes serial = 3;</code>
-     */
-    private void clearSerial() {
-      bitField0_ = (bitField0_ & ~0x00000004);
-      serial_ = getDefaultInstance().getSerial();
-    }
+    public interface DataOrBuilder extends
+            // @@protoc_insertion_point(interface_extends:com.rulex.bsb.pojo.Data)
+            com.google.protobuf.MessageLiteOrBuilder {
 
-    public static final int PREV_HASH_FIELD_NUMBER = 4;
-    private com.google.protobuf.ByteString prevHash_;
-    /**
-     * <code>optional bytes prev_hash = 4;</code>
-     */
-    @Override
-    public boolean hasPrevHash() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
-    }
-    /**
-     * <code>optional bytes prev_hash = 4;</code>
-     */
-    @Override
-    public com.google.protobuf.ByteString getPrevHash() {
-      return prevHash_;
-    }
-    /**
-     * <code>optional bytes prev_hash = 4;</code>
-     */
-    private void setPrevHash(com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000008;
-      prevHash_ = value;
-    }
-    /**
-     * <code>optional bytes prev_hash = 4;</code>
-     */
-    private void clearPrevHash() {
-      bitField0_ = (bitField0_ & ~0x00000008);
-      prevHash_ = getDefaultInstance().getPrevHash();
-    }
+        /**
+         * <code>optional bytes param = 1;</code>
+         */
+        boolean hasParam();
 
-    public static final int VN_1_FIELD_NUMBER = 5;
-    private com.google.protobuf.ByteString vn1_;
-    /**
-     * <code>optional bytes vn_1 = 5;</code>
-     */
-    @Override
-    public boolean hasVn1() {
-      return ((bitField0_ & 0x00000010) == 0x00000010);
-    }
-    /**
-     * <code>optional bytes vn_1 = 5;</code>
-     */
-    @Override
-    public com.google.protobuf.ByteString getVn1() {
-      return vn1_;
-    }
-    /**
-     * <code>optional bytes vn_1 = 5;</code>
-     */
-    private void setVn1(com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000010;
-      vn1_ = value;
-    }
-    /**
-     * <code>optional bytes vn_1 = 5;</code>
-     */
-    private void clearVn1() {
-      bitField0_ = (bitField0_ & ~0x00000010);
-      vn1_ = getDefaultInstance().getVn1();
-    }
+        /**
+         * <code>optional bytes param = 1;</code>
+         */
+        com.google.protobuf.ByteString getParam();
 
-    public static final int FLAG_FIELD_NUMBER = 6;
-    private com.google.protobuf.ByteString flag_;
-    /**
-     * <code>optional bytes flag = 6;</code>
-     */
-    @Override
-    public boolean hasFlag() {
-      return ((bitField0_ & 0x00000020) == 0x00000020);
-    }
-    /**
-     * <code>optional bytes flag = 6;</code>
-     */
-    @Override
-    public com.google.protobuf.ByteString getFlag() {
-      return flag_;
-    }
-    /**
-     * <code>optional bytes flag = 6;</code>
-     */
-    private void setFlag(com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000020;
-      flag_ = value;
-    }
-    /**
-     * <code>optional bytes flag = 6;</code>
-     */
-    private void clearFlag() {
-      bitField0_ = (bitField0_ & ~0x00000020);
-      flag_ = getDefaultInstance().getFlag();
-    }
+        /**
+         * <code>optional bytes ts = 2;</code>
+         */
+        boolean hasTs();
 
-    public static final int SIGN_FIELD_NUMBER = 7;
-    private com.google.protobuf.ByteString sign_;
-    /**
-     * <code>optional bytes sign = 7;</code>
-     */
-    @Override
-    public boolean hasSign() {
-      return ((bitField0_ & 0x00000040) == 0x00000040);
-    }
-    /**
-     * <code>optional bytes sign = 7;</code>
-     */
-    @Override
-    public com.google.protobuf.ByteString getSign() {
-      return sign_;
-    }
-    /**
-     * <code>optional bytes sign = 7;</code>
-     */
-    private void setSign(com.google.protobuf.ByteString value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000040;
-      sign_ = value;
-    }
-    /**
-     * <code>optional bytes sign = 7;</code>
-     */
-    private void clearSign() {
-      bitField0_ = (bitField0_ & ~0x00000040);
-      sign_ = getDefaultInstance().getSign();
-    }
+        /**
+         * <code>optional bytes ts = 2;</code>
+         */
+        com.google.protobuf.ByteString getTs();
 
-    @Override
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeBytes(1, param_);
-      }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeBytes(2, ts_);
-      }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeBytes(3, serial_);
-      }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        output.writeBytes(4, prevHash_);
-      }
-      if (((bitField0_ & 0x00000010) == 0x00000010)) {
-        output.writeBytes(5, vn1_);
-      }
-      if (((bitField0_ & 0x00000020) == 0x00000020)) {
-        output.writeBytes(6, flag_);
-      }
-      if (((bitField0_ & 0x00000040) == 0x00000040)) {
-        output.writeBytes(7, sign_);
-      }
-      unknownFields.writeTo(output);
-    }
+        /**
+         * <code>optional bytes serial = 3;</code>
+         */
+        boolean hasSerial();
 
-    @Override
-    public int getSerializedSize() {
-      int size = memoizedSerializedSize;
-      if (size != -1) return size;
+        /**
+         * <code>optional bytes serial = 3;</code>
+         */
+        com.google.protobuf.ByteString getSerial();
 
-      size = 0;
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(1, param_);
-      }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(2, ts_);
-      }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(3, serial_);
-      }
-      if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(4, prevHash_);
-      }
-      if (((bitField0_ & 0x00000010) == 0x00000010)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(5, vn1_);
-      }
-      if (((bitField0_ & 0x00000020) == 0x00000020)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(6, flag_);
-      }
-      if (((bitField0_ & 0x00000040) == 0x00000040)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(7, sign_);
-      }
-      size += unknownFields.getSerializedSize();
-      memoizedSerializedSize = size;
-      return size;
-    }
+        /**
+         * <code>optional bytes prev_hash = 4;</code>
+         */
+        boolean hasPrevHash();
 
-    public static Data parseFrom(
-        java.nio.ByteBuffer data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data);
-    }
-    public static Data parseFrom(
-        java.nio.ByteBuffer data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data, extensionRegistry);
-    }
-    public static Data parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data);
-    }
-    public static Data parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data, extensionRegistry);
-    }
-    public static Data parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data);
-    }
-    public static Data parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, data, extensionRegistry);
-    }
-    public static Data parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input);
-    }
-    public static Data parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input, extensionRegistry);
-    }
-    public static Data parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return parseDelimitedFrom(DEFAULT_INSTANCE, input);
-    }
-    public static Data parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
-    }
-    public static Data parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input);
-    }
-    public static Data parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageLite.parseFrom(
-          DEFAULT_INSTANCE, input, extensionRegistry);
-    }
+        /**
+         * <code>optional bytes prev_hash = 4;</code>
+         */
+        com.google.protobuf.ByteString getPrevHash();
 
-    public static Builder newBuilder() {
-      return (Builder) DEFAULT_INSTANCE.createBuilder();
-    }
-    public static Builder newBuilder(Data prototype) {
-      return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        /**
+         * <code>optional bytes vn_1 = 5;</code>
+         */
+        boolean hasVn1();
+
+        /**
+         * <code>optional bytes vn_1 = 5;</code>
+         */
+        com.google.protobuf.ByteString getVn1();
+
+        /**
+         * <code>optional bytes flag = 6;</code>
+         */
+        boolean hasFlag();
+
+        /**
+         * <code>optional bytes flag = 6;</code>
+         */
+        com.google.protobuf.ByteString getFlag();
+
+        /**
+         * <code>optional bytes sign = 7;</code>
+         */
+        boolean hasSign();
+
+        /**
+         * <code>optional bytes sign = 7;</code>
+         */
+        com.google.protobuf.ByteString getSign();
     }
 
     /**
      * Protobuf type {@code com.rulex.bsb.pojo.Data}
      */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessageLite.Builder<
-          Data, Builder> implements
-        // @@protoc_insertion_point(builder_implements:com.rulex.bsb.pojo.Data)
-        DataOrBuilder {
-      // Construct using com.rulex.bsb.pojo.DataBean.Data.newBuilder()
-      private Builder() {
-        super(DEFAULT_INSTANCE);
-      }
-
-
-      /**
-       * <code>optional bytes param = 1;</code>
-       */
-      @Override
-      public boolean hasParam() {
-        return instance.hasParam();
-      }
-      /**
-       * <code>optional bytes param = 1;</code>
-       */
-      @Override
-      public com.google.protobuf.ByteString getParam() {
-        return instance.getParam();
-      }
-      /**
-       * <code>optional bytes param = 1;</code>
-       */
-      public Builder setParam(com.google.protobuf.ByteString value) {
-        copyOnWrite();
-        instance.setParam(value);
-        return this;
-      }
-      /**
-       * <code>optional bytes param = 1;</code>
-       */
-      public Builder clearParam() {
-        copyOnWrite();
-        instance.clearParam();
-        return this;
-      }
-
-      /**
-       * <code>optional bytes ts = 2;</code>
-       */
-      @Override
-      public boolean hasTs() {
-        return instance.hasTs();
-      }
-      /**
-       * <code>optional bytes ts = 2;</code>
-       */
-      @Override
-      public com.google.protobuf.ByteString getTs() {
-        return instance.getTs();
-      }
-      /**
-       * <code>optional bytes ts = 2;</code>
-       */
-      public Builder setTs(com.google.protobuf.ByteString value) {
-        copyOnWrite();
-        instance.setTs(value);
-        return this;
-      }
-      /**
-       * <code>optional bytes ts = 2;</code>
-       */
-      public Builder clearTs() {
-        copyOnWrite();
-        instance.clearTs();
-        return this;
-      }
-
-      /**
-       * <code>optional bytes serial = 3;</code>
-       */
-      @Override
-      public boolean hasSerial() {
-        return instance.hasSerial();
-      }
-      /**
-       * <code>optional bytes serial = 3;</code>
-       */
-      @Override
-      public com.google.protobuf.ByteString getSerial() {
-        return instance.getSerial();
-      }
-      /**
-       * <code>optional bytes serial = 3;</code>
-       */
-      public Builder setSerial(com.google.protobuf.ByteString value) {
-        copyOnWrite();
-        instance.setSerial(value);
-        return this;
-      }
-      /**
-       * <code>optional bytes serial = 3;</code>
-       */
-      public Builder clearSerial() {
-        copyOnWrite();
-        instance.clearSerial();
-        return this;
-      }
-
-      /**
-       * <code>optional bytes prev_hash = 4;</code>
-       */
-      @Override
-      public boolean hasPrevHash() {
-        return instance.hasPrevHash();
-      }
-      /**
-       * <code>optional bytes prev_hash = 4;</code>
-       */
-      @Override
-      public com.google.protobuf.ByteString getPrevHash() {
-        return instance.getPrevHash();
-      }
-      /**
-       * <code>optional bytes prev_hash = 4;</code>
-       */
-      public Builder setPrevHash(com.google.protobuf.ByteString value) {
-        copyOnWrite();
-        instance.setPrevHash(value);
-        return this;
-      }
-      /**
-       * <code>optional bytes prev_hash = 4;</code>
-       */
-      public Builder clearPrevHash() {
-        copyOnWrite();
-        instance.clearPrevHash();
-        return this;
-      }
-
-      /**
-       * <code>optional bytes vn_1 = 5;</code>
-       */
-      @Override
-      public boolean hasVn1() {
-        return instance.hasVn1();
-      }
-      /**
-       * <code>optional bytes vn_1 = 5;</code>
-       */
-      @Override
-      public com.google.protobuf.ByteString getVn1() {
-        return instance.getVn1();
-      }
-      /**
-       * <code>optional bytes vn_1 = 5;</code>
-       */
-      public Builder setVn1(com.google.protobuf.ByteString value) {
-        copyOnWrite();
-        instance.setVn1(value);
-        return this;
-      }
-      /**
-       * <code>optional bytes vn_1 = 5;</code>
-       */
-      public Builder clearVn1() {
-        copyOnWrite();
-        instance.clearVn1();
-        return this;
-      }
-
-      /**
-       * <code>optional bytes flag = 6;</code>
-       */
-      @Override
-      public boolean hasFlag() {
-        return instance.hasFlag();
-      }
-      /**
-       * <code>optional bytes flag = 6;</code>
-       */
-      @Override
-      public com.google.protobuf.ByteString getFlag() {
-        return instance.getFlag();
-      }
-      /**
-       * <code>optional bytes flag = 6;</code>
-       */
-      public Builder setFlag(com.google.protobuf.ByteString value) {
-        copyOnWrite();
-        instance.setFlag(value);
-        return this;
-      }
-      /**
-       * <code>optional bytes flag = 6;</code>
-       */
-      public Builder clearFlag() {
-        copyOnWrite();
-        instance.clearFlag();
-        return this;
-      }
-
-      /**
-       * <code>optional bytes sign = 7;</code>
-       */
-      @Override
-      public boolean hasSign() {
-        return instance.hasSign();
-      }
-      /**
-       * <code>optional bytes sign = 7;</code>
-       */
-      @Override
-      public com.google.protobuf.ByteString getSign() {
-        return instance.getSign();
-      }
-      /**
-       * <code>optional bytes sign = 7;</code>
-       */
-      public Builder setSign(com.google.protobuf.ByteString value) {
-        copyOnWrite();
-        instance.setSign(value);
-        return this;
-      }
-      /**
-       * <code>optional bytes sign = 7;</code>
-       */
-      public Builder clearSign() {
-        copyOnWrite();
-        instance.clearSign();
-        return this;
-      }
-
-      // @@protoc_insertion_point(builder_scope:com.rulex.bsb.pojo.Data)
-    }
-    @Override
-    @SuppressWarnings({"unchecked", "fallthrough"})
-    protected final Object dynamicMethod(
-        com.google.protobuf.GeneratedMessageLite.MethodToInvoke method,
-        Object arg0, Object arg1) {
-      switch (method) {
-        case NEW_MUTABLE_INSTANCE: {
-          return new Data();
+    public static final class Data extends
+            com.google.protobuf.GeneratedMessageLite<
+                    Data, Data.Builder> implements
+            // @@protoc_insertion_point(message_implements:com.rulex.bsb.pojo.Data)
+            DataOrBuilder {
+        private Data() {
+            param_ = com.google.protobuf.ByteString.EMPTY;
+            ts_ = com.google.protobuf.ByteString.EMPTY;
+            serial_ = com.google.protobuf.ByteString.EMPTY;
+            prevHash_ = com.google.protobuf.ByteString.EMPTY;
+            vn1_ = com.google.protobuf.ByteString.EMPTY;
+            flag_ = com.google.protobuf.ByteString.EMPTY;
+            sign_ = com.google.protobuf.ByteString.EMPTY;
         }
-        case NEW_BUILDER: {
-          return new Builder();
+
+        private int bitField0_;
+        public static final int PARAM_FIELD_NUMBER = 1;
+        private com.google.protobuf.ByteString param_;
+
+        /**
+         * <code>optional bytes param = 1;</code>
+         */
+        @Override
+        public boolean hasParam() {
+            return ((bitField0_ & 0x00000001) == 0x00000001);
         }
-        case IS_INITIALIZED: {
-          return DEFAULT_INSTANCE;
+
+        /**
+         * <code>optional bytes param = 1;</code>
+         */
+        @Override
+        public com.google.protobuf.ByteString getParam() {
+            return param_;
         }
-        case MAKE_IMMUTABLE: {
-          return null;
-        }
-        case VISIT: {
-          Visitor visitor = (Visitor) arg0;
-          Data other = (Data) arg1;
-          param_ = visitor.visitByteString(
-              hasParam(), param_,
-              other.hasParam(), other.param_);
-          ts_ = visitor.visitByteString(
-              hasTs(), ts_,
-              other.hasTs(), other.ts_);
-          serial_ = visitor.visitByteString(
-              hasSerial(), serial_,
-              other.hasSerial(), other.serial_);
-          prevHash_ = visitor.visitByteString(
-              hasPrevHash(), prevHash_,
-              other.hasPrevHash(), other.prevHash_);
-          vn1_ = visitor.visitByteString(
-              hasVn1(), vn1_,
-              other.hasVn1(), other.vn1_);
-          flag_ = visitor.visitByteString(
-              hasFlag(), flag_,
-              other.hasFlag(), other.flag_);
-          sign_ = visitor.visitByteString(
-              hasSign(), sign_,
-              other.hasSign(), other.sign_);
-          if (visitor == com.google.protobuf.GeneratedMessageLite.MergeFromVisitor
-              .INSTANCE) {
-            bitField0_ |= other.bitField0_;
-          }
-          return this;
-        }
-        case MERGE_FROM_STREAM: {
-          com.google.protobuf.CodedInputStream input =
-              (com.google.protobuf.CodedInputStream) arg0;
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry =
-              (com.google.protobuf.ExtensionRegistryLite) arg1;
-          if (extensionRegistry == null) {
-            throw new NullPointerException();
-          }
-          try {
-            boolean done = false;
-            while (!done) {
-              int tag = input.readTag();
-              switch (tag) {
-                case 0:
-                  done = true;
-                  break;
-                case 10: {
-                  bitField0_ |= 0x00000001;
-                  param_ = input.readBytes();
-                  break;
-                }
-                case 18: {
-                  bitField0_ |= 0x00000002;
-                  ts_ = input.readBytes();
-                  break;
-                }
-                case 26: {
-                  bitField0_ |= 0x00000004;
-                  serial_ = input.readBytes();
-                  break;
-                }
-                case 34: {
-                  bitField0_ |= 0x00000008;
-                  prevHash_ = input.readBytes();
-                  break;
-                }
-                case 42: {
-                  bitField0_ |= 0x00000010;
-                  vn1_ = input.readBytes();
-                  break;
-                }
-                case 50: {
-                  bitField0_ |= 0x00000020;
-                  flag_ = input.readBytes();
-                  break;
-                }
-                case 58: {
-                  bitField0_ |= 0x00000040;
-                  sign_ = input.readBytes();
-                  break;
-                }
-                default: {
-                  if (!parseUnknownField(tag, input)) {
-                    done = true;
-                  }
-                  break;
-                }
-              }
+
+        /**
+         * <code>optional bytes param = 1;</code>
+         */
+        private void setParam(com.google.protobuf.ByteString value) {
+            if (value == null) {
+                throw new NullPointerException();
             }
-          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-            throw new RuntimeException(e.setUnfinishedMessage(this));
-          } catch (java.io.IOException e) {
-            throw new RuntimeException(
-                new com.google.protobuf.InvalidProtocolBufferException(
-                    e.getMessage()).setUnfinishedMessage(this));
-          } finally {
-          }
+            bitField0_ |= 0x00000001;
+            param_ = value;
         }
-        // fall through
-        case GET_DEFAULT_INSTANCE: {
-          return DEFAULT_INSTANCE;
+
+        /**
+         * <code>optional bytes param = 1;</code>
+         */
+        private void clearParam() {
+            bitField0_ = (bitField0_ & ~0x00000001);
+            param_ = getDefaultInstance().getParam();
         }
-        case GET_PARSER: {
-          com.google.protobuf.Parser<Data> parser = PARSER;
-          if (parser == null) {
-            synchronized (Data.class) {
-              parser = PARSER;
-              if (parser == null) {
-                parser = new DefaultInstanceBasedParser(DEFAULT_INSTANCE);
-                PARSER = parser;
-              }
+
+        public static final int TS_FIELD_NUMBER = 2;
+        private com.google.protobuf.ByteString ts_;
+
+        /**
+         * <code>optional bytes ts = 2;</code>
+         */
+        @Override
+        public boolean hasTs() {
+            return ((bitField0_ & 0x00000002) == 0x00000002);
+        }
+
+        /**
+         * <code>optional bytes ts = 2;</code>
+         */
+        @Override
+        public com.google.protobuf.ByteString getTs() {
+            return ts_;
+        }
+
+        /**
+         * <code>optional bytes ts = 2;</code>
+         */
+        private void setTs(com.google.protobuf.ByteString value) {
+            if (value == null) {
+                throw new NullPointerException();
             }
-          }
-          return parser;
-      }
-      case GET_MEMOIZED_IS_INITIALIZED: {
-        return (byte) 1;
-      }
-      case SET_MEMOIZED_IS_INITIALIZED: {
-        return null;
-      }
-      }
-      throw new UnsupportedOperationException();
+            bitField0_ |= 0x00000002;
+            ts_ = value;
+        }
+
+        /**
+         * <code>optional bytes ts = 2;</code>
+         */
+        private void clearTs() {
+            bitField0_ = (bitField0_ & ~0x00000002);
+            ts_ = getDefaultInstance().getTs();
+        }
+
+        public static final int SERIAL_FIELD_NUMBER = 3;
+        private com.google.protobuf.ByteString serial_;
+
+        /**
+         * <code>optional bytes serial = 3;</code>
+         */
+        @Override
+        public boolean hasSerial() {
+            return ((bitField0_ & 0x00000004) == 0x00000004);
+        }
+
+        /**
+         * <code>optional bytes serial = 3;</code>
+         */
+        @Override
+        public com.google.protobuf.ByteString getSerial() {
+            return serial_;
+        }
+
+        /**
+         * <code>optional bytes serial = 3;</code>
+         */
+        private void setSerial(com.google.protobuf.ByteString value) {
+            if (value == null) {
+                throw new NullPointerException();
+            }
+            bitField0_ |= 0x00000004;
+            serial_ = value;
+        }
+
+        /**
+         * <code>optional bytes serial = 3;</code>
+         */
+        private void clearSerial() {
+            bitField0_ = (bitField0_ & ~0x00000004);
+            serial_ = getDefaultInstance().getSerial();
+        }
+
+        public static final int PREV_HASH_FIELD_NUMBER = 4;
+        private com.google.protobuf.ByteString prevHash_;
+
+        /**
+         * <code>optional bytes prev_hash = 4;</code>
+         */
+        @Override
+        public boolean hasPrevHash() {
+            return ((bitField0_ & 0x00000008) == 0x00000008);
+        }
+
+        /**
+         * <code>optional bytes prev_hash = 4;</code>
+         */
+        @Override
+        public com.google.protobuf.ByteString getPrevHash() {
+            return prevHash_;
+        }
+
+        /**
+         * <code>optional bytes prev_hash = 4;</code>
+         */
+        private void setPrevHash(com.google.protobuf.ByteString value) {
+            if (value == null) {
+                throw new NullPointerException();
+            }
+            bitField0_ |= 0x00000008;
+            prevHash_ = value;
+        }
+
+        /**
+         * <code>optional bytes prev_hash = 4;</code>
+         */
+        private void clearPrevHash() {
+            bitField0_ = (bitField0_ & ~0x00000008);
+            prevHash_ = getDefaultInstance().getPrevHash();
+        }
+
+        public static final int VN_1_FIELD_NUMBER = 5;
+        private com.google.protobuf.ByteString vn1_;
+
+        /**
+         * <code>optional bytes vn_1 = 5;</code>
+         */
+        @Override
+        public boolean hasVn1() {
+            return ((bitField0_ & 0x00000010) == 0x00000010);
+        }
+
+        /**
+         * <code>optional bytes vn_1 = 5;</code>
+         */
+        @Override
+        public com.google.protobuf.ByteString getVn1() {
+            return vn1_;
+        }
+
+        /**
+         * <code>optional bytes vn_1 = 5;</code>
+         */
+        private void setVn1(com.google.protobuf.ByteString value) {
+            if (value == null) {
+                throw new NullPointerException();
+            }
+            bitField0_ |= 0x00000010;
+            vn1_ = value;
+        }
+
+        /**
+         * <code>optional bytes vn_1 = 5;</code>
+         */
+        private void clearVn1() {
+            bitField0_ = (bitField0_ & ~0x00000010);
+            vn1_ = getDefaultInstance().getVn1();
+        }
+
+        public static final int FLAG_FIELD_NUMBER = 6;
+        private com.google.protobuf.ByteString flag_;
+
+        /**
+         * <code>optional bytes flag = 6;</code>
+         */
+        @Override
+        public boolean hasFlag() {
+            return ((bitField0_ & 0x00000020) == 0x00000020);
+        }
+
+        /**
+         * <code>optional bytes flag = 6;</code>
+         */
+        @Override
+        public com.google.protobuf.ByteString getFlag() {
+            return flag_;
+        }
+
+        /**
+         * <code>optional bytes flag = 6;</code>
+         */
+        private void setFlag(com.google.protobuf.ByteString value) {
+            if (value == null) {
+                throw new NullPointerException();
+            }
+            bitField0_ |= 0x00000020;
+            flag_ = value;
+        }
+
+        /**
+         * <code>optional bytes flag = 6;</code>
+         */
+        private void clearFlag() {
+            bitField0_ = (bitField0_ & ~0x00000020);
+            flag_ = getDefaultInstance().getFlag();
+        }
+
+        public static final int SIGN_FIELD_NUMBER = 7;
+        private com.google.protobuf.ByteString sign_;
+
+        /**
+         * <code>optional bytes sign = 7;</code>
+         */
+        @Override
+        public boolean hasSign() {
+            return ((bitField0_ & 0x00000040) == 0x00000040);
+        }
+
+        /**
+         * <code>optional bytes sign = 7;</code>
+         */
+        @Override
+        public com.google.protobuf.ByteString getSign() {
+            return sign_;
+        }
+
+        /**
+         * <code>optional bytes sign = 7;</code>
+         */
+        private void setSign(com.google.protobuf.ByteString value) {
+            if (value == null) {
+                throw new NullPointerException();
+            }
+            bitField0_ |= 0x00000040;
+            sign_ = value;
+        }
+
+        /**
+         * <code>optional bytes sign = 7;</code>
+         */
+        private void clearSign() {
+            bitField0_ = (bitField0_ & ~0x00000040);
+            sign_ = getDefaultInstance().getSign();
+        }
+
+        @Override
+        public void writeTo(com.google.protobuf.CodedOutputStream output)
+                throws java.io.IOException {
+            if (((bitField0_ & 0x00000001) == 0x00000001)) {
+                output.writeBytes(1, param_);
+            }
+            if (((bitField0_ & 0x00000002) == 0x00000002)) {
+                output.writeBytes(2, ts_);
+            }
+            if (((bitField0_ & 0x00000004) == 0x00000004)) {
+                output.writeBytes(3, serial_);
+            }
+            if (((bitField0_ & 0x00000008) == 0x00000008)) {
+                output.writeBytes(4, prevHash_);
+            }
+            if (((bitField0_ & 0x00000010) == 0x00000010)) {
+                output.writeBytes(5, vn1_);
+            }
+            if (((bitField0_ & 0x00000020) == 0x00000020)) {
+                output.writeBytes(6, flag_);
+            }
+            if (((bitField0_ & 0x00000040) == 0x00000040)) {
+                output.writeBytes(7, sign_);
+            }
+            unknownFields.writeTo(output);
+        }
+
+        @Override
+        public int getSerializedSize() {
+            int size = memoizedSerializedSize;
+            if (size != -1) return size;
+
+            size = 0;
+            if (((bitField0_ & 0x00000001) == 0x00000001)) {
+                size += com.google.protobuf.CodedOutputStream
+                        .computeBytesSize(1, param_);
+            }
+            if (((bitField0_ & 0x00000002) == 0x00000002)) {
+                size += com.google.protobuf.CodedOutputStream
+                        .computeBytesSize(2, ts_);
+            }
+            if (((bitField0_ & 0x00000004) == 0x00000004)) {
+                size += com.google.protobuf.CodedOutputStream
+                        .computeBytesSize(3, serial_);
+            }
+            if (((bitField0_ & 0x00000008) == 0x00000008)) {
+                size += com.google.protobuf.CodedOutputStream
+                        .computeBytesSize(4, prevHash_);
+            }
+            if (((bitField0_ & 0x00000010) == 0x00000010)) {
+                size += com.google.protobuf.CodedOutputStream
+                        .computeBytesSize(5, vn1_);
+            }
+            if (((bitField0_ & 0x00000020) == 0x00000020)) {
+                size += com.google.protobuf.CodedOutputStream
+                        .computeBytesSize(6, flag_);
+            }
+            if (((bitField0_ & 0x00000040) == 0x00000040)) {
+                size += com.google.protobuf.CodedOutputStream
+                        .computeBytesSize(7, sign_);
+            }
+            size += unknownFields.getSerializedSize();
+            memoizedSerializedSize = size;
+            return size;
+        }
+
+        public static Data parseFrom(
+                java.nio.ByteBuffer data)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            return com.google.protobuf.GeneratedMessageLite.parseFrom(
+                    DEFAULT_INSTANCE, data);
+        }
+
+        public static Data parseFrom(
+                java.nio.ByteBuffer data,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            return com.google.protobuf.GeneratedMessageLite.parseFrom(
+                    DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static Data parseFrom(
+                com.google.protobuf.ByteString data)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            return com.google.protobuf.GeneratedMessageLite.parseFrom(
+                    DEFAULT_INSTANCE, data);
+        }
+
+        public static Data parseFrom(
+                com.google.protobuf.ByteString data,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            return com.google.protobuf.GeneratedMessageLite.parseFrom(
+                    DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static Data parseFrom(byte[] data)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            return com.google.protobuf.GeneratedMessageLite.parseFrom(
+                    DEFAULT_INSTANCE, data);
+        }
+
+        public static Data parseFrom(
+                byte[] data,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws com.google.protobuf.InvalidProtocolBufferException {
+            return com.google.protobuf.GeneratedMessageLite.parseFrom(
+                    DEFAULT_INSTANCE, data, extensionRegistry);
+        }
+
+        public static Data parseFrom(java.io.InputStream input)
+                throws java.io.IOException {
+            return com.google.protobuf.GeneratedMessageLite.parseFrom(
+                    DEFAULT_INSTANCE, input);
+        }
+
+        public static Data parseFrom(
+                java.io.InputStream input,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws java.io.IOException {
+            return com.google.protobuf.GeneratedMessageLite.parseFrom(
+                    DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Data parseDelimitedFrom(java.io.InputStream input)
+                throws java.io.IOException {
+            return parseDelimitedFrom(DEFAULT_INSTANCE, input);
+        }
+
+        public static Data parseDelimitedFrom(
+                java.io.InputStream input,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws java.io.IOException {
+            return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Data parseFrom(
+                com.google.protobuf.CodedInputStream input)
+                throws java.io.IOException {
+            return com.google.protobuf.GeneratedMessageLite.parseFrom(
+                    DEFAULT_INSTANCE, input);
+        }
+
+        public static Data parseFrom(
+                com.google.protobuf.CodedInputStream input,
+                com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+                throws java.io.IOException {
+            return com.google.protobuf.GeneratedMessageLite.parseFrom(
+                    DEFAULT_INSTANCE, input, extensionRegistry);
+        }
+
+        public static Builder newBuilder() {
+            return (Builder) DEFAULT_INSTANCE.createBuilder();
+        }
+
+        public static Builder newBuilder(Data prototype) {
+            return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
+        }
+
+        /**
+         * Protobuf type {@code com.rulex.bsb.pojo.Data}
+         */
+        public static final class Builder extends
+                com.google.protobuf.GeneratedMessageLite.Builder<
+                        Data, Builder> implements
+                // @@protoc_insertion_point(builder_implements:com.rulex.bsb.pojo.Data)
+                DataOrBuilder {
+            // Construct using com.rulex.bsb.pojo.DataBean.Data.newBuilder()
+            private Builder() {
+                super(DEFAULT_INSTANCE);
+            }
+
+
+            /**
+             * <code>optional bytes param = 1;</code>
+             */
+            @Override
+            public boolean hasParam() {
+                return instance.hasParam();
+            }
+
+            /**
+             * <code>optional bytes param = 1;</code>
+             */
+            @Override
+            public com.google.protobuf.ByteString getParam() {
+                return instance.getParam();
+            }
+
+            /**
+             * <code>optional bytes param = 1;</code>
+             */
+            public Builder setParam(com.google.protobuf.ByteString value) {
+                copyOnWrite();
+                instance.setParam(value);
+                return this;
+            }
+
+            /**
+             * <code>optional bytes param = 1;</code>
+             */
+            public Builder clearParam() {
+                copyOnWrite();
+                instance.clearParam();
+                return this;
+            }
+
+            /**
+             * <code>optional bytes ts = 2;</code>
+             */
+            @Override
+            public boolean hasTs() {
+                return instance.hasTs();
+            }
+
+            /**
+             * <code>optional bytes ts = 2;</code>
+             */
+            @Override
+            public com.google.protobuf.ByteString getTs() {
+                return instance.getTs();
+            }
+
+            /**
+             * <code>optional bytes ts = 2;</code>
+             */
+            public Builder setTs(com.google.protobuf.ByteString value) {
+                copyOnWrite();
+                instance.setTs(value);
+                return this;
+            }
+
+            /**
+             * <code>optional bytes ts = 2;</code>
+             */
+            public Builder clearTs() {
+                copyOnWrite();
+                instance.clearTs();
+                return this;
+            }
+
+            /**
+             * <code>optional bytes serial = 3;</code>
+             */
+            @Override
+            public boolean hasSerial() {
+                return instance.hasSerial();
+            }
+
+            /**
+             * <code>optional bytes serial = 3;</code>
+             */
+            @Override
+            public com.google.protobuf.ByteString getSerial() {
+                return instance.getSerial();
+            }
+
+            /**
+             * <code>optional bytes serial = 3;</code>
+             */
+            public Builder setSerial(com.google.protobuf.ByteString value) {
+                copyOnWrite();
+                instance.setSerial(value);
+                return this;
+            }
+
+            /**
+             * <code>optional bytes serial = 3;</code>
+             */
+            public Builder clearSerial() {
+                copyOnWrite();
+                instance.clearSerial();
+                return this;
+            }
+
+            /**
+             * <code>optional bytes prev_hash = 4;</code>
+             */
+            @Override
+            public boolean hasPrevHash() {
+                return instance.hasPrevHash();
+            }
+
+            /**
+             * <code>optional bytes prev_hash = 4;</code>
+             */
+            @Override
+            public com.google.protobuf.ByteString getPrevHash() {
+                return instance.getPrevHash();
+            }
+
+            /**
+             * <code>optional bytes prev_hash = 4;</code>
+             */
+            public Builder setPrevHash(com.google.protobuf.ByteString value) {
+                copyOnWrite();
+                instance.setPrevHash(value);
+                return this;
+            }
+
+            /**
+             * <code>optional bytes prev_hash = 4;</code>
+             */
+            public Builder clearPrevHash() {
+                copyOnWrite();
+                instance.clearPrevHash();
+                return this;
+            }
+
+            /**
+             * <code>optional bytes vn_1 = 5;</code>
+             */
+            @Override
+            public boolean hasVn1() {
+                return instance.hasVn1();
+            }
+
+            /**
+             * <code>optional bytes vn_1 = 5;</code>
+             */
+            @Override
+            public com.google.protobuf.ByteString getVn1() {
+                return instance.getVn1();
+            }
+
+            /**
+             * <code>optional bytes vn_1 = 5;</code>
+             */
+            public Builder setVn1(com.google.protobuf.ByteString value) {
+                copyOnWrite();
+                instance.setVn1(value);
+                return this;
+            }
+
+            /**
+             * <code>optional bytes vn_1 = 5;</code>
+             */
+            public Builder clearVn1() {
+                copyOnWrite();
+                instance.clearVn1();
+                return this;
+            }
+
+            /**
+             * <code>optional bytes flag = 6;</code>
+             */
+            @Override
+            public boolean hasFlag() {
+                return instance.hasFlag();
+            }
+
+            /**
+             * <code>optional bytes flag = 6;</code>
+             */
+            @Override
+            public com.google.protobuf.ByteString getFlag() {
+                return instance.getFlag();
+            }
+
+            /**
+             * <code>optional bytes flag = 6;</code>
+             */
+            public Builder setFlag(com.google.protobuf.ByteString value) {
+                copyOnWrite();
+                instance.setFlag(value);
+                return this;
+            }
+
+            /**
+             * <code>optional bytes flag = 6;</code>
+             */
+            public Builder clearFlag() {
+                copyOnWrite();
+                instance.clearFlag();
+                return this;
+            }
+
+            /**
+             * <code>optional bytes sign = 7;</code>
+             */
+            @Override
+            public boolean hasSign() {
+                return instance.hasSign();
+            }
+
+            /**
+             * <code>optional bytes sign = 7;</code>
+             */
+            @Override
+            public com.google.protobuf.ByteString getSign() {
+                return instance.getSign();
+            }
+
+            /**
+             * <code>optional bytes sign = 7;</code>
+             */
+            public Builder setSign(com.google.protobuf.ByteString value) {
+                copyOnWrite();
+                instance.setSign(value);
+                return this;
+            }
+
+            /**
+             * <code>optional bytes sign = 7;</code>
+             */
+            public Builder clearSign() {
+                copyOnWrite();
+                instance.clearSign();
+                return this;
+            }
+
+            // @@protoc_insertion_point(builder_scope:com.rulex.bsb.pojo.Data)
+        }
+
+        @Override
+        @SuppressWarnings({"unchecked", "fallthrough"})
+        protected final Object dynamicMethod(
+                com.google.protobuf.GeneratedMessageLite.MethodToInvoke method,
+                Object arg0, Object arg1) {
+            switch (method) {
+                case NEW_MUTABLE_INSTANCE: {
+                    return new Data();
+                }
+                case NEW_BUILDER: {
+                    return new Builder();
+                }
+                case IS_INITIALIZED: {
+                    return DEFAULT_INSTANCE;
+                }
+                case MAKE_IMMUTABLE: {
+                    return null;
+                }
+                case VISIT: {
+                    Visitor visitor = (Visitor) arg0;
+                    Data other = (Data) arg1;
+                    param_ = visitor.visitByteString(
+                            hasParam(), param_,
+                            other.hasParam(), other.param_);
+                    ts_ = visitor.visitByteString(
+                            hasTs(), ts_,
+                            other.hasTs(), other.ts_);
+                    serial_ = visitor.visitByteString(
+                            hasSerial(), serial_,
+                            other.hasSerial(), other.serial_);
+                    prevHash_ = visitor.visitByteString(
+                            hasPrevHash(), prevHash_,
+                            other.hasPrevHash(), other.prevHash_);
+                    vn1_ = visitor.visitByteString(
+                            hasVn1(), vn1_,
+                            other.hasVn1(), other.vn1_);
+                    flag_ = visitor.visitByteString(
+                            hasFlag(), flag_,
+                            other.hasFlag(), other.flag_);
+                    sign_ = visitor.visitByteString(
+                            hasSign(), sign_,
+                            other.hasSign(), other.sign_);
+                    if (visitor == com.google.protobuf.GeneratedMessageLite.MergeFromVisitor
+                            .INSTANCE) {
+                        bitField0_ |= other.bitField0_;
+                    }
+                    return this;
+                }
+                case MERGE_FROM_STREAM: {
+                    com.google.protobuf.CodedInputStream input =
+                            (com.google.protobuf.CodedInputStream) arg0;
+                    com.google.protobuf.ExtensionRegistryLite extensionRegistry =
+                            (com.google.protobuf.ExtensionRegistryLite) arg1;
+                    if (extensionRegistry == null) {
+                        throw new NullPointerException();
+                    }
+                    try {
+                        boolean done = false;
+                        while (!done) {
+                            int tag = input.readTag();
+                            switch (tag) {
+                                case 0:
+                                    done = true;
+                                    break;
+                                case 10: {
+                                    bitField0_ |= 0x00000001;
+                                    param_ = input.readBytes();
+                                    break;
+                                }
+                                case 18: {
+                                    bitField0_ |= 0x00000002;
+                                    ts_ = input.readBytes();
+                                    break;
+                                }
+                                case 26: {
+                                    bitField0_ |= 0x00000004;
+                                    serial_ = input.readBytes();
+                                    break;
+                                }
+                                case 34: {
+                                    bitField0_ |= 0x00000008;
+                                    prevHash_ = input.readBytes();
+                                    break;
+                                }
+                                case 42: {
+                                    bitField0_ |= 0x00000010;
+                                    vn1_ = input.readBytes();
+                                    break;
+                                }
+                                case 50: {
+                                    bitField0_ |= 0x00000020;
+                                    flag_ = input.readBytes();
+                                    break;
+                                }
+                                case 58: {
+                                    bitField0_ |= 0x00000040;
+                                    sign_ = input.readBytes();
+                                    break;
+                                }
+                                default: {
+                                    if (!parseUnknownField(tag, input)) {
+                                        done = true;
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+                        throw new RuntimeException(e.setUnfinishedMessage(this));
+                    } catch (java.io.IOException e) {
+                        throw new RuntimeException(
+                                new com.google.protobuf.InvalidProtocolBufferException(
+                                        e.getMessage()).setUnfinishedMessage(this));
+                    } finally {
+                    }
+                }
+                // fall through
+                case GET_DEFAULT_INSTANCE: {
+                    return DEFAULT_INSTANCE;
+                }
+                case GET_PARSER: {
+                    com.google.protobuf.Parser<Data> parser = PARSER;
+                    if (parser == null) {
+                        synchronized (Data.class) {
+                            parser = PARSER;
+                            if (parser == null) {
+                                parser = new DefaultInstanceBasedParser(DEFAULT_INSTANCE);
+                                PARSER = parser;
+                            }
+                        }
+                    }
+                    return parser;
+                }
+                case GET_MEMOIZED_IS_INITIALIZED: {
+                    return (byte) 1;
+                }
+                case SET_MEMOIZED_IS_INITIALIZED: {
+                    return null;
+                }
+            }
+            throw new UnsupportedOperationException();
+        }
+
+
+        // @@protoc_insertion_point(class_scope:com.rulex.bsb.pojo.Data)
+        private static final Data DEFAULT_INSTANCE;
+
+        static {
+            // New instances are implicitly immutable so no need to make
+            // immutable.
+            DEFAULT_INSTANCE = new Data();
+        }
+
+        public static Data getDefaultInstance() {
+            return DEFAULT_INSTANCE;
+        }
+
+        private static volatile com.google.protobuf.Parser<Data> PARSER;
+
+        public static com.google.protobuf.Parser<Data> parser() {
+            return DEFAULT_INSTANCE.getParserForType();
+        }
     }
 
 
-    // @@protoc_insertion_point(class_scope:com.rulex.bsb.pojo.Data)
-    private static final Data DEFAULT_INSTANCE;
     static {
-      // New instances are implicitly immutable so no need to make
-      // immutable.
-      DEFAULT_INSTANCE = new Data();
     }
 
-    public static Data getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static volatile com.google.protobuf.Parser<Data> PARSER;
-
-    public static com.google.protobuf.Parser<Data> parser() {
-      return DEFAULT_INSTANCE.getParserForType();
-    }
-  }
-
-
-  static {
-  }
-
-  // @@protoc_insertion_point(outer_class_scope)
+    // @@protoc_insertion_point(outer_class_scope)
 }

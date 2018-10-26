@@ -65,7 +65,6 @@
             <systemPath>${basedir}/src/main/resources/rulex.jar</systemPath>
         </dependency>
 
-
     </dependencies>
 
     <build>
