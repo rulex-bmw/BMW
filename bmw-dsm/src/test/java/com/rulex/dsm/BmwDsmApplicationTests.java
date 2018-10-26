@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
@@ -13,6 +14,7 @@ import javax.annotation.Resource;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @MapperScan("com.rulex.dsm.dao")
+@ComponentScan("com.rulex")
 public class BmwDsmApplicationTests {
 
     @Resource
@@ -21,7 +23,7 @@ public class BmwDsmApplicationTests {
     @Test
     public void contextLoads() {
         User user = new User();
-        user.setAge(2);
+        user.setAge(3);
         user.setName("张三");
         int i = userDao.insertUser(user);
         System.out.println(i);
