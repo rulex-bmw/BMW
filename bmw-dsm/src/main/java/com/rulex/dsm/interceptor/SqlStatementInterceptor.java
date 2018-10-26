@@ -6,6 +6,8 @@ import com.rulex.bsb.pojo.DataBean;
 import com.rulex.bsb.service.BSBService;
 import com.rulex.dsm.bean.Field;
 import com.rulex.dsm.bean.Source;
+import com.rulex.tools.pojo.RulexBean;
+import com.sun.tools.javac.code.Attribute;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
@@ -27,11 +29,14 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import static com.rulex.bsb.utils.TypeUtils.transform;
 import static org.fusesource.leveldbjni.JniDBFactory.bytes;
 
 @Intercepts({@Signature(type = StatementHandler.class, method = "update", args = {Statement.class})})
@@ -71,13 +76,13 @@ public class SqlStatementInterceptor implements Interceptor {
                 Insert insert = (Insert) stmt;
                 Table table = insert.getTable();
                 tablename = table.getName();
-                for(Source source : sourceList) {
+                for (Source source : sourceList) {
                     if (source.getTable().equalsIgnoreCase(table.getName())) {
                         t = true;
                     }
                 }
                 List<Column> columns = insert.getColumns();
-                for(Column c : columns) {
+                for (Column c : columns) {
                     column.add(c.getColumnName());
                 }
             } else if (stmt instanceof Update) {
@@ -163,7 +168,7 @@ public class SqlStatementInterceptor implements Interceptor {
         if (sources == null) {
             return;
         }
-        for(Element s : sources) {
+        for (Element s : sources) {
             Source source = new Source();
             String name = s.attribute("name").getValue();
             name = name.substring(0, 1).toUpperCase() + name.substring(1);
@@ -184,7 +189,7 @@ public class SqlStatementInterceptor implements Interceptor {
             String transforable;
             String length;
             String column;
-            for(Element f : fields) {
+            for (Element f : fields) {
                 Field fi = new Field();
                 paramName = f.attributeValue("name");
                 fi.setName(paramName);
@@ -239,7 +244,6 @@ public class SqlStatementInterceptor implements Interceptor {
         for (Source source : sources) {
             //根据tableName，获取对应的source
             if (source.getTable().equals(tableName)) {
-
                 Class clazz = RulexBean.class;
                 //反射获取RulexBean的内部类
                 Class innerClazz1[] = clazz.getDeclaredClasses();
@@ -247,33 +251,28 @@ public class SqlStatementInterceptor implements Interceptor {
                     //获取表对应的内部类
                     if (Class1.getSimpleName().equals(source.getName())) {
 
-
-                        Method method2 = Class1.getMethod("newBuilder");
+                        //获取当前表对应的Builder对象
+                        Method method1 = Class1.getMethod("newBuilder");
                         Constructor con = Class1.getDeclaredConstructor();
                         con.setAccessible(true);
-                        Object obj = con.newInstance();
-                        Object invoke = method2.invoke(obj);
-                        //获取当前表对应的Builder对象
-                        for (Class Class2 : Class1.getDeclaredClasses()) {
+                        Object obj1 = con.newInstance();
+                        Object builder = method1.invoke(obj1);
+                        //得到Builder类
+                        Class Class2 = builder.getClass();
 
-                            Constructor con = Class2.getDeclaredConstructor();
-                            con.setAccessible(true);
-                            Object obj = con.newInstance();
+                        //判断执行sql的Parameter值，将符合的值加入payload中
+                        SqlStatementInterceptor ssi = new SqlStatementInterceptor();
+                        builder = ssi.processParam(boundSql, columnName, source, Class2, builder);
 
-                            //判断执行sql的Parameter值，将符合的值加入payload中
-                            SqlStatementInterceptor ssi = new SqlStatementInterceptor();
-                            obj = ssi.processParam(boundSql, columnName, source, Class2, obj);
+                        //执行Builder对象的build方法
+                        Method method2 = Class2.getMethod("build");
+                        Object message = method2.invoke(builder);
 
-                            //执行Builder对象的build方法
-                            Method method2 = Class2.getMethod("build");
-                            Object message = method2.invoke(obj);
+                        //执行RulexBean内部类对象的toByteArray方法
+                        Method toByte = Class1.getMethod("toByteArray");
+                        byte[] payload = (byte[]) toByte.invoke(message);
 
-                            //执行RulexBean内部类对象的toByteArray方法
-                            Method method1 = Class1.getMethod("toByteArray");
-                            byte[] payload = (byte[]) method1.invoke(message);
-
-                            return payload;
-                        }
+                        return payload;
                     }
                 }
             }
@@ -284,11 +283,12 @@ public class SqlStatementInterceptor implements Interceptor {
     /**
      * 处理Parameter值
      *
-     * @param boundSql   获取参数
-     * @param tableName  数据库表名
-     * @param columnName 数据库字段名
-     * @param sources    xml解析拦截对象
-     * @return byte[] 返回payload值
+     * @param boundSql     获取参数
+     * @param columnNames  数据库表名
+     * @param source       xml解析拦截对象
+     * @param builderClass Builder类
+     * @param builder      Builder对象
+     * @return Object 处理后的Builder对象
      */
     public Object processParam(BoundSql boundSql, List<String> columnNames, Source source, Class builderClass, Object builder) throws Exception {
 
@@ -307,22 +307,22 @@ public class SqlStatementInterceptor implements Interceptor {
                         Method method = clazz.getMethod("get" + fieldName);
                         Object value = method.invoke(obj);
 
-
+                        ByteString sign = ByteString.copyFrom(bytes((String) value));
                         Method method2 = builderClass.getMethod("set" + fieldName, com.google.protobuf.ByteString.class);
-                        method2.invoke(builder, value);
+                        method2.invoke(builder, sign);
                     }
                 }
             }
             return builder;
             //如果执行sql的方法参数类型是map
         } else if (parameter instanceof java.util.HashMap) {
+
             return null;
         } else {
             return null;
         }
+
     }
-
-
 
 
     public static void main(String[] args) throws Exception {
