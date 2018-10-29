@@ -75,13 +75,13 @@ public class SqlStatementInterceptor implements Interceptor {
                 Insert insert = (Insert) stmt;
                 Table table = insert.getTable();
                 tablename = table.getName();
-                for (Source source : sourceList) {
+                for(Source source : sourceList) {
                     if (source.getTable().equalsIgnoreCase(table.getName())) {
                         t = true;
                     }
                 }
                 List<Column> columns = insert.getColumns();
-                for (Column c : columns) {
+                for(Column c : columns) {
                     column.add(c.getColumnName());
                 }
             } else if (stmt instanceof Update) {
@@ -91,10 +91,11 @@ public class SqlStatementInterceptor implements Interceptor {
 
             }
             if (t) {
+                System.out.println(boundSql + "-------" + tablename + "-----" + column + "-----" + sourceList);
                 //获取payload
-//                byte[] judge = judge(boundSql, tablename, column, sourceList);
-                String value = "1234";
-                byte[] judge = bytes(value);
+                byte[] judge = judge(boundSql, tablename, column, sourceList);
+                System.out.println(judge);
+//                byte[] judge = bytes("1234");
                 //调用bsb执行上链
                 DataBean.Data data = DataBean.Data.newBuilder().setParam(ByteString.copyFrom(judge)).build();
                 bsbService.producer(data);
@@ -167,7 +168,7 @@ public class SqlStatementInterceptor implements Interceptor {
         if (sources == null) {
             return;
         }
-        for (Element s : sources) {
+        for(Element s : sources) {
             Source source = new Source();
             String name = s.attribute("name").getValue();
             name = name.substring(0, 1).toUpperCase() + name.substring(1);
@@ -176,6 +177,8 @@ public class SqlStatementInterceptor implements Interceptor {
             source.setGroupable(Boolean.valueOf(groupable));
             String table = s.attributeValue("table");
             source.setTable(table);
+            String pojo = s.attributeValue("pojo");
+            source.setPojo(pojo);
             List<Field> field = new ArrayList<>();
             List<Element> fields = s.elements();
             String paramName;
@@ -188,7 +191,7 @@ public class SqlStatementInterceptor implements Interceptor {
             String transforable;
             String length;
             String column;
-            for (Element f : fields) {
+            for(Element f : fields) {
                 Field fi = new Field();
                 paramName = f.attributeValue("name");
                 fi.setName(paramName);
@@ -240,13 +243,13 @@ public class SqlStatementInterceptor implements Interceptor {
      */
     public byte[] judge(BoundSql boundSql, String tableName, List<String> columnName, List<Source> sources) throws Exception {
 
-        for (Source source : sources) {
+        for(Source source : sources) {
             //根据tableName，获取对应的source
             if (source.getTable().equals(tableName)) {
                 Class clazz = RulexBean.class;
                 //反射获取RulexBean的内部类
                 Class innerClazz1[] = clazz.getDeclaredClasses();
-                for (Class Class1 : innerClazz1) {
+                for(Class Class1 : innerClazz1) {
                     //获取表对应的内部类
                     if (Class1.getSimpleName().equals(TypeUtils.transform(source.getName()))) {
 
@@ -296,8 +299,8 @@ public class SqlStatementInterceptor implements Interceptor {
         //如果执行sql的方法参数类型是对象
         if (Class.forName(source.getPojo()) == clazz) {
 
-            for (String columnName : columnNames) {
-                for (Field field : source.getFields()) {
+            for(String columnName : columnNames) {
+                for(Field field : source.getFields()) {
 
                     if (columnName.equals(field.getColumn())) {
 
