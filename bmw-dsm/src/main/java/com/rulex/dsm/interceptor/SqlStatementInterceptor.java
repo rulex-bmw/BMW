@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import static com.rulex.bsb.utils.TypeUtils.transform;
 import static org.fusesource.leveldbjni.JniDBFactory.bytes;
 
 @Intercepts({@Signature(type = StatementHandler.class, method = "update", args = {Statement.class})})
@@ -252,11 +251,11 @@ public class SqlStatementInterceptor implements Interceptor {
                     if (Class1.getSimpleName().equals(TypeUtils.transform(source.getName()))) {
 
                         //获取当前表对应的Builder对象
-                        Method method1 = Class1.getMethod("newBuilder");
+                        Method newBuilder = Class1.getMethod("newBuilder");
                         Constructor con = Class1.getDeclaredConstructor();
                         con.setAccessible(true);
                         Object obj1 = con.newInstance();
-                        Object builder = method1.invoke(obj1);
+                        Object builder = newBuilder.invoke(obj1);
                         //得到Builder类
                         Class Class2 = builder.getClass();
 
