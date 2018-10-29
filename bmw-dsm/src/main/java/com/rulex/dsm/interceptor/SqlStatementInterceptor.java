@@ -7,7 +7,9 @@ import com.rulex.bsb.service.BSBService;
 import com.rulex.bsb.utils.TypeUtils;
 import com.rulex.dsm.bean.Field;
 import com.rulex.dsm.bean.Source;
+import com.rulex.dsm.dao.DataTypes;
 import com.rulex.tools.pojo.RulexBean;
+import com.sun.prism.PixelFormat;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
@@ -35,8 +37,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-
-import static org.fusesource.leveldbjni.JniDBFactory.bytes;
 
 @Intercepts({@Signature(type = StatementHandler.class, method = "update", args = {Statement.class})})
 @Component
@@ -75,13 +75,13 @@ public class SqlStatementInterceptor implements Interceptor {
                 Insert insert = (Insert) stmt;
                 Table table = insert.getTable();
                 tablename = table.getName();
-                for(Source source : sourceList) {
+                for (Source source : sourceList) {
                     if (source.getTable().equalsIgnoreCase(table.getName())) {
                         t = true;
                     }
                 }
                 List<Column> columns = insert.getColumns();
-                for(Column c : columns) {
+                for (Column c : columns) {
                     column.add(c.getColumnName());
                 }
             } else if (stmt instanceof Update) {
@@ -94,8 +94,8 @@ public class SqlStatementInterceptor implements Interceptor {
                 System.out.println(boundSql + "-------" + tablename + "-----" + column + "-----" + sourceList);
                 //获取payload
                 byte[] judge = judge(boundSql, tablename, column, sourceList);
-                System.out.println(judge);
-//                byte[] judge = bytes("1234");
+
+//                byte[] judge = bytes("a1234086n");
                 //调用bsb执行上链
                 DataBean.Data data = DataBean.Data.newBuilder().setParam(ByteString.copyFrom(judge)).build();
                 bsbService.producer(data);
@@ -168,7 +168,7 @@ public class SqlStatementInterceptor implements Interceptor {
         if (sources == null) {
             return;
         }
-        for(Element s : sources) {
+        for (Element s : sources) {
             Source source = new Source();
             String name = s.attribute("name").getValue();
             name = name.substring(0, 1).toUpperCase() + name.substring(1);
@@ -191,7 +191,7 @@ public class SqlStatementInterceptor implements Interceptor {
             String transforable;
             String length;
             String column;
-            for(Element f : fields) {
+            for (Element f : fields) {
                 Field fi = new Field();
                 paramName = f.attributeValue("name");
                 fi.setName(paramName);
@@ -243,13 +243,13 @@ public class SqlStatementInterceptor implements Interceptor {
      */
     public byte[] judge(BoundSql boundSql, String tableName, List<String> columnName, List<Source> sources) throws Exception {
 
-        for(Source source : sources) {
+        for (Source source : sources) {
             //根据tableName，获取对应的source
             if (source.getTable().equals(tableName)) {
                 Class clazz = RulexBean.class;
                 //反射获取RulexBean的内部类
                 Class innerClazz1[] = clazz.getDeclaredClasses();
-                for(Class Class1 : innerClazz1) {
+                for (Class Class1 : innerClazz1) {
                     //获取表对应的内部类
                     if (Class1.getSimpleName().equals(TypeUtils.InitialsLow2Up(source.getName()))) {
 
@@ -299,47 +299,46 @@ public class SqlStatementInterceptor implements Interceptor {
         //如果执行sql的方法参数类型是对象
         if (Class.forName(source.getPojo()) == clazz) {
 
-            for(String columnName : columnNames) {
-                for(Field field : source.getFields()) {
+            for (String columnName : columnNames) {
+                for (Field field : source.getFields()) {
 
                     if (columnName.equals(field.getColumn())) {
 
-                        Object obj = clazz.newInstance();
                         String fieldName = TypeUtils.InitialsLow2Up(field.getName());
                         Method method = clazz.getMethod("get" + fieldName);
-                        Object value = method.invoke(obj);
+                        Object value = method.invoke(parameter);
 
-                        ByteString sign = ByteString.copyFrom(bytes((String) value));
-                        Method method2 = builderClass.getMethod("set" + fieldName, com.google.protobuf.ByteString.class);
-                        method2.invoke(builder, sign);
+                        if (DataTypes.wrapper_Int.getName().equals(field.getType()) || DataTypes.primeval_int.getName().equals(field.getType())) {
+                            Method method2 = builderClass.getMethod("set" + fieldName, int.class);
+                            method2.invoke(builder, (int) value);
+                        } else if (DataTypes.primeval_string.getName().equals(field.getType())) {
+                            Method method2 = builderClass.getMethod("set" + fieldName, String.class);
+                            method2.invoke(builder, (String) value);
+                        } else if (DataTypes.wrapper_Byte.getName().equals(field.getType()) || DataTypes.primeval_byte.getName().equals(field.getType())) {
+                            Method method2 = builderClass.getMethod("set" + fieldName, byte.class);
+                            method2.invoke(builder, (byte) value);
+                        } else if (DataTypes.wrapper_Short.getName().equals(field.getType()) || DataTypes.primeval_short.getName().equals(field.getType())) {
+                            Method method2 = builderClass.getMethod("set" + fieldName, short.class);
+                            method2.invoke(builder, (short) value);
+                        } else if (DataTypes.wrapper_Long.getName().equals(field.getType()) || DataTypes.primeval_long.getName().equals(field.getType())) {
+                            Method method2 = builderClass.getMethod("set" + fieldName, long.class);
+                            method2.invoke(builder, (long) value);
+                        } else if (DataTypes.wrapper_Double.getName().equals(field.getType()) || DataTypes.primeval_double.getName().equals(field.getType())) {
+                            Method method2 = builderClass.getMethod("set" + fieldName, double.class);
+                            method2.invoke(builder, (double) value);
+                        } else if (DataTypes.wrapper_Float.getName().equals(field.getType()) || DataTypes.primeval_float.getName().equals(field.getType())) {
+                            Method method2 = builderClass.getMethod("set" + fieldName, float.class);
+                            method2.invoke(builder, (float) value);
+                        }
                     }
                 }
             }
             return builder;
             //如果执行sql的方法参数类型是map
         } else if (parameter instanceof java.util.HashMap) {
-
             return null;
         } else {
             return null;
         }
-
-    }
-
-
-    public static void main(String[] args) {
-
-        List<Source> sources = new ArrayList<>();
-
-        Source source = new Source();
-        source.setName("one");
-        source.setTable("one");
-        sources.add(source);
-        try {
-            new SqlStatementInterceptor().judge(null, "one", null, sources);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
 }

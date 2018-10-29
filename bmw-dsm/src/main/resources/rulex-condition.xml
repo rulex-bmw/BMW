@@ -1,6 +1,6 @@
 <configuration version="">
     <source name="One" groupable="true" table="bmw_user" pojo="com.rulex.dsm.pojo.User">
-        <field name="username" column="username" type="String" maxsize="10" minsize="2" isnull="false" transforable="true"
+        <field name="name" column="username" type="String" maxsize="10" minsize="2" isnull="false" transforable="true"
                length="4"></field>
         <field name="age" column="age" type="Integer" isnull="false" transforable="false" minvalue="0" maxvalue="200"
                length="3"></field>

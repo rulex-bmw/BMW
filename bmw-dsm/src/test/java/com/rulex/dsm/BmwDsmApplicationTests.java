@@ -23,8 +23,8 @@ public class BmwDsmApplicationTests {
     @Test
     public void contextLoads() {
         User user = new User();
-        user.setAge(3);
-        user.setName("张三");
+        user.setAge(8);
+        user.setName("王五");
         int i = userDao.insertUser(user);
         System.out.println(i);
 //
