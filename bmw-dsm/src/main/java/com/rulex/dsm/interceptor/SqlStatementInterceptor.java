@@ -251,7 +251,7 @@ public class SqlStatementInterceptor implements Interceptor {
                 Class innerClazz1[] = clazz.getDeclaredClasses();
                 for(Class Class1 : innerClazz1) {
                     //获取表对应的内部类
-                    if (Class1.getSimpleName().equals(TypeUtils.transform(source.getName()))) {
+                    if (Class1.getSimpleName().equals(TypeUtils.InitialsLow2Up(source.getName()))) {
 
                         //获取当前表对应的Builder对象
                         Method newBuilder = Class1.getMethod("newBuilder");
@@ -305,7 +305,7 @@ public class SqlStatementInterceptor implements Interceptor {
                     if (columnName.equals(field.getColumn())) {
 
                         Object obj = clazz.newInstance();
-                        String fieldName = TypeUtils.transform(field.getName());
+                        String fieldName = TypeUtils.InitialsLow2Up(field.getName());
                         Method method = clazz.getMethod("get" + fieldName);
                         Object value = method.invoke(obj);
 

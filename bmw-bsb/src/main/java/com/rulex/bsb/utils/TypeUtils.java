@@ -139,10 +139,8 @@ public class TypeUtils {
         return Double.longBitsToDouble(value);
     }
 
-    public static String transform(String lower) {
-        char[] cs = lower.toCharArray();
-        cs[0] -= 32;
-        return String.valueOf(cs);
+    public static String InitialsLow2Up(String lower) {
+        return lower.substring(0, 1).toUpperCase() + lower.substring(1);
     }
 
 }
