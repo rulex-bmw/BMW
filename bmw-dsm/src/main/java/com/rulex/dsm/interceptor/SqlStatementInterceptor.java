@@ -4,10 +4,10 @@ import com.google.protobuf.ByteString;
 import com.rulex.bsb.dao.LevelDBDaoImpl;
 import com.rulex.bsb.pojo.DataBean;
 import com.rulex.bsb.service.BSBService;
+import com.rulex.bsb.utils.TypeUtils;
 import com.rulex.dsm.bean.Field;
 import com.rulex.dsm.bean.Source;
 import com.rulex.tools.pojo.RulexBean;
-import com.sun.tools.javac.code.Attribute;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
@@ -249,7 +249,7 @@ public class SqlStatementInterceptor implements Interceptor {
                 Class innerClazz1[] = clazz.getDeclaredClasses();
                 for (Class Class1 : innerClazz1) {
                     //获取表对应的内部类
-                    if (Class1.getSimpleName().equals(source.getName())) {
+                    if (Class1.getSimpleName().equals(TypeUtils.transform(source.getName()))) {
 
                         //获取当前表对应的Builder对象
                         Method method1 = Class1.getMethod("newBuilder");
@@ -303,7 +303,7 @@ public class SqlStatementInterceptor implements Interceptor {
                     if (columnName.equals(field.getColumn())) {
 
                         Object obj = clazz.newInstance();
-                        String fieldName = transform(field.getName());
+                        String fieldName = TypeUtils.transform(field.getName());
                         Method method = clazz.getMethod("get" + fieldName);
                         Object value = method.invoke(obj);
 
@@ -325,15 +325,19 @@ public class SqlStatementInterceptor implements Interceptor {
     }
 
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
 
         List<Source> sources = new ArrayList<>();
 
         Source source = new Source();
-        source.setName("Three");
-        source.setTable("three");
+        source.setName("one");
+        source.setTable("one");
         sources.add(source);
-        new SqlStatementInterceptor().judge(null, "three", null, sources);
+        try {
+            new SqlStatementInterceptor().judge(null, "one", null, sources);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 }
