@@ -311,15 +311,6 @@ public class SqlStatementInterceptor implements Interceptor {
                         if (DataTypes.wrapper_Int.getName().equals(field.getType()) || DataTypes.primeval_int.getName().equals(field.getType())) {
                             Method method2 = builderClass.getMethod("set" + fieldName, int.class);
                             method2.invoke(builder, (int) value);
-                        } else if (DataTypes.primeval_string.getName().equals(field.getType())) {
-                            Method method2 = builderClass.getMethod("set" + fieldName, String.class);
-                            method2.invoke(builder, (String) value);
-                        } else if (DataTypes.wrapper_Byte.getName().equals(field.getType()) || DataTypes.primeval_byte.getName().equals(field.getType())) {
-                            Method method2 = builderClass.getMethod("set" + fieldName, byte.class);
-                            method2.invoke(builder, (byte) value);
-                        } else if (DataTypes.wrapper_Short.getName().equals(field.getType()) || DataTypes.primeval_short.getName().equals(field.getType())) {
-                            Method method2 = builderClass.getMethod("set" + fieldName, short.class);
-                            method2.invoke(builder, (short) value);
                         } else if (DataTypes.wrapper_Long.getName().equals(field.getType()) || DataTypes.primeval_long.getName().equals(field.getType())) {
                             Method method2 = builderClass.getMethod("set" + fieldName, long.class);
                             method2.invoke(builder, (long) value);
@@ -329,6 +320,15 @@ public class SqlStatementInterceptor implements Interceptor {
                         } else if (DataTypes.wrapper_Float.getName().equals(field.getType()) || DataTypes.primeval_float.getName().equals(field.getType())) {
                             Method method2 = builderClass.getMethod("set" + fieldName, float.class);
                             method2.invoke(builder, (float) value);
+                        } else if (DataTypes.primeval_string.getName().equals(field.getType())) {
+                            Method method2 = builderClass.getMethod("set" + fieldName, String.class);
+                            method2.invoke(builder, (String) value);
+                        } else if (DataTypes.primeval_boolean.getName().equals(field.getType())) {
+                            Method method2 = builderClass.getMethod("set" + fieldName, boolean.class);
+                            method2.invoke(builder, (String) value);
+                        } else if (DataTypes.primeval_ByteString.getName().equals(field.getType())) {
+                            Method method2 = builderClass.getMethod("set" + fieldName, ByteString.class);
+                            method2.invoke(builder, (String) value);
                         }
                     }
                 }

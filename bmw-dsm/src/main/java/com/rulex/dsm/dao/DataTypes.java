@@ -2,16 +2,18 @@ package com.rulex.dsm.dao;
 
 public enum DataTypes {
 
-    primeval_byte("byte"), primeval_short("short"), primeval_int("int"), primeval_long("long"),
-    wrapper_Byte("Byte"), wrapper_Short("Short"), wrapper_Int("Integer"), wrapper_Long("Long"),
-    primeval_float("float"), primeval_double("double"),
-    wrapper_Float("Float"), wrapper_Double("Double"),
-    primeval_string("String");
+    primeval_int("int"), wrapper_Int("Integer"),
+    primeval_long("long"), wrapper_Long("Long"),
+    primeval_double("double"), wrapper_Double("Double"),
+    primeval_float("float"), wrapper_Float("Float"),
+    primeval_string("String"),
+    primeval_boolean("boolean"),
+    primeval_ByteString("ByteString");
 
     private String name;
 
 
-    private DataTypes(String name) {
+    DataTypes(String name) {
         this.name = name;
 
     }
