@@ -1,0 +1,24 @@
+<schema version="">
+    <record name="one" groupable="false">
+        <field name="name" type="String" maxsize="" minsize="" isnull="" transforable="true/false" minvalue="" maxvalue=""
+               length=""></field>
+        <field name="age" type="Integer" maxsize="" minsize="" isnull="" transforable="true/false" minvalue="" maxvalue=""
+               length=""></field>
+        <!--<field name="tall" type="Integer" maxsize="" minsize="" isnull="" transforable="true/false" minvalue="" maxvalue=""-->
+               <!--length=""></field>-->
+        <!--<field name="buy" type="String" maxsize="" minsize="" isnull="" transforable="true/false" minvalue="" maxvalue=""-->
+               <!--length=""></field>-->
+    </record>
+    <record name="two" groupable="false">
+        <field name="" type="" maxsize="" minsize="" isnull="" transforable="true/false" minvalue="" maxvalue=""
+               length=""></field>
+        <field name="" type="" maxsize="" minsize="" isnull="" transforable="true/false" minvalue="" maxvalue=""
+               length=""></field>
+    </record>
+    <record name="three" groupable="false">
+        <field name="" type="" maxsize="" minsize="" isnull="" transforable="true/false" minvalue="" maxvalue=""
+               length=""></field>
+        <field name="" type="" maxsize="" minsize="" isnull="" transforable="true/false" minvalue="" maxvalue=""
+               length=""></field>
+    </record>
+</schema>

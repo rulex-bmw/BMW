@@ -1,24 +1,14 @@
-<schema version="">
-    <record name="one" groupable="false">
-        <field name="name" type="String" maxsize="" minsize="" isnull="" transforable="true/false" minvalue="" maxvalue=""
-               length=""></field>
-        <field name="age" type="Integer" maxsize="" minsize="" isnull="" transforable="true/false" minvalue="" maxvalue=""
-               length=""></field>
-        <!--<field name="tall" type="Integer" maxsize="" minsize="" isnull="" transforable="true/false" minvalue="" maxvalue=""-->
-               <!--length=""></field>-->
-        <!--<field name="buy" type="String" maxsize="" minsize="" isnull="" transforable="true/false" minvalue="" maxvalue=""-->
-               <!--length=""></field>-->
+<schema version="1.0">
+    <record name="UserCount" groupable="false">
+        <field name="userId" type="String" isnull="false"></field>
+        <field name="extcredits1" type="Integer" isnull="false"></field>
     </record>
-    <record name="two" groupable="false">
-        <field name="" type="" maxsize="" minsize="" isnull="" transforable="true/false" minvalue="" maxvalue=""
-               length=""></field>
-        <field name="" type="" maxsize="" minsize="" isnull="" transforable="true/false" minvalue="" maxvalue=""
-               length=""></field>
-    </record>
-    <record name="three" groupable="false">
-        <field name="" type="" maxsize="" minsize="" isnull="" transforable="true/false" minvalue="" maxvalue=""
-               length=""></field>
-        <field name="" type="" maxsize="" minsize="" isnull="" transforable="true/false" minvalue="" maxvalue=""
-               length=""></field>
+    <record name="UserInfo" groupable="false">
+        <field name="id" type="String" isnull="true"></field>
+        <field name="loginName" type="String" isnull="false"></field>
+        <field name="email" type="String" isnull="true"></field>
+        <field name="status" type="String" isnull="true"></field>
+        <field name="registerIp" type="String" isnull="true"></field>
+        <field name="registerTime" type="String" isnull="true"></field>
     </record>
 </schema>
