@@ -27,8 +27,8 @@ import org.dom4j.io.SAXReader;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -93,7 +93,7 @@ public class SqlStatementInterceptor implements Interceptor {
                 System.out.println(boundSql + "-------" + tablename + "-----" + column + "-----" + sourceList);
                 //获取payload
                 byte[] judge = judge(boundSql, tablename, column, sourceList);
-                if(judge!=null){
+                if (judge != null) {
                     //调用bsb执行上链
                     DataBean.Data data = DataBean.Data.newBuilder().setParam(ByteString.copyFrom(judge)).build();
                     bsbService.producer(data);
@@ -151,9 +151,13 @@ public class SqlStatementInterceptor implements Interceptor {
     public Document readerXML() throws DocumentException {
         // 读取xml文件
         SAXReader sr = new SAXReader();
-//        File file = new File(SqlStatementInterceptor.class.getClass().getResource("/").getPath() + "rulex-condition.xml");
-        File file = new File(SqlStatementInterceptor.class.getClassLoader().getResource("/").getPath() + "rulex-condition.xml");
-        Document doc = sr.read(file);
+//      File file = new File(SqlStatementInterceptor.class.getClass().getResource("/").getPath() + "rulex-condition.xml");
+//        File file = new File(SqlStatementInterceptor.class.getClassLoader().getResource("/").getPath() + "rulex-condition.xml");
+
+        InputStream inputStream = SqlStatementInterceptor.class.getClassLoader().getResourceAsStream("xml/rulex-condition.xml");
+        Document doc = sr.read(inputStream);
+
+//        Document doc = sr.read(file);
         return doc;
     }
 
