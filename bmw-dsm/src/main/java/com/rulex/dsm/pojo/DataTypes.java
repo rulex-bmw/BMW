@@ -1,4 +1,4 @@
-package com.rulex.dsm.dao;
+package com.rulex.dsm.pojo;
 
 public enum DataTypes {
 

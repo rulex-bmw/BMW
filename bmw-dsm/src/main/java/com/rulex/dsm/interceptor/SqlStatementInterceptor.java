@@ -7,9 +7,8 @@ import com.rulex.bsb.service.BSBService;
 import com.rulex.bsb.utils.TypeUtils;
 import com.rulex.dsm.bean.Field;
 import com.rulex.dsm.bean.Source;
-import com.rulex.dsm.dao.DataTypes;
+import com.rulex.dsm.pojo.DataTypes;
 import com.rulex.tools.pojo.RulexBean;
-import com.sun.prism.PixelFormat;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
@@ -94,13 +93,12 @@ public class SqlStatementInterceptor implements Interceptor {
                 System.out.println(boundSql + "-------" + tablename + "-----" + column + "-----" + sourceList);
                 //获取payload
                 byte[] judge = judge(boundSql, tablename, column, sourceList);
-
-//                byte[] judge = bytes("a1234086n");
-                //调用bsb执行上链
-                DataBean.Data data = DataBean.Data.newBuilder().setParam(ByteString.copyFrom(judge)).build();
-                bsbService.producer(data);
-                bsbService.customer();
-
+                if(judge!=null){
+                    //调用bsb执行上链
+                    DataBean.Data data = DataBean.Data.newBuilder().setParam(ByteString.copyFrom(judge)).build();
+                    bsbService.producer(data);
+                    bsbService.customer();
+                }
             }
             return invocation.proceed();
         } catch (Exception e) {
@@ -153,7 +151,8 @@ public class SqlStatementInterceptor implements Interceptor {
     public Document readerXML() throws DocumentException {
         // 读取xml文件
         SAXReader sr = new SAXReader();
-        File file = new File(SqlStatementInterceptor.class.getClass().getResource("/").getPath() + "rulex-condition.xml");
+//        File file = new File(SqlStatementInterceptor.class.getClass().getResource("/").getPath() + "rulex-condition.xml");
+        File file = new File(SqlStatementInterceptor.class.getClassLoader().getResource("/").getPath() + "rulex-condition.xml");
         Document doc = sr.read(file);
         return doc;
     }

@@ -1,8 +1,8 @@
 package com.rulex.bsb.utils;
 
 import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
+import java.security.spec.ECGenParameterSpec;
 
 public class SHA256 {
 
@@ -46,4 +46,20 @@ public class SHA256 {
         }
         return stringBuffer.toString();
     }
+
+
+//    public static void main(String[] args) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+//        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("EC");
+//        // curveName这里取值：secp256k1
+//        ECGenParameterSpec ecGenParameterSpec = new ECGenParameterSpec("secp256k1");
+//        keyPairGenerator.initialize(ecGenParameterSpec, new SecureRandom());
+//        KeyPair keyPair = keyPairGenerator.generateKeyPair();
+//        // 获取公钥
+//        PublicKey aPublic = keyPair.getPublic();
+//        // 获取私钥
+//        PrivateKey aPrivate = keyPair.getPrivate();
+//        System.out.println(aPrivate + "\n" + aPublic);
+//    }
+
+
 }

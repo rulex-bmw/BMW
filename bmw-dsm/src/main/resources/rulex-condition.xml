@@ -1,24 +1,14 @@
-<configuration version="">
-    <source name="One" groupable="true" table="bmw_user" pojo="com.rulex.dsm.pojo.User">
-        <field name="name" column="username" type="String" maxsize="10" minsize="2" isnull="false" transforable="true"
-               length="4"></field>
-        <field name="age" column="age" type="Integer" isnull="false" transforable="false" minvalue="0" maxvalue="200"
-               length="3"></field>
-        <!--<field name="tall" type="Integer" isnull="false" transforable="true" minvalue="0" maxvalue="500"-->
-               <!--length="3"></field>-->
-        <!--<field name="buy" type="String" maxsize="20" minsize="2" isnull="false" transforable="false"-->
-               <!--length="10"></field>-->
+<configuration version="1.0">
+    <source name="UserCount" groupable="true" table="user_count" pojo="cn.javaex.uscat.view.UserCount">
+        <field name="userId" column="user_id" type="String" isnull="false" transforable="true" length="11"></field>
+        <field name="extcredits1" column="extcredits1" type="Integer" isnull="false" transforable="false" length="4"></field>
     </source>
-    <!--<source name="two" groupable="false" table="">-->
-        <!--<field name="" type="" maxsize="" minsize="" isnull="" transforable="true/false" minvalue="" maxvalue=""-->
-               <!--length=""></field>-->
-        <!--<field name="" type="" maxsize="" minsize="" isnull="" transforable="true/false" minvalue="" maxvalue=""-->
-               <!--length=""></field>-->
-    <!--</source>-->
-    <!--<source name="three" groupable="false" table="">-->
-        <!--<field name="" type="" maxsize="" minsize="" isnull="" transforable="true/false" minvalue="" maxvalue=""-->
-               <!--length=""></field>-->
-        <!--<field name="" type="" maxsize="" minsize="" isnull="" transforable="true/false" minvalue="" maxvalue=""-->
-               <!--length=""></field>-->
-    <!--</source>-->
+    <source name="UserInfo" groupable="true" table="user_info" pojo="cn.javaex.uscat.view.UserInfo">
+        <field name="id" column="id" type="String" isnull="false" transforable="false" length="4"></field>
+        <field name="loginName" column="login_name" type="String" isnull="false" transforable="false" length="20"></field>
+        <field name="email" column="email" type="String" isnull="false" transforable="false" length="50"></field>
+        <field name="status" column="status" type="String" isnull="false" transforable="false" length="1"></field>
+        <field name="registerIp" column="register_ip" type="String" isnull="false" transforable="false" length="50"></field>
+        <field name="registerTime" column="register_time" type="String" isnull="false" transforable="false" length="20"></field>
+    </source>
 </configuration>

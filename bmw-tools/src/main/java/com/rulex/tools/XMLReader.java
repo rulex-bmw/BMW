@@ -85,30 +85,30 @@ public class XMLReader {
                     }
                     type = field.attributeValue("type");
                     if (type.equals("Integer")) {
-                        maxvalue = field.attributeValue("maxvalue");
-                        minvalue = field.attributeValue("minvalue");
+//                        maxvalue = field.attributeValue("maxvalue");
+//                        minvalue = field.attributeValue("minvalue");
                         protocol += "int32 ";
                     } else if (type.equals("Long")) {
-                        maxvalue = field.attributeValue("maxvalue");
-                        minvalue = field.attributeValue("minvalue");
+//                        maxvalue = field.attributeValue("maxvalue");
+//                        minvalue = field.attributeValue("minvalue");
                         protocol += "int64 ";
                     } else if (type.equals("Float")) {
-                        maxvalue = field.attributeValue("maxvalue");
-                        minvalue = field.attributeValue("minvalue");
+//                        maxvalue = field.attributeValue("maxvalue");
+//                        minvalue = field.attributeValue("minvalue");
                         protocol += "float ";
                     } else if (type.equals("Double")) {
-                        maxvalue = field.attributeValue("maxvalue");
-                        minvalue = field.attributeValue("minvalue");
+//                        maxvalue = field.attributeValue("maxvalue");
+//                        minvalue = field.attributeValue("minvalue");
                         protocol += "double ";
                     } else if (type.equals("String")) {
-                        maxsize = field.attributeValue("maxsize");
-                        minsize = field.attributeValue("minsize");
+//                        maxsize = field.attributeValue("maxsize");
+//                        minsize = field.attributeValue("minsize");
                         protocol += "string ";
                     }
                     i++;
                     protocol += paramName + " = " + i + ";";
-                    length = field.attributeValue("length");
-                    transforable = field.attributeValue("transforable");
+//                    length = field.attributeValue("length");
+//                    transforable = field.attributeValue("transforable");
                 }
             }
             protocol += "\n}";
