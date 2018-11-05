@@ -286,7 +286,7 @@ public class SqlStatementInterceptor implements Interceptor {
     }
 
     /**
-     * 处理Parameter值
+     * 处理 Parameter值
      *
      * @param boundSql     获取参数
      * @param columnNames  数据库表名
