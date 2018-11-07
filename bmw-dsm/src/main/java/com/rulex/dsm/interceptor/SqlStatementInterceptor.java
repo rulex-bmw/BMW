@@ -92,8 +92,6 @@ public class SqlStatementInterceptor implements Interceptor {
                 if (judge != null) {
                     //调用bsb执行上链
                     DataBean.Data data = DataBean.Data.newBuilder().setParam(ByteString.copyFrom(judge)).build();
-
-
                     bsbService.producer(data);
                     bsbService.customer();
                 }
@@ -102,9 +100,6 @@ public class SqlStatementInterceptor implements Interceptor {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
-        } finally {
-//            LevelDBDaoImpl.mataDB.close();
-//            LevelDBDaoImpl.dataDB.close();
         }
     }
 
@@ -284,7 +279,7 @@ public class SqlStatementInterceptor implements Interceptor {
     }
 
     /**
-     * 处理Parameter值
+     * 处理 Parameter值
      *
      * @param boundSql     获取参数
      * @param columnNames  数据库表名
@@ -326,10 +321,10 @@ public class SqlStatementInterceptor implements Interceptor {
                             method2.invoke(builder, (String) value);
                         } else if (DataTypes.primeval_boolean.getName().equals(field.getType())) {
                             Method method2 = builderClass.getMethod("set" + fieldName, boolean.class);
-                            method2.invoke(builder, (String) value);
+                            method2.invoke(builder, (boolean) value);
                         } else if (DataTypes.primeval_ByteString.getName().equals(field.getType())) {
                             Method method2 = builderClass.getMethod("set" + fieldName, ByteString.class);
-                            method2.invoke(builder, (String) value);
+                            method2.invoke(builder, (ByteString) value);
                         }
                     }
                 }
