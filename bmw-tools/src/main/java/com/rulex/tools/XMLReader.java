@@ -24,7 +24,7 @@ public class XMLReader {
 
         // 读取xml文件
         SAXReader sr = new SAXReader();
-        File file = new File(PathSet.xmlPath + "entity/pojo.xml");
+        File file = new File(PathSet.xmlPath + "pojo.xml");
         Document doc = sr.read(file);
         return doc;
     }
