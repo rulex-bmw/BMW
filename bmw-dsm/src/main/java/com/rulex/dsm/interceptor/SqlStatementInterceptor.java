@@ -328,10 +328,10 @@ public class SqlStatementInterceptor implements Interceptor {
                             method2.invoke(builder, (String) value);
                         } else if (DataTypes.primeval_boolean.getName().equals(field.getType())) {
                             Method method2 = builderClass.getMethod("set" + fieldName, boolean.class);
-                            method2.invoke(builder, (String) value);
+                            method2.invoke(builder, (boolean) value);
                         } else if (DataTypes.primeval_ByteString.getName().equals(field.getType())) {
                             Method method2 = builderClass.getMethod("set" + fieldName, ByteString.class);
-                            method2.invoke(builder, (String) value);
+                            method2.invoke(builder, (ByteString) value);
                         }
                     }
                 }
