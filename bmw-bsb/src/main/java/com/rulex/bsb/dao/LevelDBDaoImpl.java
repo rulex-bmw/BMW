@@ -9,9 +9,7 @@ import com.rulex.bsb.utils.TypeUtils;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.DBIterator;
 import org.joda.time.DateTime;
-import org.springframework.stereotype.Repository;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,30 +23,26 @@ import static org.fusesource.leveldbjni.JniDBFactory.bytes;
  *
  * @author admin
  */
-@Repository
 public class LevelDBDaoImpl implements LevelDBDao {
 
-    @Resource
-    private LevelDBUtil levelDBUtil;
+    private BlockChainDao blockChainDao = new BlockChainDao();
 
-    public static final String DATA_PATH = "data";
-    public static final String FLAG_PATH = "mata";
     public static final byte[] HEADER_KEY = bytes("000000");
     public static final byte[] WRITEPOSITION = bytes("writePosition");
     public static final byte[] READPOSITION = bytes("readPosition");
     public static final byte[] CREATION_DATA = bytes("Rulex BMW (Blockchain Middleware) is accelerating the landing of blockchain technology by migrating existed app ecosystem to public blockchains");
 
-    public static DB dataDB = null;
-    public static DB mataDB = null;
+//    public static DB dataDB = LevelDBUtil.getDataDB();
+//    public static DB mataDB = LevelDBUtil.getMataDB();
 
-    static {
-        try {
-            if (dataDB == null) dataDB = LevelDBUtil.getDb(DATA_PATH);
-            if (mataDB == null) mataDB = LevelDBUtil.getDb(FLAG_PATH);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    {
+//        try {
+//            if (dataDB == null) dataDB = LevelDBUtil.getDb(DATA_PATH);
+//            if (mataDB == null) mataDB = LevelDBUtil.getDb(FLAG_PATH);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 
     /**
@@ -56,7 +50,7 @@ public class LevelDBDaoImpl implements LevelDBDao {
      */
     public void origin() {
         double i = 0;
-        if (dataDB.get(HEADER_KEY) != null) {
+        if (null != LevelDBUtil.getDataDB().get(HEADER_KEY)) {
             return;
         }
         //generation timestamp
@@ -68,11 +62,11 @@ public class LevelDBDaoImpl implements LevelDBDao {
         String key = SHA256.getSHA256(origin.toString());
         //生成标签
         DataBean.Data mata = DataBean.Data.newBuilder().setPrevHash(ByteString.copyFrom(bytes(key))).setSerial(serial).build();
-        mataDB.put(WRITEPOSITION, mata.toByteArray());
+        LevelDBUtil.getMataDB().put(WRITEPOSITION, mata.toByteArray());
         LevelDBDaoImpl levelDBDao = new LevelDBDaoImpl();
-        levelDBDao.setHeaderData(origin, dataDB);
-        dataDB.put(bytes(key), origin.toByteArray());
-        mataDB.put(READPOSITION, mata.toByteArray());
+        levelDBDao.setHeaderData(origin, LevelDBUtil.getDataDB());
+        LevelDBUtil.getDataDB().put(bytes(key), origin.toByteArray());
+        LevelDBUtil.getMataDB().put(READPOSITION, mata.toByteArray());
     }
 
 
@@ -85,7 +79,7 @@ public class LevelDBDaoImpl implements LevelDBDao {
      * @throws IOException
      */
     public synchronized void set(DataBean.Data param) throws IOException {
-        if (param.getParam() == null && !(param.getParam().toByteArray().length <= 256)) {
+        if (null == param.getParam() && !(param.getParam().toByteArray().length <= 256)) {
             return;
         }
         DBIterator iterator = null;
@@ -94,14 +88,14 @@ public class LevelDBDaoImpl implements LevelDBDao {
         ByteString timestamp = ByteString.copyFrom(ts);
         ByteString p = param.getParam();
         //获取上一个hash
-        DataBean.Data writeposition = DataBean.Data.parseFrom(mataDB.get(WRITEPOSITION));
+        DataBean.Data writeposition = DataBean.Data.parseFrom(LevelDBUtil.getMataDB().get(WRITEPOSITION));
         String s = writeposition.getSerial().toStringUtf8();
         Double i = Double.valueOf(s);
         i++;
         ByteString serial = ByteString.copyFrom(bytes(TypeUtils.doubleToString(i)));
         //Set up herderVelue
         DataBean.Data record = DataBean.Data.newBuilder().setParam(p).setTs(timestamp).setSerial(serial).build();
-        setHeaderData(record, dataDB);
+        setHeaderData(record, LevelDBUtil.getDataDB());
         //seek key=HASH(value)
         // Take a hash of data
         DataBean.Data hash = DataBean.Data.newBuilder().setParam(p).setTs(timestamp).setSerial(serial).setPrevHash(writeposition.getPrevHash()).build();
@@ -110,9 +104,9 @@ public class LevelDBDaoImpl implements LevelDBDao {
         ByteString sign = ByteString.copyFrom(bytes("1"));
         //Save a data
         DataBean.Data data = DataBean.Data.newBuilder().setParam(p).setTs(timestamp).setPrevHash(writeposition.getPrevHash()).setSerial(serial).setSign(sign).setFlag(ByteString.copyFrom(TypeUtils.Boolean2ByteArray(false))).build();
-        dataDB.put(hashkey, data.toByteArray());
+        LevelDBUtil.getDataDB().put(hashkey, data.toByteArray());
         DataBean.Data mata = DataBean.Data.newBuilder().setPrevHash(ByteString.copyFrom(hashkey)).setSerial(serial).build();
-        mataDB.put(WRITEPOSITION, mata.toByteArray());
+        LevelDBUtil.getMataDB().put(WRITEPOSITION, mata.toByteArray());
     }
 
     /**
@@ -142,7 +136,7 @@ public class LevelDBDaoImpl implements LevelDBDao {
     public DataBean.Data getReadposition() {
         DataBean.Data data = null;
         try {
-            byte[] readposition = mataDB.get(READPOSITION);
+            byte[] readposition = LevelDBUtil.getMataDB().get(READPOSITION);
             data = DataBean.Data.parseFrom(readposition);
         } catch (IOException e) {
             e.printStackTrace();
@@ -159,17 +153,17 @@ public class LevelDBDaoImpl implements LevelDBDao {
     public boolean setStatus(String hashey) {
         try {
             byte[] key = bytes(hashey);
-            byte[] bytes = dataDB.get(key);
+            byte[] bytes = LevelDBUtil.getDataDB().get(key);
             DataBean.Data data = DataBean.Data.parseFrom(bytes);
             DataBean.Data chainData = DataBean.Data.newBuilder().setParam(data.getParam()).build();
-            int edit = levelDBUtil.putstatus(key, chainData.toByteArray());
+            int edit = blockChainDao.putStatus(key, chainData.toByteArray());
             if (edit == 1) {
                 //修改readposition
                 DataBean.Data readposition = DataBean.Data.newBuilder().setPrevHash(ByteString.copyFrom(key)).setSerial(data.getSerial()).build();
-                mataDB.put(READPOSITION, readposition.toByteArray());
+                LevelDBUtil.getMataDB().put(READPOSITION, readposition.toByteArray());
                 //修改flag
                 DataBean.Data flagdata = DataBean.Data.newBuilder().setParam(data.getParam()).setSerial(data.getSerial()).setPrevHash(data.getPrevHash()).setTs(data.getTs()).setFlag(ByteString.copyFrom(TypeUtils.Boolean2ByteArray(true))).setSign(data.getSign()).build();
-                dataDB.put(key, flagdata.toByteArray());
+                LevelDBUtil.getDataDB().put(key, flagdata.toByteArray());
                 return true;
             } else {
                 throw new DataException("Data write blockchain failure");
@@ -202,13 +196,13 @@ public class LevelDBDaoImpl implements LevelDBDao {
             //从数据库读取最后一条记录的key
             // Read the key of the last record from the database
 //            db = LevelDBUtil.getDb(FLAG_PATH);
-            DataBean.Data hash = DataBean.Data.parseFrom(mataDB.get(WRITEPOSITION));
+            DataBean.Data hash = DataBean.Data.parseFrom(LevelDBUtil.getMataDB().get(WRITEPOSITION));
             byte[] lastKey = hash.getPrevHash().toByteArray();
             //从数据库读取readPosition的key
             // Read the key for readPosition from the database
             byte[] readKey = null;
-            if (mataDB.get(READPOSITION) != null) {
-                DataBean.Data hash2 = DataBean.Data.parseFrom(mataDB.get(READPOSITION));
+            if (LevelDBUtil.getMataDB().get(READPOSITION) != null) {
+                DataBean.Data hash2 = DataBean.Data.parseFrom(LevelDBUtil.getMataDB().get(READPOSITION));
                 readKey = hash2.getPrevHash().toByteArray();
             }
 //            db.close();
@@ -227,7 +221,7 @@ public class LevelDBDaoImpl implements LevelDBDao {
                 //mapValue为map的vale值,map的value为数据库数据的key,map的key为上一条数据库数据的key
                 //The value of the map
                 byte[] mapValue = prveKey;
-                byte[] value = dataDB.get(prveKey);
+                byte[] value = LevelDBUtil.getDataDB().get(prveKey);
                 //value为null说明数据被篡改，抛出错误
                 // A value of null indicates that the data has been tampered with and an error has been thrown
                 if (value == null) {
@@ -238,7 +232,7 @@ public class LevelDBDaoImpl implements LevelDBDao {
                     }
                     break;
                 }
-                DataBean.Data data = DataBean.Data.parseFrom(dataDB.get(prveKey));
+                DataBean.Data data = DataBean.Data.parseFrom(LevelDBUtil.getDataDB().get(prveKey));
                 prveKey = data.getPrevHash().toByteArray();
                 if (prveKey.length == 0 || prveKey == null) {
                     break;
@@ -258,13 +252,13 @@ public class LevelDBDaoImpl implements LevelDBDao {
 
             //从数据库读取header的值
             //Read the value of the header from the database
-            headerValue = asString(dataDB.get(HEADER_KEY));
+            headerValue = asString(LevelDBUtil.getDataDB().get(HEADER_KEY));
 
             //验算header值
             //Check the header values
             while (!stack.isEmpty()) {
                 byte[] value = stack.pop();
-                DataBean.Data data = DataBean.Data.parseFrom(dataDB.get(value));
+                DataBean.Data data = DataBean.Data.parseFrom(LevelDBUtil.getDataDB().get(value));
                 if (startValue == null) {
                     DataBean.Data record = DataBean.Data.newBuilder().setParam(data.getParam()).setTs(data.getTs()).setSerial(data.getSerial()).build();
 
@@ -313,13 +307,13 @@ public class LevelDBDaoImpl implements LevelDBDao {
             //从数据库读取最后一条记录的key
             // Read the key of the last record from the database
 //            db = LevelDBUtil.getDb(FLAG_PATH);
-            DataBean.Data hash = DataBean.Data.parseFrom(mataDB.get(WRITEPOSITION));
+            DataBean.Data hash = DataBean.Data.parseFrom(LevelDBUtil.getMataDB().get(WRITEPOSITION));
             byte[] lastKey = hash.getPrevHash().toByteArray();
             //从数据库读取readPosition的key
             // Read the key for readPosition from the database
             byte[] readKey = null;
-            if (mataDB.get(READPOSITION) != null) {
-                DataBean.Data hash2 = DataBean.Data.parseFrom(mataDB.get(READPOSITION));
+            if (LevelDBUtil.getMataDB().get(READPOSITION) != null) {
+                DataBean.Data hash2 = DataBean.Data.parseFrom(LevelDBUtil.getMataDB().get(READPOSITION));
                 readKey = hash2.getPrevHash().toByteArray();
             }
 //            db.close();
@@ -336,7 +330,7 @@ public class LevelDBDaoImpl implements LevelDBDao {
                 //mapValue为map的vale值,map的value为数据库数据的key,map的key为上一条数据库数据的key
                 //The value of the map
                 byte[] mapValue = prveKey;
-                DataBean.Data data = DataBean.Data.parseFrom(dataDB.get(prveKey));
+                DataBean.Data data = DataBean.Data.parseFrom(LevelDBUtil.getDataDB().get(prveKey));
                 prveKey = data.getPrevHash().toByteArray();
 
                 if (prveKey.length == 0 || prveKey == null) {

@@ -1,0 +1,24 @@
+<configuration version="">
+    <source name="One" groupable="true" table="bmw_user" pojo="com.rulex.dsm.pojo.User">
+        <field name="name" column="username" type="String" maxsize="10" minsize="2" isnull="false" transforable="true"
+               length="4"></field>
+        <field name="age" column="age" type="Integer" isnull="false" transforable="false" minvalue="0" maxvalue="200"
+               length="3"></field>
+        <!--<field name="tall" type="Integer" isnull="false" transforable="true" minvalue="0" maxvalue="500"-->
+               <!--length="3"></field>-->
+        <!--<field name="buy" type="String" maxsize="20" minsize="2" isnull="false" transforable="false"-->
+               <!--length="10"></field>-->
+    </source>
+    <!--<source name="two" groupable="false" table="">-->
+        <!--<field name="" type="" maxsize="" minsize="" isnull="" transforable="true/false" minvalue="" maxvalue=""-->
+               <!--length=""></field>-->
+        <!--<field name="" type="" maxsize="" minsize="" isnull="" transforable="true/false" minvalue="" maxvalue=""-->
+               <!--length=""></field>-->
+    <!--</source>-->
+    <!--<source name="three" groupable="false" table="">-->
+        <!--<field name="" type="" maxsize="" minsize="" isnull="" transforable="true/false" minvalue="" maxvalue=""-->
+               <!--length=""></field>-->
+        <!--<field name="" type="" maxsize="" minsize="" isnull="" transforable="true/false" minvalue="" maxvalue=""-->
+               <!--length=""></field>-->
+    <!--</source>-->
+</configuration>

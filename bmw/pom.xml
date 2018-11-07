@@ -67,7 +67,13 @@
             <version>1.6.1</version>
         </dependency>
 
-    </dependencies>
+        <!--sql解析工具-->
+        <dependency>
+            <groupId>com.github.jsqlparser</groupId>
+            <artifactId>jsqlparser</artifactId>
+            <version>0.9.1</version>
+        </dependency>
 
+    </dependencies>
 
 </project>

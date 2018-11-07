@@ -17,14 +17,14 @@ import static org.fusesource.leveldbjni.JniDBFactory.bytes;
 
 public class XMLReader {
 
-    private static final String XML_PATH = "C:\\Users\\admin\\Desktop\\pojo.xml";
-    private static final String PROTO_PATH = "C:\\Users\\admin\\Desktop\\pojo.proto";
+//    public static List<List<Map<String,Object>>>
 
 
     public Document readerXML() throws DocumentException {
+
         // 读取xml文件
         SAXReader sr = new SAXReader();
-        File file = new File(XML_PATH);
+        File file = new File(PathSet.xmlPath + "pojo.xml");
         Document doc = sr.read(file);
         return doc;
     }
@@ -39,8 +39,8 @@ public class XMLReader {
     public static void parse() throws DocumentException, IOException {
         XMLReader xmlReader = new XMLReader();
         Document doc = xmlReader.readerXML();
-        File file = new File(PROTO_PATH);
-        String protocol = String.format("package com.rulex.bmw.pojo;\noption java_outer_classname = %1$s;", "\"RulexBean\"");
+        File file = new File(PathSet.xmlPath + "pojo.proto");
+        String protocol = String.format("package %1$s;\noption java_outer_classname = %2$s;", PathSet.packagePath, "\"RulexBean\"");
         //解析根节点
         Element root = doc.getRootElement();
         //解析record节点
@@ -85,47 +85,54 @@ public class XMLReader {
                     }
                     type = field.attributeValue("type");
                     if (type.equals("Integer")) {
-                        maxvalue = field.attributeValue("maxvalue");
-                        minvalue = field.attributeValue("minvalue");
+//                        maxvalue = field.attributeValue("maxvalue");
+//                        minvalue = field.attributeValue("minvalue");
                         protocol += "int32 ";
                     } else if (type.equals("Long")) {
-                        maxvalue = field.attributeValue("maxvalue");
-                        minvalue = field.attributeValue("minvalue");
+//                        maxvalue = field.attributeValue("maxvalue");
+//                        minvalue = field.attributeValue("minvalue");
                         protocol += "int64 ";
+                    } else if (type.equals("Float")) {
+//                        maxvalue = field.attributeValue("maxvalue");
+//                        minvalue = field.attributeValue("minvalue");
+                        protocol += "float ";
+                    } else if (type.equals("Double")) {
+//                        maxvalue = field.attributeValue("maxvalue");
+//                        minvalue = field.attributeValue("minvalue");
+                        protocol += "double ";
                     } else if (type.equals("String")) {
-                        maxsize = field.attributeValue("maxsize");
-                        minsize = field.attributeValue("minsize");
+//                        maxsize = field.attributeValue("maxsize");
+//                        minsize = field.attributeValue("minsize");
                         protocol += "string ";
                     }
                     i++;
                     protocol += paramName + " = " + i + ";";
-                    length = field.attributeValue("length");
-                    transforable = field.attributeValue("transforable");
-
+//                    length = field.attributeValue("length");
+//                    transforable = field.attributeValue("transforable");
                 }
-
             }
-
-
             protocol += "\n}";
         }
         FileOutputStream out = new FileOutputStream(file);
         out.write(bytes(protocol));
         out.close();
+        System.out.println("xml读取完毕");
     }
 
 
     public static void main(String[] args) {
         try {
             XMLReader.parse();
+            FormatConversion.formatConversion();
         } catch (DocumentException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-
     }
 
 }

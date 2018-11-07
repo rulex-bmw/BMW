@@ -74,20 +74,20 @@ public class JfTest {
     }
 
 
-    @Test
-    public void contextds() throws IOException {
-
-        DB db = LevelDBUtil.getDb("mata");
-        DataBean.Data build = DataBean.Data.newBuilder().setPrevHash(ByteString.copyFrom(bytes("da29cd7d95e264d9da2bc8dec0c12d14f734465b9c022858066008eb214ebc60"))).build();
-
-        db.put(bytes("readPosition"), build.toByteArray());
-        DataBean.Data hash = DataBean.Data.parseFrom(db.get(bytes("readPosition")));
-        System.out.println(hash.toString());
-
-        db.close();
-
-
-    }
+//    @Test
+//    public void contextds() throws IOException {
+//
+//        DB db = LevelDBUtil.getDb("mata");
+//        DataBean.Data build = DataBean.Data.newBuilder().setPrevHash(ByteString.copyFrom(bytes("da29cd7d95e264d9da2bc8dec0c12d14f734465b9c022858066008eb214ebc60"))).build();
+//
+//        db.put(bytes("readPosition"), build.toByteArray());
+//        DataBean.Data hash = DataBean.Data.parseFrom(db.get(bytes("readPosition")));
+//        System.out.println(hash.toString());
+//
+//        db.close();
+//
+//
+//    }
 
     @Test
     public void tds() throws IOException {
