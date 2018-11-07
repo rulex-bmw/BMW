@@ -48,7 +48,7 @@ public class SHA256 {
     }
 
 
-//    public static void main(String[] args) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+    public static void main(String[] args) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
 //        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("EC");
 //        // curveName这里取值：secp256k1
 //        ECGenParameterSpec ecGenParameterSpec = new ECGenParameterSpec("secp256k1");
@@ -59,7 +59,10 @@ public class SHA256 {
 //        // 获取私钥
 //        PrivateKey aPrivate = keyPair.getPrivate();
 //        System.out.println(aPrivate + "\n" + aPublic);
-//    }
+        String a = "10000000000000000000000000000000000000000000000000000000000000000";
+        System.out.println(a.length());
+
+    }
 
 
 }

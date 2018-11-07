@@ -3,11 +3,9 @@ package com.rulex.bsb.service;
 import com.rulex.bsb.dao.LevelDBDao;
 import com.rulex.bsb.dao.LevelDBDaoImpl;
 import com.rulex.bsb.utils.LevelDBUtil;
-import org.iq80.leveldb.DB;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import static org.fusesource.leveldbjni.JniDBFactory.asString;
@@ -22,14 +20,14 @@ public class Verify {
      */
     static {
         LevelDBDao levelDBDao = new LevelDBDaoImpl();
-        DB db = null;
+//        DB db = null;
         try {
-            if (LevelDBDaoImpl.dataDB == null) {
-                db = LevelDBUtil.getDb("data");
-            } else {
-                db = LevelDBDaoImpl.dataDB;
-            }
-            String value = asString(db.get(bytes("000000")));
+//            if (LevelDBDaoImpl.dataDB == null) {
+//                db = LevelDBUtil.getDataDB();
+//            } else {
+//                db = LevelDBDaoImpl.dataDB;
+//            }
+            String value = asString(LevelDBUtil.getDataDB().get(bytes("000000")));
 //            db.close();
             if (value != null) {
                 hashKey = levelDBDao.verifyHeaderData();
@@ -39,17 +37,17 @@ public class Verify {
         }
     }
 
-    public static void main(String[] args) {
-
-        System.out.println("start");
-
-
-        Iterator<Map.Entry<String, String>> entries = hashKey.entrySet().iterator();
-        while (entries.hasNext()) {
-            Map.Entry<String, String> entry = entries.next();
-
-            System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
-        }
-    }
+//    public static void main(String[] args) {
+//
+//        System.out.println("start");
+//
+//
+//        Iterator<Map.Entry<String, String>> entries = hashKey.entrySet().iterator();
+//        while (entries.hasNext()) {
+//            Map.Entry<String, String> entry = entries.next();
+//
+//            System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+//        }
+//    }
 
 }

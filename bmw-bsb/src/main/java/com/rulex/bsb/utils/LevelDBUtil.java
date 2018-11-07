@@ -3,61 +3,80 @@ package com.rulex.bsb.utils;
 import org.apache.commons.lang.StringUtils;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.Options;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementSetter;
-import org.springframework.stereotype.Repository;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
 import static org.fusesource.leveldbjni.JniDBFactory.factory;
 
-@Repository
+/**
+ * 嵌入式数据库连接
+ */
 public class LevelDBUtil {
 
-    @Resource(name = "jdbcTemplate")
-    private JdbcTemplate jdbcTemplate;
+    private static DB dataDB = null;
+    private static DB mataDB = null;
 
-    public JdbcTemplate getJdbcTemplate() {
-        return jdbcTemplate;
+    private static final String DATA_PATH = "data";
+    private static final String FLAG_PATH = "mata";
+
+    private LevelDBUtil() {
+
     }
-
-    public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
-
-
 
     /**
      * Connect to the LevelDB database
      */
-    public static DB getDb(String fileName) throws IOException {
+    public static DB getDataDB() {
 
-        Options options = new Options();
-        options.createIfMissing(true);
-        String path = System.getProperty("user.dir");
-        DB db = factory.open(new File(path.substring(0, StringUtils.lastIndexOf(path, File.separator)) + File.separator + fileName), options);
+        if (null == dataDB) {
+            Options options = new Options();
+            options.createIfMissing(true);
+            String path = System.getProperty("user.dir");
+            try {
+                String dataPath = path.substring(0, StringUtils.lastIndexOf(path, File.separator)) + File.separator + DATA_PATH;
+                dataDB = factory.open(new File(dataPath), options);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-        return db;
+        }
+        return dataDB;
     }
 
-
-    public int putstatus(byte[] key, byte[] value) {
-        InputStream hash = TypeUtils.byte2Input(key);
-        InputStream payload = TypeUtils.byte2Input(value);
-        String sql = "insert into bmw_chain (key_hash,payload)values (?,?);";
-        int row = jdbcTemplate.update(sql, new PreparedStatementSetter() {
-            @Override
-            public void setValues(PreparedStatement preparedStatement) throws SQLException {
-                preparedStatement.setBlob(1, hash);
-                preparedStatement.setBlob(2, payload);
+    /**
+     * Connect to the LevelDB database
+     */
+    public static DB getMataDB() {
+        if (null == mataDB) {
+            Options options = new Options();
+            options.createIfMissing(true);
+            String path = System.getProperty("user.dir");
+            try {
+                mataDB = factory.open(new File(path.substring(0, StringUtils.lastIndexOf(path, File.separator)) + File.separator + FLAG_PATH), options);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        });
-        return row;
+        }
+        return mataDB;
+    }
+
+    /**
+     * 关闭数据库连接
+     */
+    public static void closeDB() {
+        try {
+            if (null != dataDB) {
+                dataDB.close();
+                dataDB = null;
+            }
+            if (null != mataDB) {
+                mataDB.close();
+                mataDB = null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 

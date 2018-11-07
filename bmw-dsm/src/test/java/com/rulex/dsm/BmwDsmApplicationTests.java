@@ -1,6 +1,5 @@
 package com.rulex.dsm;
 
-import com.rulex.dsm.dao.UserDao;
 import com.rulex.dsm.pojo.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,20 +12,20 @@ import javax.annotation.Resource;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@MapperScan("com.rulex.dsm.dao")
-@ComponentScan("com.rulex")
+//@MapperScan("com.rulex.dsm.dao")
+//@ComponentScan("com.rulex")
 public class BmwDsmApplicationTests {
 
-    @Resource
-    private UserDao userDao;
-
-    @Test
-    public void contextLoads() {
-        User user = new User();
-        user.setAge(8);
-        user.setName("王五");
-        int i = userDao.insertUser(user);
-        System.out.println(i);
+//    @Resource
+//    private UserDao userDao;
+//
+//    @Test
+//    public void contextLoads() {
+//        User user = new User();
+//        user.setAge(8);
+//        user.setName("王五");
+//        int i = userDao.insertUser(user);
+//        System.out.println(i);
 //
 //        String name = "李四";
 //        int id = 3;
@@ -36,6 +35,6 @@ public class BmwDsmApplicationTests {
 
 //        int i = userDao.delUser(2);
 //        System.out.println(i);
-    }
+//    }
 
 }

@@ -1,14 +1,13 @@
 package com.rulex.dsm.interceptor;
 
 import com.google.protobuf.ByteString;
-import com.rulex.bsb.dao.LevelDBDaoImpl;
 import com.rulex.bsb.pojo.DataBean;
 import com.rulex.bsb.service.BSBService;
+import com.rulex.bsb.service.BSBServiceImpl;
 import com.rulex.bsb.utils.TypeUtils;
 import com.rulex.dsm.bean.Field;
 import com.rulex.dsm.bean.Source;
 import com.rulex.dsm.pojo.DataTypes;
-import com.rulex.tools.pojo.RulexBean;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
@@ -26,7 +25,6 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
@@ -41,9 +39,7 @@ import java.util.Properties;
 @Component
 public class SqlStatementInterceptor implements Interceptor {
 
-    @Resource
-    private BSBService bsbService;
-
+    private BSBService bsbService = new BSBServiceImpl();
 
     CCJSqlParserManager parser = new CCJSqlParserManager();
     private List<Source> sourceList;
@@ -74,13 +70,13 @@ public class SqlStatementInterceptor implements Interceptor {
                 Insert insert = (Insert) stmt;
                 Table table = insert.getTable();
                 tablename = table.getName();
-                for (Source source : sourceList) {
+                for(Source source : sourceList) {
                     if (source.getTable().equalsIgnoreCase(table.getName())) {
                         t = true;
                     }
                 }
                 List<Column> columns = insert.getColumns();
-                for (Column c : columns) {
+                for(Column c : columns) {
                     column.add(c.getColumnName());
                 }
             } else if (stmt instanceof Update) {
@@ -93,9 +89,11 @@ public class SqlStatementInterceptor implements Interceptor {
                 System.out.println(boundSql + "-------" + tablename + "-----" + column + "-----" + sourceList);
                 //获取payload
                 byte[] judge = judge(boundSql, tablename, column, sourceList);
-                if(judge!=null){
+                if (judge != null) {
                     //调用bsb执行上链
                     DataBean.Data data = DataBean.Data.newBuilder().setParam(ByteString.copyFrom(judge)).build();
+
+
                     bsbService.producer(data);
                     bsbService.customer();
                 }
@@ -105,8 +103,8 @@ public class SqlStatementInterceptor implements Interceptor {
             e.printStackTrace();
             return null;
         } finally {
-            LevelDBDaoImpl.mataDB.close();
-            LevelDBDaoImpl.dataDB.close();
+//            LevelDBDaoImpl.mataDB.close();
+//            LevelDBDaoImpl.dataDB.close();
         }
     }
 
@@ -149,10 +147,13 @@ public class SqlStatementInterceptor implements Interceptor {
     }
 
     public Document readerXML() throws DocumentException {
+
         // 读取xml文件
         SAXReader sr = new SAXReader();
-//        File file = new File(SqlStatementInterceptor.class.getClass().getResource("/").getPath() + "rulex-condition.xml");
-        File file = new File(SqlStatementInterceptor.class.getClassLoader().getResource("/").getPath() + "rulex-condition.xml");
+        //本地测试使用
+//        File file = new File(SqlStatementInterceptor.class.getResource("/").getPath() + "rulex-condition1.xml");
+        //jar包中使用
+        File file = new File(SqlStatementInterceptor.class.getClassLoader().getResource("/").getPath() + "rulex-condition1.xml");
         Document doc = sr.read(file);
         return doc;
     }
@@ -167,7 +168,7 @@ public class SqlStatementInterceptor implements Interceptor {
         if (sources == null) {
             return;
         }
-        for (Element s : sources) {
+        for(Element s : sources) {
             Source source = new Source();
             String name = s.attribute("name").getValue();
             name = name.substring(0, 1).toUpperCase() + name.substring(1);
@@ -190,7 +191,7 @@ public class SqlStatementInterceptor implements Interceptor {
             String transforable;
             String length;
             String column;
-            for (Element f : fields) {
+            for(Element f : fields) {
                 Field fi = new Field();
                 paramName = f.attributeValue("name");
                 fi.setName(paramName);
@@ -242,13 +243,14 @@ public class SqlStatementInterceptor implements Interceptor {
      */
     public byte[] judge(BoundSql boundSql, String tableName, List<String> columnName, List<Source> sources) throws Exception {
 
-        for (Source source : sources) {
+        for(Source source : sources) {
             //根据tableName，获取对应的source
             if (source.getTable().equals(tableName)) {
-                Class clazz = RulexBean.class;
+                Class clazz = Class.forName("com.rulex.tools.pojo.RulexBean");
+//                Class clazz = RulexBean.class;
                 //反射获取RulexBean的内部类
                 Class innerClazz1[] = clazz.getDeclaredClasses();
-                for (Class Class1 : innerClazz1) {
+                for(Class Class1 : innerClazz1) {
                     //获取表对应的内部类
                     if (Class1.getSimpleName().equals(TypeUtils.InitialsLow2Up(source.getName()))) {
 
@@ -298,8 +300,8 @@ public class SqlStatementInterceptor implements Interceptor {
         //如果执行sql的方法参数类型是对象
         if (Class.forName(source.getPojo()) == clazz) {
 
-            for (String columnName : columnNames) {
-                for (Field field : source.getFields()) {
+            for(String columnName : columnNames) {
+                for(Field field : source.getFields()) {
 
                     if (columnName.equals(field.getColumn())) {
 

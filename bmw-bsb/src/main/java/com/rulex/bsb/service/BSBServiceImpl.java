@@ -3,9 +3,8 @@ package com.rulex.bsb.service;
 import com.rulex.bsb.dao.LevelDBDao;
 import com.rulex.bsb.dao.LevelDBDaoImpl;
 import com.rulex.bsb.pojo.DataBean;
-import org.springframework.stereotype.Service;
+import com.rulex.bsb.utils.LevelDBUtil;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.Map;
 
@@ -16,17 +15,17 @@ import static org.fusesource.leveldbjni.JniDBFactory.asString;
  *
  * @author admin
  */
-@Service
 public class BSBServiceImpl implements BSBService {
 
-    @Resource
-    private LevelDBDao levelDBDao;
+    private LevelDBDao levelDBDao = new LevelDBDaoImpl();
 
     @Override
     public void producer(DataBean.Data data) {
         try {
             levelDBDao.origin();
             levelDBDao.set(data);
+            LevelDBUtil.closeDB();
+            System.out.println("producer thread id " + Thread.currentThread().getId());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -42,7 +41,7 @@ public class BSBServiceImpl implements BSBService {
         int i = 0;
         String currentHash = null;
         String prevHash = null;
-        if (null == LevelDBDaoImpl.mataDB.get(LevelDBDaoImpl.WRITEPOSITION)) {
+        if (null == LevelDBUtil.getMataDB().get(LevelDBDaoImpl.WRITEPOSITION)) {
             return -1;
         }
         Map<String, String> keyMap = LevelDBDaoImpl.getHashMap();
@@ -64,14 +63,10 @@ public class BSBServiceImpl implements BSBService {
 
                 prevHash = currentHash;
                 i++;
-                System.out.println("customer run with " + i);
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                System.out.println("customer thread id: " + Thread.currentThread().getId() + "\ncustomer run with " + i);
             }
         }
+        LevelDBUtil.closeDB();
         return i;
     }
 
