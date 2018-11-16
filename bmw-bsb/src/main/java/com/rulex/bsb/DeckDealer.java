@@ -121,7 +121,6 @@ public class DeckDealer {
         int index = i.intValue();
         Short card = cards.get(index);
         cards.set(index, cards.get(--count));
-        cards.remove(count.shortValue());
         //将牌放入盐中并进行crc验证
         Arrays.fill(s, CARD_INDEX, CARD_INDEX + 1, TypeUtils.uint8ToByte(card));
         byte crc = CRC8Util.calcCrc8(s);
