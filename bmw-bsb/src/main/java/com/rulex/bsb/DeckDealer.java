@@ -1,9 +1,6 @@
 package com.rulex.bsb;
 
-import com.rulex.bsb.utils.CRC8Util;
-import com.rulex.bsb.utils.CryptoUtils;
-import com.rulex.bsb.utils.SHA256;
-import com.rulex.bsb.utils.TypeUtils;
+import com.rulex.bsb.utils.*;
 import org.bouncycastle.util.encoders.Base64;
 
 import java.math.BigInteger;
@@ -135,6 +132,102 @@ public class DeckDealer {
         p.add(Base64.toBase64String(SHA256.getSHA256Bytes(s)));
 
         return CryptoUtils.ECDHEncrypt(pk, s);
+    }
+
+
+    /**
+     * 抓取剩余牌
+     *
+     * @param pks   玩家公钥集合
+     * @param signs 签名集合
+     * @return 抓取的牌
+     */
+    public static List<Short> drawLeftCards(List<byte[]> pks, List<byte[]> signs) throws Exception {
+
+        //牌数小于等于零，抛出异常
+        if (count <= 0) {
+            throw new DataException("No more card can be drawn");
+        }
+
+        //salt的数量与公钥数量和sign的数量不同，抛出异常
+        int pc = salts.size();
+        if (pks.size() != pc || signs.size() != pc) {
+            throw new DataException("Not a consented draw cards request");
+        }
+
+        //将所有的公钥合并
+        byte[] initial = new byte[0];
+        int length;
+        for (byte[] pk : pks) {
+            length = initial.length;
+            initial = Arrays.copyOf(initial, pk.length + length);
+            System.arraycopy(pk, 0, initial, length, pk.length);
+        }
+        //哈希公钥数组，得到摘要
+        byte[] h2s = SHA256.getSHA256Bytes(initial);
+
+        //验证签名
+        for (int i = 0; i < pks.size(); i++) {
+            byte[] salt = salts.get(java.util.Base64.getEncoder().encodeToString(pks.get(i)));
+            if (salt == null || salt.length == 0) {
+                throw new DataException("Unknown player: " + java.util.Base64.getEncoder().encodeToString(pks.get(i)));
+            }
+            boolean flag = ECDSA.verify(h2s, pks.get(i), "SHA1withECDSA", signs.get(i));
+            //验证签名失败，抛出异常
+            if (flag == false) {
+                throw new DataException("Signature verification failed");
+            }
+        }
+        //验证成功，取出所有牌
+        List<Short> card = new ArrayList<>();
+        card.addAll(cards);
+        cards.clear();
+        count = 0;
+        return card;
+    }
+
+
+    /**
+     * 返还牌
+     *
+     * @param pk  玩家公钥
+     * @param sig 签名
+     * @param cs  牌信息
+     */
+
+    public static void returnCards(byte[] pk, byte[] sig, List<byte[]> cs) throws Exception {
+
+        //验证玩家身份
+        String pkStr = java.util.Base64.getEncoder().encodeToString(pk);
+        byte[] salt = salts.get(pkStr);
+        if (salt == null || salt.length == 0) {
+            throw new DataException("Unknown player: " + pkStr);
+        }
+        boolean flag = ECDSA.verify(salt, pk, "SHA1withECDSA", sig);
+        //验证签名失败，抛出异常
+        if (flag == true) {
+            throw new DataException("Signature verification failed");
+        }
+
+        //验证欲返回牌库的牌是否合理
+        for (byte[] c : cs) {
+            if (proofs.get(pkStr).indexOf(java.util.Base64.getEncoder().encodeToString(SHA256.getSHA256Bytes(c))) < 0) {
+                throw new DataException("Unproven card" + TypeUtils.bytesToHexString(c) + "to return");
+            }
+        }
+
+        //还牌
+        for (byte[] c : cs) {
+            cards.add(Short.valueOf(c[CARD_INDEX]));
+            count++;
+        }
+
+        //生成新的seed
+        seed = Arrays.copyOf(seed, seed.length + sig.length);
+        System.arraycopy(sig, 0, seed, seed.length, sig.length);
+        seed = SHA256.getSHA256Bytes(seed);
+        seed = ECDSA.sign(seed, dsk, "SHA1withECDSA");
+        salts.put(pkStr, SHA256.getSHA256Bytes(seed));
     }
 
 
