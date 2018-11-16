@@ -4,11 +4,13 @@ import com.rulex.bsb.utils.CRC8Util;
 import com.rulex.bsb.utils.CryptoUtils;
 import com.rulex.bsb.utils.SHA256;
 import com.rulex.bsb.utils.TypeUtils;
-import org.apache.commons.lang.StringUtils;
 import org.bouncycastle.util.encoders.Base64;
 
 import java.math.BigInteger;
-import java.security.*;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.*;
 
 public class DeckDealer {
@@ -17,8 +19,8 @@ public class DeckDealer {
     {
         try {
             KeyPair pair = CryptoUtils.generatorKeyPair("EC", "secp256k1");
-            dsk = pair.getPrivate();
-            dpk = pair.getPublic();
+            dsk = pair.getPrivate().getEncoded();
+            dpk = pair.getPublic().getEncoded();
             SecureRandom secureRandom = new SecureRandom();
             seed = new byte[32];
             secureRandom.nextBytes(seed);
@@ -39,9 +41,9 @@ public class DeckDealer {
 
     private static byte[] seed = {};
 
-    private static PrivateKey dsk;
+    private static byte[] dsk;
 
-    private static PublicKey dpk;
+    private static byte[] dpk;
 
     private static final Integer CARD_INDEX = 7;
 
@@ -50,7 +52,7 @@ public class DeckDealer {
     //存储未抽牌
     private static List<Short> cards = new ArrayList<>();
     //为每一位玩家存储最新盐
-    private static Map<String, String> salts = new HashMap<>();
+    private static Map<String, byte[]> salts = new HashMap<>();
     //所有抽牌证明
     private static Map<String, List<String>> proofs = new HashMap<>();
     //剩余牌数
@@ -80,8 +82,8 @@ public class DeckDealer {
             System.arraycopy(pk, 0, seed, destPos, l);
             destPos += l;
         }
-        seed = CryptoUtils.sign(dsk.getEncoded(), SHA256.getSHA256(seed));
-        String s = SHA256.getSHA256(seed);
+        seed = CryptoUtils.sign(dsk, SHA256.getSHA256Bytes(seed));
+        byte[] s = SHA256.getSHA256Bytes(seed);
 
         for(byte[] pk : pks) {
             String pkk = Base64.toBase64String(pk);
@@ -101,9 +103,9 @@ public class DeckDealer {
 
         String pkk = Base64.toBase64String(pk);
 
-        String s = salts.get(pkk);
+        byte[] s = salts.get(pkk);
 
-        if (StringUtils.isBlank(s)) {
+        if (s == null) {
             throw new Exception(String.format("Unknown player: %s", pkk));
         }
 
@@ -115,24 +117,22 @@ public class DeckDealer {
         int sl = sig.length;
         seed = Arrays.copyOf(seed, l + sl);
         System.arraycopy(sig, 0, seed, l, sl);
-        seed = CryptoUtils.sign(dsk.getEncoded(), SHA256.getSHA256(seed));
-        s = SHA256.getSHA256(seed);
+        seed = CryptoUtils.sign(dsk, SHA256.getSHA256Bytes(seed));
+        s = SHA256.getSHA256Bytes(seed);
         //抽取卡牌
-        BigInteger i = new BigInteger(s, 16).multiply(new BigInteger(count.toString())).divide(max256b);
+        BigInteger i = new BigInteger(TypeUtils.bytesToHexString(s), 16).multiply(new BigInteger(count.toString())).divide(max256b);
         int index = i.intValue();
         Short card = cards.get(index);
         cards.set(index, cards.get(--count));
         //将牌放入盐中并进行crc验证
-        byte[] bytes = TypeUtils.hexStringToByte(s);
-        Arrays.fill(bytes, CARD_INDEX, CARD_INDEX + 1, TypeUtils.uint8ToByte(card));
-        byte crc = CRC8Util.calcCrc8(bytes);
-        Arrays.fill(bytes, bytes.length - 1, bytes.length, crc);
-        s = TypeUtils.bytesToHexString(bytes);
+        Arrays.fill(s, CARD_INDEX, CARD_INDEX + 1, TypeUtils.uint8ToByte(card));
+        byte crc = CRC8Util.calcCrc8(s);
+        Arrays.fill(s, s.length - 1, s.length, crc);
         //更新玩家的最新盐
         salts.put(pkk, s);
         //放入抽牌证明
         List<String> p = proofs.get(pkk);
-        p.add(Base64.toBase64String(SHA256.getSHA256Bytes(bytes)));
+        p.add(Base64.toBase64String(SHA256.getSHA256Bytes(s)));
 
         return CryptoUtils.ECDHEncrypt(pk, s);
     }
@@ -155,22 +155,22 @@ public class DeckDealer {
             sks.add(pair.getPrivate().getEncoded());
         }
         Object[] objects = DeckDealer.openGame(54, 1, pks);
-        List<String> es = new ArrayList<>();
+        List<byte[]> es = new ArrayList<>();
         Map<Integer, List<Short>> cbps = new HashMap<>();
         for(int i = 0; i < 4; i++) {
             cbps.put(i, new ArrayList<>());
         }
         for(int i = 0; i < 4; i++) {
-            es.add((String) objects[0]);
+            es.add((byte[]) objects[0]);
         }
         long round = Math.round(Math.floor((54 * 1) / 4));
         for(long i = 0; i < round - 1; i++) {
             for(int j = 0; j < 4; j++) {
                 byte[] r = DeckDealer.drawCard(pks.get(j), CryptoUtils.sign(sks.get(j), es.get(j)));
                 es.set(j, CryptoUtils.ECDHDecrypt(sks.get(j), r));
-                String s = es.get(j);
+                byte[] s = es.get(j);
                 List<Short> c = cbps.get(j);
-                c.add(TypeUtils.byteToUnit8(TypeUtils.hexStringToByte(s)[CARD_INDEX]));
+                c.add(TypeUtils.byteToUnit8(s[CARD_INDEX]));
             }
         }
 

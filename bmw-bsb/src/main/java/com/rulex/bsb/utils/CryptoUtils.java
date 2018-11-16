@@ -46,7 +46,7 @@ public class CryptoUtils {
      * @param msg
      * @return
      */
-    public static byte[] ECDHEncrypt(byte[] publicKey, String msg) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, NoSuchProviderException, NoSuchPaddingException, InvalidKeySpecException {
+    public static byte[] ECDHEncrypt(byte[] publicKey, byte[] msg) throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, NoSuchProviderException, NoSuchPaddingException, InvalidKeySpecException {
         X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(publicKey);
         KeyFactory keyFactory = KeyFactory.getInstance("EC");
         PublicKey pk = keyFactory.generatePublic(x509EncodedKeySpec);
@@ -61,7 +61,7 @@ public class CryptoUtils {
         SecureRandom secureRandom = new SecureRandom();
         byte[] iv = new byte[16];//iv作为初始化向量
         secureRandom.nextBytes(iv);
-        byte[] ct = AES256.AES_cbc_encrypt(bytes(msg), encKey, iv);//加密数据
+        byte[] ct = AES256.AES_cbc_encrypt(msg, encKey, iv);//加密数据
         ByteString pct = ByteString.copyFrom(ct);
         ByteString pepk = ByteString.copyFrom(epk.getEncoded());
         ByteString piv = ByteString.copyFrom(iv);
@@ -84,7 +84,7 @@ public class CryptoUtils {
      * @param body
      * @return
      */
-    public static String ECDHDecrypt(byte[] privateKey, byte[] body) throws Exception {
+    public static byte[] ECDHDecrypt(byte[] privateKey, byte[] body) throws Exception {
         Encoding.ecies ecies = Encoding.ecies.parseFrom(body);
         byte[] ct = ecies.getCiphertext().toByteArray();
         byte[] iv = ecies.getIv().toByteArray();
@@ -102,8 +102,6 @@ public class CryptoUtils {
         byte[] secret = keyAgreement.generateSecret();
         byte[] encKey = Arrays.copyOfRange(secret, 0, 16);
         String macKey = TypeUtils.bytesToHexString(Arrays.copyOfRange(secret, 16, 32));
-//        byte[] ct = (byte[]) body[2];
-//        byte[] iv = (byte[]) body[0];
         Encoding.ecies dataToMac = Encoding.ecies.newBuilder()
                 .setCiphertext(ByteString.copyFrom(ct))
                 .setEphemPublicKey(ByteString.copyFrom(pepk))
@@ -114,27 +112,27 @@ public class CryptoUtils {
             throw new Exception("Corrupted body - unmatched authentication code");
         }
         byte[] msg = AES256.AES_cbc_decrypt(ct, encKey, iv);
-        return new String(msg);
+        return msg;
     }
 
 
-    public static byte[] sign(byte[] privateKey, String message) throws Exception {
+    public static byte[] sign(byte[] privateKey, byte[] message) throws Exception {
         PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(privateKey);
         KeyFactory keyFactory = KeyFactory.getInstance("EC");
         PrivateKey sk = keyFactory.generatePrivate(pkcs8EncodedKeySpec);
         Signature signature = Signature.getInstance("SHA1withECDSA");
         signature.initSign(sk);
-        signature.update(message.getBytes());
+        signature.update(message);
         return signature.sign();
     }
 
-    public static boolean verify(byte[] publicKey, byte[] signed, String message) throws Exception {
+    public static boolean verify(byte[] publicKey, byte[] signed, byte[] message) throws Exception {
         X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(publicKey);
         KeyFactory keyFactory = KeyFactory.getInstance("EC");
         PublicKey pk = keyFactory.generatePublic(x509EncodedKeySpec);
         Signature signature = Signature.getInstance("SHA1withECDSA");
         signature.initVerify(pk);
-        signature.update(message.getBytes());
+        signature.update(message);
         return signature.verify(signed);
     }
 
@@ -299,6 +297,21 @@ public class CryptoUtils {
 //// Generated public key from private key
 //        System.out.print("Generated Public Key: " +
 //                BaseEncoding.base64Url().encode(publicKeyGenerated.getEncoded()));
+
+
+        // === here the magic happens ===
+//        KeyFactory eckf = KeyFactory.getInstance("EC");
+//        ECPoint point = new ECPoint(new BigInteger(1, x), new BigInteger(1, y));
+//        ECNamedCurveParameterSpec parameterSpec = ECNamedCurveTable.getParameterSpec(name);
+//        ECParameterSpec spec = new ECNamedCurveSpec(name, parameterSpec.getCurve(), parameterSpec.getG(), parameterSpec.getN(), parameterSpec.getH(), parameterSpec.getSeed());
+//        ECPublicKey ecPublicKey = (ECPublicKey) eckf.generatePublic(new ECPublicKeySpec(point, spec));
+//        System.out.println(ecPublicKey.getClass().getName());
+//
+//        // === test 123 ===
+//        Cipher ecies = Cipher.getInstance("ECIESwithAES", "BC");
+//        ecies.init(Cipher.ENCRYPT_MODE, ecPublicKey);
+//        byte[] ct = ecies.doFinal("owlstead".getBytes(US_ASCII));
+//        System.out.println(Hex.toHexString(ct));
 
 
     }
