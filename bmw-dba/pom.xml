@@ -35,6 +35,21 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+
+		<!--主程序包-->
+		<dependency>
+			<groupId>com.rulex</groupId>
+			<artifactId>bmw</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+
+		<!--bmw-bsb-->
+		<dependency>
+			<groupId>com.rulex</groupId>
+			<artifactId>bsb</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 	<build>
