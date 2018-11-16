@@ -22,7 +22,7 @@ public class DeckDealer {
             seed = new byte[32];
             secureRandom.nextBytes(seed);
             StringBuffer stringBuffer = new StringBuffer();
-            for(int i = 0; i < 64; i++) {
+            for (int i = 0; i < 64; i++) {
                 String s = Integer.toHexString(new SecureRandom().nextInt(16));
                 stringBuffer.append(s);
             }
@@ -66,14 +66,14 @@ public class DeckDealer {
     public static Object[] openGame(Integer cardNum, Integer deckNum, List<byte[]> pks) throws Exception {
         new DeckDealer();
         cards.clear();
-        for(Short i = 0; i < deckNum; i++) {
-            for(Short j = 0; j < cardNum; j++) {
+        for (Short i = 0; i < deckNum; i++) {
+            for (Short j = 0; j < cardNum; j++) {
                 cards.add(j);
             }
         }
         int destPos = seed.length;
         int l;
-        for(byte[] pk : pks) {
+        for (byte[] pk : pks) {
             l = pk.length;
             seed = Arrays.copyOf(seed, destPos + l);
             System.arraycopy(pk, 0, seed, destPos, l);
@@ -82,7 +82,7 @@ public class DeckDealer {
         seed = CryptoUtils.sign(dsk, SHA256.getSHA256Bytes(seed));
         byte[] s = SHA256.getSHA256Bytes(seed);
 
-        for(byte[] pk : pks) {
+        for (byte[] pk : pks) {
             String pkk = Base64.toBase64String(pk);
             salts.put(pkk, s);
             proofs.put(pkk, new ArrayList<>());
@@ -159,7 +159,7 @@ public class DeckDealer {
         //将所有的公钥合并
         byte[] initial = new byte[0];
         int length;
-        for(byte[] pk : pks) {
+        for (byte[] pk : pks) {
             length = initial.length;
             initial = Arrays.copyOf(initial, pk.length + length);
             System.arraycopy(pk, 0, initial, length, pk.length);
@@ -168,7 +168,7 @@ public class DeckDealer {
         byte[] h2s = SHA256.getSHA256Bytes(initial);
 
         //验证签名
-        for(int i = 0; i < pks.size(); i++) {
+        for (int i = 0; i < pks.size(); i++) {
             byte[] salt = salts.get(Base64.toBase64String(pks.get(i)));
             if (salt == null || salt.length == 0) {
                 throw new DataException("Unknown player: " + Base64.toBase64String(pks.get(i)));
@@ -181,7 +181,7 @@ public class DeckDealer {
         }
         //验证成功，取出所有牌
         List<Short> card = new ArrayList<>();
-        card.addAll(cards);
+        card.addAll(cards.subList(0, count));
         cards.clear();
         count = 0;
         return card;
@@ -196,7 +196,7 @@ public class DeckDealer {
      * @param cs  牌信息
      */
 
-    public static void returnCards(byte[] pk, byte[] sig, List<byte[]> cs) throws Exception {
+    public static byte[] returnCards(byte[] pk, byte[] sig, List<byte[]> cs) throws Exception {
 
         //验证玩家身份
         String pkStr = Base64.toBase64String(pk);
@@ -211,15 +211,15 @@ public class DeckDealer {
         }
 
         //验证欲返回牌库的牌是否合理
-        for(byte[] c : cs) {
+        for (byte[] c : cs) {
             if (proofs.get(pkStr).indexOf(Base64.toBase64String(SHA256.getSHA256Bytes(c))) < 0) {
                 throw new DataException("Unproven card" + TypeUtils.bytesToHexString(c) + "to return");
             }
         }
 
         //还牌
-        for(byte[] c : cs) {
-            cards.add(Short.valueOf(c[CARD_INDEX]));
+        for (byte[] c : cs) {
+            cards.add(TypeUtils.byteToUnit8(c[CARD_INDEX]));
             count++;
         }
 
@@ -229,10 +229,13 @@ public class DeckDealer {
         seed = SHA256.getSHA256Bytes(seed);
         seed = ECDSA.sign(seed, dsk, "SHA1withECDSA");
         salts.put(pkStr, SHA256.getSHA256Bytes(seed));
+
+        return SHA256.getSHA256Bytes(seed);
     }
 
 
     public static void main(String[] args) throws Exception {
+
         String[] cardNames = {
                 "2♢", "3♢", "4♢", "5♢", "6♢", "7♢", "8♢", "9♢", "10♢", "J♢", "Q♢", "K♢", "A♢",
                 "2♧", "3♧", "4♧", "5♧", "6♧", "7♧", "8♧", "9♧", "10♧", "J♧", "Q♧", "K♧", "A♧",
@@ -243,7 +246,7 @@ public class DeckDealer {
         //测试游戏
         List<byte[]> pks = new ArrayList<>();
         List<byte[]> sks = new ArrayList<>();
-        for(int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++) {
             KeyPair pair = CryptoUtils.generatorKeyPair("EC", "secp256k1");
             pks.add(pair.getPublic().getEncoded());
             sks.add(pair.getPrivate().getEncoded());
@@ -251,32 +254,77 @@ public class DeckDealer {
         Object[] objects = DeckDealer.openGame(54, 1, pks);
         List<byte[]> es = new ArrayList<>();
         Map<Integer, List<Short>> cbps = new HashMap<>();
-        for(int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++) {
             cbps.put(i, new ArrayList<>());
         }
-        for(int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++) {
             es.add((byte[]) objects[0]);
         }
         long round = Math.round(Math.floor((54 * 1) / 4));
-        for(long i = 0; i < round - 1; i++) {
-            for(int j = 0; j < 4; j++) {
+
+        List<byte[]> cs = new ArrayList<>();
+
+        for (long i = 0; i < round - 1; i++) {
+            for (int j = 0; j < 4; j++) {
                 byte[] r = DeckDealer.drawCard(pks.get(j), CryptoUtils.sign(sks.get(j), es.get(j)));
                 es.set(j, CryptoUtils.ECDHDecrypt(sks.get(j), r));
+
+                if (j == 1) {
+
+                    cs.add(CryptoUtils.ECDHDecrypt(sks.get(j), r));
+                }
                 byte[] s = es.get(j);
                 List<Short> c = cbps.get(j);
-                c.add(TypeUtils.byteToUnit8(s[CARD_INDEX]));
+                c.add(TypeUtils.byteToUnit8(s[DeckDealer.CARD_INDEX]));
             }
         }
 
         System.out.println("12轮抽牌结果:");
-        for(int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++) {
             List<Short> shorts = cbps.get(i);
             System.out.print(i + 1 + "号玩家牌：");
-            for(Short s : shorts) {
+            for (Short s : shorts) {
                 System.out.print(cardNames[s] + " ");
             }
             System.out.println("\n");
         }
+
+        //抓取剩余牌
+        byte[] initial = new byte[0];
+        int length;
+        for (byte[] pk : pks) {
+            length = initial.length;
+            initial = Arrays.copyOf(initial, pk.length + length);
+            System.arraycopy(pk, 0, initial, length, pk.length);
+        }
+        byte[] h2s = SHA256.getSHA256Bytes(initial);
+
+        List<byte[]> signs = new ArrayList<>();
+
+        for (int i = 0; i < 4; i++) {
+            signs.add(ECDSA.sign(h2s, sks.get(i), "SHA1withECDSA"));
+        }
+
+        List<Short> lc = DeckDealer.drawLeftCards(pks, signs);
+
+        System.out.println("抓取的剩余牌:");
+
+        for (Short s : lc) {
+            System.out.print(cardNames[s] + " ");
+        }
+        System.out.println("\n");
+
+
+        //还牌
+        DeckDealer.returnCards(pks.get(1), ECDSA.sign(es.get(1), sks.get(1), "SHA1withECDSA"), cs);
+
+        System.out.println("返回的牌:");
+
+        for (Short s : DeckDealer.cards) {
+            System.out.print(cardNames[s] + " ");
+        }
+        System.out.println("\n");
+    }
 
 
 //        System.out.println(bytes.length);
@@ -285,7 +333,7 @@ public class DeckDealer {
 //        System.out.println(s);
 
 
-        //CRC校验
+    //CRC校验
 //        DeckDealer.openGame(54, 1, pks);
 //        seed = CryptoUtils.sign(dsk.getEncoded(), SHA256.getSHA256(seed));
 //        String s = SHA256.getSHA256(seed);
@@ -297,7 +345,7 @@ public class DeckDealer {
 //        byte crc = CRC8Util.calcCrc8(bytes);
 //        System.out.println(crc);
 
-        //用一个字节储存牌的信息
+    //用一个字节储存牌的信息
 //        DeckDealer.openGame(54, 1, pks);
 //        seed = CryptoUtils.sign(dsk.getEncoded(), SHA256.getSHA256(seed));
 //        String s = SHA256.getSHA256(seed);
@@ -337,7 +385,7 @@ public class DeckDealer {
 //        String s = Integer.toHexString((int) i2);
 //        System.out.println(s);
 
-        //biginteger测试
+    //biginteger测试
 //        BigInteger b1 = new BigInteger("999");
 //        BigInteger b2 = new BigInteger("1000");
 //        System.out.println("add: " + b1.add(b2));
@@ -372,7 +420,7 @@ public class DeckDealer {
 //        System.out.println(max256b);
 
 
-        //测试数组合并
+    //测试数组合并
 //        int destPos = seed.length;
 //        int l;
 //        byte[] encoded;
@@ -386,7 +434,7 @@ public class DeckDealer {
 //        }
 //        System.out.println(Arrays.toString(seed));
 
-        //测试种子签名
+    //测试种子签名
 //        for(int i = 0; i < 2; i++) {
 //            int destPos = seed.length;
 //            int l;
@@ -405,7 +453,7 @@ public class DeckDealer {
 //        }
 
 
-        //测试测试生成256位随机数
+    //测试测试生成256位随机数
 //        StringBuffer stringBuffer = new StringBuffer();
 //        for(int i = 0; i < 64; i++) {
 //            String s = Integer.toHexString(new SecureRandom().nextInt(16));
@@ -414,6 +462,6 @@ public class DeckDealer {
 //        System.out.println(stringBuffer.toString().toUpperCase());
 
 
-    }
-
 }
+
+
