@@ -2,10 +2,7 @@ package com.rulex.bsb.dao;
 
 import com.google.protobuf.ByteString;
 import com.rulex.bsb.pojo.DataBean;
-import com.rulex.bsb.utils.DataException;
-import com.rulex.bsb.utils.LevelDBUtil;
-import com.rulex.bsb.utils.SHA256;
-import com.rulex.bsb.utils.TypeUtils;
+import com.rulex.bsb.utils.*;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.DBIterator;
 import org.joda.time.DateTime;
@@ -71,7 +68,7 @@ public class LevelDBDaoImpl implements LevelDBDao {
 
 
     /**
-     * 1、Calculate headerValue and save key='000000', headerValue=SHA256 (record, Vn-1).
+     * 1、Calculate headerValue and save key='000000', headerValue=CryptoUtils (record, Vn-1).
      * 2、Protocal buffer serializer value, calculate key=HASH (value), save records, value=param|Ts|prev_hash
      * 3、save flag
      *

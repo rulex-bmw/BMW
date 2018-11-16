@@ -1,0 +1,10 @@
+package com.rulex.bsb.pojo;
+option optimize_for = LITE_RUNTIME;
+option java_outer_classname = "Encoding";
+
+message ecies {
+   optional bytes iv = 1;
+   optional bytes ephemPublicKey = 2;
+   optional bytes ciphertext = 3;
+   optional bytes mac = 4;
+}
