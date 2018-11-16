@@ -205,7 +205,7 @@ public class DeckDealer {
         }
         boolean flag = ECDSA.verify(salt, pk, "SHA1withECDSA", sig);
         //验证签名失败，抛出异常
-        if (flag == true) {
+        if (flag == false) {
             throw new DataException("Signature verification failed");
         }
 
@@ -223,13 +223,15 @@ public class DeckDealer {
         }
 
         //生成新的seed
-        seed = Arrays.copyOf(seed, seed.length + sig.length);
-        System.arraycopy(sig, 0, seed, seed.length, sig.length);
+        int length = seed.length;
+        seed = Arrays.copyOf(seed, length + sig.length);
+        System.arraycopy(sig, 0, seed, length, sig.length);
         seed = SHA256.getSHA256Bytes(seed);
         seed = ECDSA.sign(seed, dsk, "SHA1withECDSA");
         salts.put(pkStr, SHA256.getSHA256Bytes(seed));
 
         return SHA256.getSHA256Bytes(seed);
+
     }
 
 
