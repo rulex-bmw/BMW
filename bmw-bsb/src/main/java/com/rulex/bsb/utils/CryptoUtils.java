@@ -1,16 +1,7 @@
 package com.rulex.bsb.utils;
 
-import com.google.common.io.BaseEncoding;
 import com.google.protobuf.ByteString;
 import com.rulex.bsb.pojo.Encoding;
-import org.bouncycastle.jce.ECNamedCurveTable;
-import org.bouncycastle.jce.interfaces.ECPrivateKey;
-import org.bouncycastle.jce.interfaces.ECPublicKey;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
-import org.bouncycastle.jce.spec.ECParameterSpec;
-import org.bouncycastle.jce.spec.ECPublicKeySpec;
-import org.bouncycastle.math.ec.ECPoint;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -151,6 +142,11 @@ public class CryptoUtils {
 //        KeyPair pair = CryptoUtils.generatorKeyPair("EC", "secp256k1");
 //        PublicKey aPublic = pair.getPublic();
 //        PrivateKey aPrivate = pair.getPrivate();
+//        System.out.println("java.security genneratory：");
+//        System.out.println("privateKey: " + Arrays.toString(aPrivate.getEncoded()));
+//        System.out.println("publicKey: " + Arrays.toString(aPublic.getEncoded()));
+
+
 //        String msg = "hello world ECIES!";
 //        byte[] obj = CryptoUtils.ECDHEncrypt(aPublic.getEncoded(), msg);
 //        System.out.println(obj.length);
@@ -260,8 +256,6 @@ public class CryptoUtils {
 //        } else { return false; }
 
 
-
-
 //        ECNamedCurveParameterSpec ecncp = ECNamedCurveTable.getParameterSpec("secp256k1");
 //        KeyPairGenerator kp = KeyPairGenerator.getInstance("ECDH", "BC");
 //        kp.initialize(ecncp, new SecureRandom());
@@ -274,13 +268,14 @@ public class CryptoUtils {
 //
 //
         // Generate Keys
-        Security.addProvider(new BouncyCastleProvider());
-        ECGenParameterSpec ecGenSpec = new ECGenParameterSpec("secp256k1");
-        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("ECDSA", "BC");
-        keyPairGenerator.initialize(ecGenSpec, new SecureRandom());
-        java.security.KeyPair pair = keyPairGenerator.generateKeyPair();
-        ECPrivateKey privateKey = (ECPrivateKey) pair.getPrivate();
+//        Security.addProvider(new BouncyCastleProvider());
+//        ECGenParameterSpec ecGenSpec = new ECGenParameterSpec("secp256k1");
+//        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("ECDSA", "BC");
+//        keyPairGenerator.initialize(ecGenSpec, new SecureRandom());
+//        java.security.KeyPair pair = keyPairGenerator.generateKeyPair();
+//        ECPrivateKey privateKey = (ECPrivateKey) pair.getPrivate();
 //        ECPublicKey publicKeyExpected = (ECPublicKey) pair.getPublic();
+//        System.out.println("bouncy castle gennerator:");
 //        System.out.println(Arrays.toString(publicKeyExpected.getEncoded()));
 //        PublicKey pk = publicKeyExpected;
 //        System.out.println(Arrays.toString(pk.getEncoded()));
@@ -291,19 +286,19 @@ public class CryptoUtils {
 //                BaseEncoding.base64Url().encode(publicKeyExpected.getEncoded()));
 //
 // Generate public key from private key
-        KeyFactory keyFactory = KeyFactory.getInstance("ECDH", "BC");
-        ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec("secp256k1");
-
-        ECPoint Q = ecSpec.getG().multiply(privateKey.getD());
-        byte[] publicDerBytes = Q.getEncoded(false);
-
-        ECPoint point = ecSpec.getCurve().decodePoint(publicDerBytes);
-        ECPublicKeySpec pubSpec = new ECPublicKeySpec(point, ecSpec);
-        ECPublicKey publicKeyGenerated = (ECPublicKey) keyFactory.generatePublic(pubSpec);
-
-// Generated public key from private key
-        System.out.print("Generated Public Key: " +
-                BaseEncoding.base64Url().encode(publicKeyGenerated.getEncoded()));
+//        KeyFactory keyFactory = KeyFactory.getInstance("ECDH", "BC");
+//        ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec("secp256k1");
+//
+//        ECPoint Q = ecSpec.getG().multiply(privateKey.getD());
+//        byte[] publicDerBytes = Q.getEncoded(false);
+//
+//        ECPoint point = ecSpec.getCurve().decodePoint(publicDerBytes);
+//        ECPublicKeySpec pubSpec = new ECPublicKeySpec(point, ecSpec);
+//        ECPublicKey publicKeyGenerated = (ECPublicKey) keyFactory.generatePublic(pubSpec);
+//
+//// Generated public key from private key
+//        System.out.print("Generated Public Key: " +
+//                BaseEncoding.base64Url().encode(publicKeyGenerated.getEncoded()));
 
 
     }
