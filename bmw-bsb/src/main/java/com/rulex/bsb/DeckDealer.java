@@ -269,12 +269,14 @@ public class DeckDealer {
             for (int j = 0; j < 4; j++) {
                 byte[] r = DeckDealer.drawCard(pks.get(j), CryptoUtils.sign(sks.get(j), es.get(j)));
                 es.set(j, CryptoUtils.ECDHDecrypt(sks.get(j), r));
-
-                if (j == 1) {
-
-                    cs.add(CryptoUtils.ECDHDecrypt(sks.get(j), r));
-                }
                 byte[] s = es.get(j);
+
+                if (j == 1 && cs.size() < 6) {
+                    if (i == 1 || i == 3 || i == 5 || i == 6 || i == 9 || i == 10) {
+                        cs.add(s);
+                    }
+                }
+
                 List<Short> c = cbps.get(j);
                 c.add(TypeUtils.byteToUnit8(s[DeckDealer.CARD_INDEX]));
             }
@@ -315,6 +317,18 @@ public class DeckDealer {
         }
         System.out.println("\n");
 
+        cbps.get(1).addAll(lc);
+
+
+        System.out.println("牌抓完了:");
+        for (int i = 0; i < 4; i++) {
+            List<Short> shorts = cbps.get(i);
+            System.out.print(i + 1 + "号玩家牌：");
+            for (Short s : shorts) {
+                System.out.print(cardNames[s] + " ");
+            }
+            System.out.println("\n");
+        }
 
         //还牌
         DeckDealer.returnCards(pks.get(1), ECDSA.sign(es.get(1), sks.get(1), "SHA1withECDSA"), cs);
