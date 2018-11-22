@@ -9,5 +9,6 @@ public class BmwDbaApplication {
 	public static void main(String[] args) {
 
 		SpringApplication.run(BmwDbaApplication.class, args);
+
 	}
 }
