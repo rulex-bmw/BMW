@@ -27,6 +27,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -141,19 +142,23 @@ public class SqlStatementInterceptor implements Interceptor {
     public void setProperties(Properties arg0) {
     }
 
-    public Document readerXML() throws DocumentException {
+    public Document readerXML() throws DocumentException, IOException {
 
         // 读取xml文件
         SAXReader sr = new SAXReader();
         //本地测试使用
 //        File file = new File(SqlStatementInterceptor.class.getResource("/").getPath() + "rulex-condition1.xml");
         //jar包中使用
-        File file = new File(SqlStatementInterceptor.class.getClassLoader().getResource("/").getPath() + "rulex-condition1.xml");
-        Document doc = sr.read(file);
+//        File file = new File(SqlStatementInterceptor.class.getClassLoader().getResource("/").getPath() + "rulex-condition1.xml");
+//        Document doc = sr.read(file);
+
+        InputStream inputStream = SqlStatementInterceptor.class.getClassLoader().getResourceAsStream("xml/rulex-condition.xml");
+        Document doc = sr.read(inputStream);
+        inputStream.close();
         return doc;
     }
 
-    public void parseXML() throws DocumentException {
+    public void parseXML() throws DocumentException, IOException {
         sourceList = new ArrayList<>();
         Document doc = readerXML();
         //解析根节点

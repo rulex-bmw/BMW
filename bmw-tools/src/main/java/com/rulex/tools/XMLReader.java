@@ -6,10 +6,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 
 import static org.fusesource.leveldbjni.JniDBFactory.bytes;
@@ -20,12 +17,13 @@ public class XMLReader {
 //    public static List<List<Map<String,Object>>>
 
 
-    public Document readerXML() throws DocumentException {
+    public Document readerXML() throws DocumentException, IOException {
 
         // 读取xml文件
         SAXReader sr = new SAXReader();
-        File file = new File(PathSet.xmlPath + "pojo.xml");
-        Document doc = sr.read(file);
+        InputStream is = XMLReader.class.getClassLoader().getResourceAsStream("entity/pojo.xml");
+        Document doc = sr.read(is);
+        is.close();
         return doc;
     }
 

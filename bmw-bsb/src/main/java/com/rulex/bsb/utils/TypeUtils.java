@@ -124,7 +124,7 @@ public class TypeUtils {
     public static byte[] double2Bytes(double d) {
         long value = Double.doubleToRawLongBits(d);
         byte[] byteRet = new byte[8];
-        for(int i = 0; i < 8; i++) {
+        for (int i = 0; i < 8; i++) {
             byteRet[i] = (byte) ((value >> 8 * i) & 0xff);
         }
         return byteRet;
@@ -133,14 +133,137 @@ public class TypeUtils {
 
     public static double bytes2Double(byte[] arr) {
         long value = 0;
-        for(int i = 0; i < 8; i++) {
+        for (int i = 0; i < 8; i++) {
             value |= ((long) (arr[i] & 0xff)) << (8 * i);
         }
         return Double.longBitsToDouble(value);
     }
 
+
+    /**
+     * 首字母转大写
+     *
+     * @param lower
+     * @return String
+     */
     public static String InitialsLow2Up(String lower) {
         return lower.substring(0, 1).toUpperCase() + lower.substring(1);
+    }
+
+
+    /**
+     * 把字节数组转换成16进制字符串
+     *
+     * @param bArray
+     * @return
+     */
+    public static final String bytesToHexString(byte[] bArray) {
+        StringBuffer sb = new StringBuffer(bArray.length);
+        String sTemp;
+        for(int i = 0; i < bArray.length; i++) {
+            sTemp = Integer.toHexString(0xFF & bArray[i]);
+            if (sTemp.length() < 2)
+                sb.append(0);
+            sb.append(sTemp.toUpperCase());
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 把16进制字符串转换成字节数组
+     *
+     * @param hex
+     * @return
+     */
+    public static byte[] hexStringToByte(String hex) {
+        if (hex.length() % 2 != 0) {
+            hex = "0" + hex;
+        }
+        int len = (hex.length() / 2);
+        byte[] result = new byte[len];
+        char[] achar = hex.toCharArray();
+        for(int i = 0; i < len; i++) {
+            int pos = i * 2;
+            result[i] = (byte) (toByte(achar[pos]) << 4 | toByte(achar[pos + 1]));
+        }
+        return result;
+    }
+
+    private static byte toByte(char c) {
+        byte b = (byte) "0123456789ABCDEF".indexOf(c);
+        return b;
+    }
+
+
+    /**
+     * short到字节数组的转换.
+     */
+    public static byte[] shortToByte(short number) {
+        int temp = number;
+        byte[] b = new byte[2];
+        for(int i = 0; i < b.length; i++) {
+            b[i] = new Integer(temp & 0xff).byteValue();// 将最低位保存在最低位
+            temp = temp >> 8;// 向右移8位
+        }
+        return b;
+    }
+
+
+    /**
+     * 字节数组到short的转换.
+     */
+    public static short byteToShort(byte[] b) {
+        short s = 0;
+        short s0 = (short) (b[0] & 0xff);// 最低位
+        short s1 = (short) (b[1] & 0xff);
+        s1 <<= 8;
+        s = (short) (s0 | s1);
+        return s;
+    }
+
+    /**
+     * uint8到字节数组的转换.
+     */
+    public static byte uint8ToByte(short number) {
+        return  new Integer(number & 0xff).byteValue();
+    }
+
+    /**
+     * 字节数组到uint8的转换.
+     */
+    public static short byteToUnit8(byte b) {
+        return (short) (b & 0xff);
+    }
+
+
+    /**
+     * 8位数
+     *
+     * @param s
+     * @return
+     */
+    public static short getUint8(short s) {
+        return (short) (s & 0x00ff);
+    }
+
+    /**
+     * 16位数
+     *
+     * @param i
+     * @return
+     */
+    public static int getUint16(int i) {
+        return i & 0x0000ffff;
+    }
+
+    /**
+     * 32位数
+     *
+     * @param l
+     * @return
+     */
+    public static long getUint32(long l) {
+        return l & 0x00000000ffffffff;
     }
 
 }
