@@ -142,7 +142,7 @@ public class SqlStatementInterceptor implements Interceptor {
     public void setProperties(Properties arg0) {
     }
 
-    public Document readerXML() throws DocumentException {
+    public Document readerXML() throws DocumentException, IOException {
 
         // 读取xml文件
         SAXReader sr = new SAXReader();
@@ -154,11 +154,11 @@ public class SqlStatementInterceptor implements Interceptor {
 
         InputStream inputStream = SqlStatementInterceptor.class.getClassLoader().getResourceAsStream("xml/rulex-condition.xml");
         Document doc = sr.read(inputStream);
-
+        inputStream.close();
         return doc;
     }
 
-    public void parseXML() throws DocumentException {
+    public void parseXML() throws DocumentException, IOException {
         sourceList = new ArrayList<>();
         Document doc = readerXML();
         //解析根节点
