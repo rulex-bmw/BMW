@@ -4,31 +4,22 @@ import com.google.protobuf.ByteString;
 import com.rulex.bsb.pojo.DataBean;
 import com.rulex.bsb.service.BSBService;
 import com.rulex.bsb.service.BSBServiceImpl;
-import com.rulex.bsb.utils.TypeUtils;
-import com.rulex.dsm.bean.Field;
 import com.rulex.dsm.bean.Source;
-import com.rulex.dsm.pojo.DataTypes;
+import com.rulex.dsm.service.InsertService;
+import com.rulex.dsm.utils.XmlUtil;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.update.Update;
-import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.executor.statement.RoutingStatementHandler;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.plugin.*;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringReader;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +33,7 @@ public class SqlStatementInterceptor implements Interceptor {
 
     CCJSqlParserManager parser = new CCJSqlParserManager();
 
-    private List<Source> sourceList;
+    private List<Source> sourceList = new ArrayList<>();
 
     /**
      * 拦截器执行方法
@@ -58,7 +49,7 @@ public class SqlStatementInterceptor implements Interceptor {
         try {
             //获取拦截规则
             if (null == sourceList) {
-                parseXML();
+                sourceList = XmlUtil.parseXML();
             }
             net.sf.jsqlparser.statement.Statement stmt = parser.parse(new StringReader(boundSql.getSql()));
             boolean t = false;
@@ -84,7 +75,7 @@ public class SqlStatementInterceptor implements Interceptor {
             }
             if (t) {
                 //获取payload
-                byte[] payload = judge(boundSql, tablename, column, sourceList);
+                byte[] payload = InsertService.judge(boundSql, tablename, column, sourceList);
                 if (payload != null) {
                     //调用bsb执行上链
                     DataBean.Data data = DataBean.Data.newBuilder().setParam(ByteString.copyFrom(payload)).build();
@@ -137,173 +128,5 @@ public class SqlStatementInterceptor implements Interceptor {
     public void setProperties(Properties arg0) {
     }
 
-    public Document readerXML() throws DocumentException, IOException {
 
-        // 读取xml文件
-        SAXReader sr = new SAXReader();
-        //本地测试使用
-//        File file = new File(SqlStatementInterceptor.class.getResource("/").getPath() + "rulex-condition1.xml");
-
-        InputStream inputStream = SqlStatementInterceptor.class.getClassLoader().getResourceAsStream("xml/rulex-condition.xml");
-        Document doc = sr.read(inputStream);
-        inputStream.close();
-        return doc;
-    }
-
-    public void parseXML() throws DocumentException, IOException {
-        sourceList = new ArrayList<>();
-        //解析source节点
-        List<Element> sources = readerXML().getRootElement().elements("source");
-        if (sources == null) {
-            return;
-        }
-        for(Element s : sources) {
-            Source source = new Source();
-            source.setName(TypeUtils.InitialsLow2Up(s.attribute("name").getValue()));
-            source.setGroupable(Boolean.valueOf(s.attributeValue("groupable")));
-            source.setTable(s.attributeValue("table"));
-            source.setPojo(s.attributeValue("pojo"));
-            List<Field> field = new ArrayList<>();
-            List<Element> fields = s.elements();
-            for(Element f : fields) {
-                Field fi = new Field();
-                fi.setName(f.attributeValue("name"));
-                fi.setColumn(f.attributeValue("column"));
-                String isnull = f.attributeValue("isnull");
-                fi.setIsnull((isnull.equals("false") || StringUtils.isBlank(isnull)) ? false : true);
-                String type = f.attributeValue("type");
-                fi.setType(type);
-                if (type.equals("Integer") || type.equals("Long") || type.equals("Float") || type.equals("Double")) {
-                    String maxvalue = f.attributeValue("maxvalue");
-                    String minvalue = f.attributeValue("minvalue");
-                    if (!StringUtils.isBlank(maxvalue)) fi.setMaxvalue(maxvalue);
-                    if (!StringUtils.isBlank(minvalue)) fi.setMinvalue(minvalue);
-                } else if (type.equals("String")) {
-                    String maxsize = f.attributeValue("maxsize");
-                    String minsize = f.attributeValue("minsize");
-                    if (!StringUtils.isBlank(maxsize)) fi.setMaxsize(Integer.valueOf(maxsize));
-                    if (!StringUtils.isBlank(minsize)) fi.setMinsize(Integer.valueOf(minsize));
-                }
-                String length = f.attributeValue("length");
-                if (!StringUtils.isBlank(length)) fi.setLength(Integer.valueOf(length));
-                String transforable = f.attributeValue("transforable");
-                fi.setTransforable(transforable.equals("false") || StringUtils.isBlank(transforable) ? false : true);
-                field.add(fi);
-            }
-            source.setFields(field);
-            sourceList.add(source);
-        }
-    }
-
-
-    /**
-     * 拦截判断，生成payload
-     *
-     * @param boundSql   获取参数
-     * @param tableName  数据库表名
-     * @param columnName 数据库字段名
-     * @param sources    xml解析拦截对象
-     * @return byte[] 返回payload值
-     */
-    public byte[] judge(BoundSql boundSql, String tableName, List<String> columnName, List<Source> sources) throws Exception {
-
-        for(Source source : sources) {
-            //根据tableName，获取对应的source
-            if (source.getTable().equals(tableName)) {
-                Class clazz = Class.forName("com.rulex.tools.pojo.RulexBean");
-//                Class clazz = RulexBean.class;
-                //反射获取RulexBean的内部类
-                Class innerClazz1[] = clazz.getDeclaredClasses();
-                for(Class Class1 : innerClazz1) {
-                    //获取表对应的内部类
-                    if (Class1.getSimpleName().equals(TypeUtils.InitialsLow2Up(source.getName()))) {
-
-                        //获取当前表对应的Builder对象
-                        Method newBuilder = Class1.getMethod("newBuilder");
-                        Constructor con = Class1.getDeclaredConstructor();
-                        con.setAccessible(true);
-                        Object obj1 = con.newInstance();
-                        Object builder = newBuilder.invoke(obj1);
-                        //得到Builder类
-                        Class Class2 = builder.getClass();
-
-                        //判断执行sql的Parameter值，将符合的值加入payload中
-                        SqlStatementInterceptor ssi = new SqlStatementInterceptor();
-                        builder = ssi.processParam(boundSql, columnName, source, Class2, builder);
-
-                        //执行Builder对象的build方法
-                        Method method2 = Class2.getMethod("build");
-                        Object message = method2.invoke(builder);
-
-                        //执行RulexBean内部类对象的toByteArray方法
-                        Method toByte = Class1.getMethod("toByteArray");
-                        byte[] payload = (byte[]) toByte.invoke(message);
-
-                        return payload;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * 处理 Parameter值
-     *
-     * @param boundSql     获取参数
-     * @param columnNames  数据库表名
-     * @param source       xml解析拦截对象
-     * @param builderClass Builder类
-     * @param builder      Builder对象
-     * @return Object 处理后的Builder对象
-     */
-    public Object processParam(BoundSql boundSql, List<String> columnNames, Source source, Class builderClass, Object builder) throws Exception {
-
-        Object parameter = boundSql.getParameterObject();
-        Class clazz = parameter.getClass();
-        //如果执行sql的方法参数类型是对象
-        if (Class.forName(source.getPojo()) == clazz) {
-
-            for(String columnName : columnNames) {
-                for(Field field : source.getFields()) {
-
-                    if (columnName.equals(field.getColumn())) {
-
-                        String fieldName = TypeUtils.InitialsLow2Up(field.getName());
-                        Method method = clazz.getMethod("get" + fieldName);
-                        Object value = method.invoke(parameter);
-
-                        if (DataTypes.wrapper_Int.getName().equals(field.getType()) || DataTypes.primeval_int.getName().equals(field.getType())) {
-                            Method method2 = builderClass.getMethod("set" + fieldName, int.class);
-                            method2.invoke(builder, (int) value);
-                        } else if (DataTypes.wrapper_Long.getName().equals(field.getType()) || DataTypes.primeval_long.getName().equals(field.getType())) {
-                            Method method2 = builderClass.getMethod("set" + fieldName, long.class);
-                            method2.invoke(builder, (long) value);
-                        } else if (DataTypes.wrapper_Double.getName().equals(field.getType()) || DataTypes.primeval_double.getName().equals(field.getType())) {
-                            Method method2 = builderClass.getMethod("set" + fieldName, double.class);
-                            method2.invoke(builder, (double) value);
-                        } else if (DataTypes.wrapper_Float.getName().equals(field.getType()) || DataTypes.primeval_float.getName().equals(field.getType())) {
-                            Method method2 = builderClass.getMethod("set" + fieldName, float.class);
-                            method2.invoke(builder, (float) value);
-                        } else if (DataTypes.primeval_string.getName().equals(field.getType())) {
-                            Method method2 = builderClass.getMethod("set" + fieldName, String.class);
-                            method2.invoke(builder, (String) value);
-                        } else if (DataTypes.primeval_boolean.getName().equals(field.getType())) {
-                            Method method2 = builderClass.getMethod("set" + fieldName, boolean.class);
-                            method2.invoke(builder, (boolean) value);
-                        } else if (DataTypes.primeval_ByteString.getName().equals(field.getType())) {
-                            Method method2 = builderClass.getMethod("set" + fieldName, ByteString.class);
-                            method2.invoke(builder, (ByteString) value);
-                        }
-                    }
-                }
-            }
-            return builder;
-            //如果执行sql的方法参数类型是map
-        } else if (parameter instanceof java.util.HashMap) {
-            return null;
-        } else {
-            return null;
-        }
-    }
 }
