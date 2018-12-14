@@ -4,11 +4,11 @@ import java.util.List;
 
 public class Source {
 
-    private String name;
-    private String pojo;
-    private String table;
-    private Boolean groupable;
-    private List<Field> fields;
+    private String name;    // pojo名称
+    private String pojo;    // pojo具体路径
+    private String table;   // 表名
+    private Boolean groupable;  // 是否可合并
+    private List<Field> fields; // 成员变量
 
     public String getName() {
         return name;

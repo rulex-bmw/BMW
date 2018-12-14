@@ -26,6 +26,7 @@ public class LevelDBUtil {
 
     /**
      * Connect to the LevelDB database
+     * @return 数据库连接
      */
     public static DB getDataDB() {
 

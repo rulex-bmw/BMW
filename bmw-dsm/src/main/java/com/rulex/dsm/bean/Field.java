@@ -2,16 +2,16 @@ package com.rulex.dsm.bean;
 
 public class Field {
 
-    private String name;
-    private String type;
-    private String column;
-    private Boolean isnull;
-    private Boolean transforable;
-    private Integer maxsize;
-    private Integer minsize;
-    private String maxvalue;
-    private String minvalue;
-    private Integer length;
+    private String name;    // 成员变量名称
+    private String type;    // 数据类型
+    private String column;  // 列名
+    private Boolean isnull; //是否为空
+    private Boolean transforable;   // 是否可变
+    private Integer maxsize;    // 最大长度
+    private Integer minsize;    // 最小长度
+    private String maxvalue;    // 最大值
+    private String minvalue;    // 最小值
+    private Integer length;     // 长度
 
     public String getName() {
         return name;

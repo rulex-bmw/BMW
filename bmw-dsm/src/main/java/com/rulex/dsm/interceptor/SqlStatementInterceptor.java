@@ -10,7 +10,6 @@ import com.rulex.dsm.bean.Source;
 import com.rulex.dsm.pojo.DataTypes;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.schema.Column;
-import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.update.Update;
@@ -25,7 +24,6 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -43,6 +41,7 @@ public class SqlStatementInterceptor implements Interceptor {
     private BSBService bsbService = new BSBServiceImpl();
 
     CCJSqlParserManager parser = new CCJSqlParserManager();
+
     private List<Source> sourceList;
 
     /**
@@ -53,26 +52,23 @@ public class SqlStatementInterceptor implements Interceptor {
      */
     @Override
     public Object intercept(Invocation invocation) throws IOException {
-        //target目标对象
+        //拦截执行sql
         RoutingStatementHandler target = (RoutingStatementHandler) invocation.getTarget();
         BoundSql boundSql = target.getBoundSql();
-        String sql = boundSql.getSql();
-        //解析sql获取table和column
-        String tablename = null;
-        List<String> column = new ArrayList<>();
         try {
-            //解析xml获取list<source>
+            //获取拦截规则
             if (null == sourceList) {
                 parseXML();
             }
-            net.sf.jsqlparser.statement.Statement stmt = parser.parse(new StringReader(sql));
+            net.sf.jsqlparser.statement.Statement stmt = parser.parse(new StringReader(boundSql.getSql()));
             boolean t = false;
+            String tablename = null;
+            List<String> column = new ArrayList<>();
             if (stmt instanceof Insert) {
                 Insert insert = (Insert) stmt;
-                Table table = insert.getTable();
-                tablename = table.getName();
+                tablename = insert.getTable().getName();
                 for(Source source : sourceList) {
-                    if (source.getTable().equalsIgnoreCase(table.getName())) {
+                    if (source.getTable().equalsIgnoreCase(tablename)) {
                         t = true;
                     }
                 }
@@ -87,12 +83,11 @@ public class SqlStatementInterceptor implements Interceptor {
 
             }
             if (t) {
-                System.out.println(boundSql + "-------" + tablename + "-----" + column + "-----" + sourceList);
                 //获取payload
-                byte[] judge = judge(boundSql, tablename, column, sourceList);
-                if (judge != null) {
+                byte[] payload = judge(boundSql, tablename, column, sourceList);
+                if (payload != null) {
                     //调用bsb执行上链
-                    DataBean.Data data = DataBean.Data.newBuilder().setParam(ByteString.copyFrom(judge)).build();
+                    DataBean.Data data = DataBean.Data.newBuilder().setParam(ByteString.copyFrom(payload)).build();
                     bsbService.producer(data);
                     bsbService.customer();
                 }
@@ -148,9 +143,6 @@ public class SqlStatementInterceptor implements Interceptor {
         SAXReader sr = new SAXReader();
         //本地测试使用
 //        File file = new File(SqlStatementInterceptor.class.getResource("/").getPath() + "rulex-condition1.xml");
-        //jar包中使用
-//        File file = new File(SqlStatementInterceptor.class.getClassLoader().getResource("/").getPath() + "rulex-condition1.xml");
-//        Document doc = sr.read(file);
 
         InputStream inputStream = SqlStatementInterceptor.class.getClassLoader().getResourceAsStream("xml/rulex-condition.xml");
         Document doc = sr.read(inputStream);
@@ -160,70 +152,42 @@ public class SqlStatementInterceptor implements Interceptor {
 
     public void parseXML() throws DocumentException, IOException {
         sourceList = new ArrayList<>();
-        Document doc = readerXML();
-        //解析根节点
-        Element root = doc.getRootElement();
-        //解析record节点
-        List<Element> sources = root.elements("source");
+        //解析source节点
+        List<Element> sources = readerXML().getRootElement().elements("source");
         if (sources == null) {
             return;
         }
         for(Element s : sources) {
             Source source = new Source();
-            String name = s.attribute("name").getValue();
-            name = name.substring(0, 1).toUpperCase() + name.substring(1);
-            source.setName(name);
-            String groupable = s.attributeValue("groupable");
-            source.setGroupable(Boolean.valueOf(groupable));
-            String table = s.attributeValue("table");
-            source.setTable(table);
-            String pojo = s.attributeValue("pojo");
-            source.setPojo(pojo);
+            source.setName(TypeUtils.InitialsLow2Up(s.attribute("name").getValue()));
+            source.setGroupable(Boolean.valueOf(s.attributeValue("groupable")));
+            source.setTable(s.attributeValue("table"));
+            source.setPojo(s.attributeValue("pojo"));
             List<Field> field = new ArrayList<>();
             List<Element> fields = s.elements();
-            String paramName;
-            String isnull;
-            String type;
-            String maxvalue;
-            String minvalue;
-            String maxsize;
-            String minsize;
-            String transforable;
-            String length;
-            String column;
             for(Element f : fields) {
                 Field fi = new Field();
-                paramName = f.attributeValue("name");
-                fi.setName(paramName);
-                column = f.attributeValue("column");
-                fi.setColumn(column);
-                isnull = f.attributeValue("isnull");
-                if (isnull.equals("false") || StringUtils.isBlank(isnull)) {//不填或false表示不能为空
-                    fi.setIsnull(false);
-                } else {//表示可以为空
-                    fi.setIsnull(Boolean.valueOf(isnull));
-                }
-                type = f.attributeValue("type");
+                fi.setName(f.attributeValue("name"));
+                fi.setColumn(f.attributeValue("column"));
+                String isnull = f.attributeValue("isnull");
+                fi.setIsnull((isnull.equals("false") || StringUtils.isBlank(isnull)) ? false : true);
+                String type = f.attributeValue("type");
                 fi.setType(type);
                 if (type.equals("Integer") || type.equals("Long") || type.equals("Float") || type.equals("Double")) {
-                    maxvalue = f.attributeValue("maxvalue");
-                    minvalue = f.attributeValue("minvalue");
-                    fi.setMaxvalue(maxvalue);
-                    fi.setMinvalue(minvalue);
+                    String maxvalue = f.attributeValue("maxvalue");
+                    String minvalue = f.attributeValue("minvalue");
+                    if (!StringUtils.isBlank(maxvalue)) fi.setMaxvalue(maxvalue);
+                    if (!StringUtils.isBlank(minvalue)) fi.setMinvalue(minvalue);
                 } else if (type.equals("String")) {
-                    maxsize = f.attributeValue("maxsize");
-                    minsize = f.attributeValue("minsize");
+                    String maxsize = f.attributeValue("maxsize");
+                    String minsize = f.attributeValue("minsize");
                     if (!StringUtils.isBlank(maxsize)) fi.setMaxsize(Integer.valueOf(maxsize));
                     if (!StringUtils.isBlank(minsize)) fi.setMinsize(Integer.valueOf(minsize));
                 }
-                length = f.attributeValue("length");
+                String length = f.attributeValue("length");
                 if (!StringUtils.isBlank(length)) fi.setLength(Integer.valueOf(length));
-                transforable = f.attributeValue("transforable");
-                if (!StringUtils.isBlank(transforable)) {
-                    fi.setTransforable(Boolean.valueOf(transforable));
-                } else {
-                    fi.setTransforable(false);
-                }
+                String transforable = f.attributeValue("transforable");
+                fi.setTransforable(transforable.equals("false") || StringUtils.isBlank(transforable) ? false : true);
                 field.add(fi);
             }
             source.setFields(field);

@@ -1,3 +1,4 @@
+<!--拦截规则和数据库信息-->
 <configuration version="1.0">
     <source name="UserCount" groupable="true" table="user_count" pojo="cn.javaex.uscat.view.UserCount">
         <field name="userId" column="user_id" type="String" isnull="false" transforable="true" length="11"></field>

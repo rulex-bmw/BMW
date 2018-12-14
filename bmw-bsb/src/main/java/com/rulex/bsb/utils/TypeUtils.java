@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 
 public class TypeUtils {
 
@@ -172,27 +173,33 @@ public class TypeUtils {
     /**
      * 把16进制字符串转换成字节数组
      *
-     * @param hex
+     * @param
      * @return
      */
-    public static byte[] hexStringToByte(String hex) {
-        if (hex.length() % 2 != 0) {
-            hex = "0" + hex;
+    public static byte[] hexStringToByte(String inHex) {
+        int hexlen = inHex.length();
+        byte[] result;
+        if (hexlen % 2 == 1) {
+            //奇数
+            hexlen++;
+            result = new byte[(hexlen / 2)];
+            inHex = "0" + inHex;
+        } else {
+            //偶数
+            result = new byte[(hexlen / 2)];
         }
-        int len = (hex.length() / 2);
-        byte[] result = new byte[len];
-        char[] achar = hex.toCharArray();
-        for(int i = 0; i < len; i++) {
-            int pos = i * 2;
-            result[i] = (byte) (toByte(achar[pos]) << 4 | toByte(achar[pos + 1]));
+        int j = 0;
+        for(int i = 0; i < hexlen; i += 2) {
+            result[j] = hexToByte(inHex.substring(i, i + 2));
+            j++;
         }
         return result;
     }
 
-    private static byte toByte(char c) {
-        byte b = (byte) "0123456789ABCDEF".indexOf(c);
-        return b;
+    public static byte hexToByte(String inHex) {
+        return (byte) Integer.parseInt(inHex, 16);
     }
+
 
 
     /**
@@ -265,5 +272,41 @@ public class TypeUtils {
     public static long getUint32(long l) {
         return l & 0x00000000ffffffff;
     }
+
+    /**
+     * 合并数组
+     *
+     * @param arrays
+     * @return
+     */
+    public static byte[] concatByteArrays(byte[][] arrays) {
+        int tl = 0;
+        for(byte[] bytes : arrays) {
+            tl += bytes.length;
+        }
+        byte[] r = new byte[tl];
+
+        int i = 0;
+        for(byte[] bytes : arrays) {
+            System.arraycopy(bytes, 0, r, i, bytes.length);
+            i += bytes.length;
+        }
+
+        return r;
+    }
+
+    /**
+     * 输出数组从最后开始指定n长度的数组
+     *
+     * @param src
+     * @param n
+     * @return
+     */
+    public static byte[] lastNBytes(byte[] src, int n) {
+        byte[] prefix = new byte[src.length < n ? n - src.length : 0];
+        byte[] postfix = Arrays.copyOfRange(src, src.length - (src.length > n ? n : src.length), src.length);
+        return concatByteArrays(new byte[][]{prefix, postfix});
+    }
+
 
 }

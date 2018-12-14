@@ -1,3 +1,4 @@
+<!--用于生成protobuf-->
 <schema version="1.0">
     <record name="UserCount" groupable="false">
         <field name="userId" type="String" isnull="false"></field>

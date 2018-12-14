@@ -11,15 +11,20 @@ import java.util.List;
 
 import static org.fusesource.leveldbjni.JniDBFactory.bytes;
 
-
+/**
+ *
+ */
 public class XMLReader {
 
-//    public static List<List<Map<String,Object>>>
 
-
-    public Document readerXML() throws DocumentException, IOException {
-
-        // 读取xml文件
+    /**
+     * 读取用户设置的xml文件
+     *
+     * @return document xml文档对象
+     * @throws DocumentException
+     * @throws IOException
+     */
+    public static Document readerXML() throws DocumentException, IOException {
         SAXReader sr = new SAXReader();
         InputStream is = XMLReader.class.getClassLoader().getResourceAsStream("entity/pojo.xml");
         Document doc = sr.read(is);
@@ -29,20 +34,16 @@ public class XMLReader {
 
 
     /**
-     * 解析xml文件
+     * 解析xml文件，输出proto文件
      *
      * @throws DocumentException
      * @throws IOException
      */
     public static void parse() throws DocumentException, IOException {
-        XMLReader xmlReader = new XMLReader();
-        Document doc = xmlReader.readerXML();
         File file = new File(PathSet.xmlPath + "pojo.proto");
-        String protocol = String.format("package %1$s;\noption java_outer_classname = %2$s;", PathSet.packagePath, "\"RulexBean\"");
-        //解析根节点
-        Element root = doc.getRootElement();
+        String proto = String.format("package %1$s;\noption java_outer_classname = %2$s;", PathSet.packagePath, "\"RulexBean\"");
         //解析record节点
-        List<Element> records = root.elements("record");
+        List<Element> records = readerXML().getRootElement().elements("record");
         if (records == null) {
             return;
         }
@@ -52,69 +53,47 @@ public class XMLReader {
                 throw new RuntimeException("record名称不能为空");
             }
             name = name.substring(0, 1).toUpperCase() + name.substring(1);
-            protocol += "\nmessage " + name + " {";
-            String groupable = record.attributeValue("groupable");
+            proto += "\nmessage " + name + " {";
             //可合并
-            if (groupable.equals("true")) {
+            if (record.attributeValue("groupable").equals("true")) {
 
                 //不合并
             } else {
                 List<Element> fields = record.elements();
-                String paramName;
-                String isnull;
-                String type;
-                String maxvalue;
-                String minvalue;
-                String maxsize;
-                String minsize;
-                String transforable;
-                String length;
                 int i = 0;
                 for(Element field : fields) {
-                    isnull = field.attributeValue("isnull");
-                    paramName = field.attributeValue("name");
+                    String paramName = field.attributeValue("name");
                     if (StringUtils.isBlank(paramName)) {
                         continue;
                     }
+                    String isnull = field.attributeValue("isnull");
                     if (isnull.equals("") || isnull.equals("false")) {//不填或false表示不能为空
-                        protocol += "\n\trequired ";
+                        proto += "\n\trequired ";
                     } else {//表示可以为空
-                        protocol += "\n\toptional ";
+                        proto += "\n\toptional ";
                     }
-                    type = field.attributeValue("type");
+                    String type = field.attributeValue("type");
                     if (type.equals("Integer")) {
-//                        maxvalue = field.attributeValue("maxvalue");
-//                        minvalue = field.attributeValue("minvalue");
-                        protocol += "int32 ";
+                        proto += "int32 ";
                     } else if (type.equals("Long")) {
-//                        maxvalue = field.attributeValue("maxvalue");
-//                        minvalue = field.attributeValue("minvalue");
-                        protocol += "int64 ";
+                        proto += "int64 ";
                     } else if (type.equals("Float")) {
-//                        maxvalue = field.attributeValue("maxvalue");
-//                        minvalue = field.attributeValue("minvalue");
-                        protocol += "float ";
+                        proto += "float ";
                     } else if (type.equals("Double")) {
-//                        maxvalue = field.attributeValue("maxvalue");
-//                        minvalue = field.attributeValue("minvalue");
-                        protocol += "double ";
+                        proto += "double ";
                     } else if (type.equals("String")) {
-//                        maxsize = field.attributeValue("maxsize");
-//                        minsize = field.attributeValue("minsize");
-                        protocol += "string ";
+                        proto += "string ";
                     }
                     i++;
-                    protocol += paramName + " = " + i + ";";
-//                    length = field.attributeValue("length");
-//                    transforable = field.attributeValue("transforable");
+                    proto += paramName + " = " + i + ";";
                 }
             }
-            protocol += "\n}";
+            proto += "\n}";
         }
         FileOutputStream out = new FileOutputStream(file);
-        out.write(bytes(protocol));
+        out.write(bytes(proto));
         out.close();
-        System.out.println("xml读取完毕");
+        System.out.println("proto文件已生成");
     }
 
 
