@@ -6,7 +6,6 @@ import com.rulex.bsb.utils.DataException;
 import com.rulex.bsb.utils.LevelDBUtil;
 import com.rulex.bsb.utils.SHA256;
 import org.iq80.leveldb.DB;
-import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -39,7 +38,7 @@ public class LevelDBDao {
         //生成创世数据
         try {
             DataBean.Data.Builder origin = DataBean.Data.newBuilder().setPayload(ByteString.copyFrom(CREATION_DATA))
-                    .setTs(new DateTime().toString("yyyyMMddHHmmssSSSS"))
+                    .setTs(System.currentTimeMillis())
                     .setSerial(0);
             byte[] data = origin.build().toByteArray();
             byte[] key = SHA256.getSHA256Bytes(data);
@@ -69,14 +68,13 @@ public class LevelDBDao {
         }
         try {
             //generation timestamp
-            String timestamp = new DateTime().toString("yyyyMMddHHmmssSSSS");
             ByteString p = param.getPayload();
             //获取上一个hash
             DataBean.Position writeposition = DataBean.Position.parseFrom(LevelDBUtil.getMataDB().get(WRITEPOSITION));
             Long s = writeposition.getSerial();
             s++;
             //Set up herderVelue
-            DataBean.Data.Builder record = DataBean.Data.newBuilder().setPayload(p).setTs(timestamp).setSerial(s);
+            DataBean.Data.Builder record = DataBean.Data.newBuilder().setPayload(p).setTs(System.currentTimeMillis()).setSerial(s);
             setHeaderData(record, LevelDBUtil.getDataDB());
             //seek key=HASH(payload,ts,serial,prevHash)
             // Take a hash of data

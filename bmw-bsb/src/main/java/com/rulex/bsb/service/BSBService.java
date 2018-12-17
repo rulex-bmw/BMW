@@ -5,7 +5,6 @@ import com.rulex.bsb.pojo.DataBean;
 import com.rulex.bsb.utils.LevelDBUtil;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -58,7 +57,7 @@ public class BSBService {
                     System.out.println("customer thread id: " + Thread.currentThread().getId() + "\ncustomer run with " + i);
                 }
             }
-            return i;
+            return ++i;
         } finally {
             LevelDBUtil.closeDB();
         }

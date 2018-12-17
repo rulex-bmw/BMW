@@ -28,7 +28,7 @@ public class JfTest {
      * 验证数据完整性
      */
 
-    @Test
+    /*@Test
     public void contextLoads() throws IOException {
 //        Options options = new Options();
 //        factory.destroy(new File("data"), options);
@@ -42,10 +42,10 @@ public class JfTest {
         bsbService.producer(build);
 
 
-    }
+    }*/
 
 
-    @Test
+    /*@Test
     public void xtLoads() throws IOException {
         //查询数据
         Options options = new Options();
@@ -69,7 +69,7 @@ public class JfTest {
         iterator.close();
         dataDB.close();
 
-    }
+    }*/
 
 
 //    @Test
@@ -87,7 +87,7 @@ public class JfTest {
 //
 //    }
 
-    @Test
+    /*@Test
     public void tds() throws IOException {
         Iterator<Map.Entry<String, String>> entries = LevelDBDao.getHashMap().entrySet().iterator();
         while (entries.hasNext()) {
@@ -96,5 +96,5 @@ public class JfTest {
             System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
 
         }
-    }
+    }*/
 }
