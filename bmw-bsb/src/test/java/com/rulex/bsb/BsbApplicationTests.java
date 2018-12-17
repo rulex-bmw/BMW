@@ -6,6 +6,7 @@ import com.rulex.bsb.pojo.DataBean;
 import com.rulex.bsb.service.BSBService;
 import com.rulex.bsb.service.Verify;
 import com.rulex.bsb.utils.LevelDBUtil;
+import com.rulex.bsb.utils.TypeUtils;
 import org.iq80.leveldb.DBIterator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,14 +37,15 @@ public class BsbApplicationTests {
         int i = 0;
         for(iterator.seekToFirst(); iterator.hasNext(); iterator.next()) {
             byte[] key = iterator.peekNext().getKey();
-            s = asString(key);
             if (Arrays.equals(key, LevelDBDao.HEADER_KEY)) {
-                asString = asString(iterator.peekNext().getValue());
+                s = asString(key);
+                asString = Arrays.toString(iterator.peekNext().getValue());
             } else {
+                s = TypeUtils.bytesToHexString(key);
                 DataBean.Data data = DataBean.Data.parseFrom(iterator.peekNext().getValue());
                 asString = data.toString();
             }
-            System.out.println(s + "--------\n" + asString);
+            System.out.println(s + "--------" + asString);
             i++;
             System.out.println("----------------------------------------------------");
         }
@@ -52,15 +54,15 @@ public class BsbApplicationTests {
     }
 
 
-//    @Test
-//    public void blockChain() {
-//        Verify verify = new Verify();
-//        try {
-//            bsbService.customer();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    @Test
+    public void blockChain() {
+//        new Verify();
+        try {
+            BSBService.Consumer();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 
 //    class Producer implements Callable<Integer> {
