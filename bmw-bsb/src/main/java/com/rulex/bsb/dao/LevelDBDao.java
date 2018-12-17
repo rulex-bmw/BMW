@@ -167,11 +167,11 @@ public class LevelDBDao {
      * map of the data base is the key of the database data, and the key of the map is the key of the last database data
      * @throws IOException
      */
-    public Map<String,  byte[]> verifyHeaderData() throws IOException {
+    public Map<byte[], byte[]> verifyHeaderData() throws IOException {
 
         String startValue = null;
         String headerValue = null;
-        Map<String, byte[]> map = new HashMap<>();
+        Map<byte[], byte[]> map = new HashMap<>();
         try {
 
             //从数据库读取最后一条记录的key
@@ -220,7 +220,7 @@ public class LevelDBDao {
                 //将LevelDB数据库的key保存进map里
                 //Save the key of LevelDB database into map
                 if (flag) {
-                    map.put(asString(prveKey), mapValue);
+                    map.put(prveKey, mapValue);
                 }
                 //排除掉已上区块链的数据
                 //Exclude data that is already on the blockChain
@@ -276,9 +276,9 @@ public class LevelDBDao {
      * map of the data base is the key of the database data, and the key of the map is the key of the last database data
      * @throws IOException
      */
-    public static Map<String, byte[]> getHashMap() throws IOException {
+    public static Map<byte[], byte[]> getHashMap() throws IOException {
 
-        Map<String, byte[]> map = new HashMap<>();
+        Map<byte[], byte[]> map = new HashMap<>();
         try {
             //从数据库读取最后一条记录的key
             // Read the key of the last record from the database
@@ -314,7 +314,7 @@ public class LevelDBDao {
                 //将LevelDB数据库的key保存进map里
                 //Save the key of LevelDB database into map
                 if (flag) {
-                    map.put(asString(prveKey), mapValue);
+                    map.put(prveKey, mapValue);
                 }
                 //排除掉已上区块链的数据
                 //Exclude data that is already on the blockChain
