@@ -24,9 +24,9 @@ public class XMLReader {
      * @throws DocumentException
      * @throws IOException
      */
-    public static Document readerXML() throws DocumentException, IOException {
+    public static Document readerXML(String resoucePath) throws DocumentException, IOException {
         SAXReader sr = new SAXReader();
-        InputStream is = XMLReader.class.getClassLoader().getResourceAsStream("entity/pojo.xml");
+        InputStream is = XMLReader.class.getClassLoader().getResourceAsStream(resoucePath);
         Document doc = sr.read(is);
         is.close();
         return doc;
@@ -43,7 +43,7 @@ public class XMLReader {
         File file = new File(PathSet.xmlPath + "pojo.proto");
         String proto = String.format("package %1$s;\noption java_outer_classname = %2$s;", PathSet.packagePath, "\"RulexBean\"");
         //解析record节点
-        List<Element> records = readerXML().getRootElement().elements("record");
+        List<Element> records = readerXML("entity/pojo.xml").getRootElement().elements("record");
         if (records == null) {
             return;
         }
@@ -60,7 +60,6 @@ public class XMLReader {
                 //不合并
             } else {
                 List<Element> fields = record.elements();
-                int i = 0;
                 for(Element field : fields) {
                     String paramName = field.attributeValue("name");
                     if (StringUtils.isBlank(paramName)) {
@@ -84,8 +83,7 @@ public class XMLReader {
                     } else if (type.equals("String")) {
                         proto += "string ";
                     }
-                    i++;
-                    proto += paramName + " = " + i + ";";
+                    proto += paramName + " = " + field.attributeValue("fieldId") + ";";
                 }
             }
             proto += "\n}";

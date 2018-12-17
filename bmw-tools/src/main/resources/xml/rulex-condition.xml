@@ -1,15 +1,23 @@
 <!--拦截规则和数据库信息-->
 <configuration version="1.0">
-    <source name="UserCount" groupable="true" table="user_count" pojo="cn.javaex.uscat.view.UserCount">
-        <field name="userId" column="user_id" type="String" isnull="false" transforable="true" length="11"></field>
-        <field name="extcredits1" column="extcredits1" type="Integer" isnull="false" transforable="false" length="4"></field>
-    </source>
+    <!--<source name="UserCount" groupable="true" table="user_count" pojo="cn.javaex.uscat.view.UserCount">-->
+    <!--<field name="userId" column="user_id" type="String" isnull="false" transforable="true" length="11"></field>-->
+    <!--<field name="extcredits1" column="extcredits1" type="Integer" isnull="false" transforable="false" length="4"></field>-->
+    <!--</source>-->
     <source name="UserInfo" groupable="true" table="user_info" pojo="cn.javaex.uscat.view.UserInfo">
-        <field name="id" column="id" type="String" isnull="false" transforable="false" length="4"></field>
-        <field name="loginName" column="login_name" type="String" isnull="false" transforable="false" length="20"></field>
-        <field name="email" column="email" type="String" isnull="false" transforable="false" length="50"></field>
-        <field name="status" column="status" type="String" isnull="false" transforable="false" length="1"></field>
-        <field name="registerIp" column="register_ip" type="String" isnull="false" transforable="false" length="50"></field>
-        <field name="registerTime" column="register_time" type="String" isnull="false" transforable="false" length="20"></field>
+        <!--只是规定primaryKey，不上链-->
+        <id name="id" column="id" type="String"></id>
+        <!--上链信息-->
+        <field name="id" column="id" type="String" isnull="false" transforable="false" length="4" fieldId="1"></field>
+        <field name="loginName" column="login_name" type="String" isnull="false" transforable="false"
+               length="20" fieldId="2"></field>
+        <field name="email" column="email" type="String" isnull="false" transforable="false" length="50"
+               fieldId="3"></field>
+        <field name="status" column="status" type="String" isnull="false" transforable="false" length="1"
+               fieldId="4"></field>
+        <field name="registerIp" column="register_ip" type="String" isnull="false" transforable="false"
+               length="50" fieldId="5"></field>
+        <field name="registerTime" column="register_time" type="String" isnull="false" transforable="false"
+               length="20" fieldId="6"></field>
     </source>
 </configuration>

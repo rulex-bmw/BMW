@@ -90,31 +90,6 @@ public class SqlStatementInterceptor implements Interceptor {
         }
     }
 
-    //mybatis拦截器获取参数
-//        System.out.println(sql);
-//        Object parameterObject = boundSql.getParameterObject();
-//        if (parameterObject instanceof com.rulex.dsm.pojo.User) {
-//            com.rulex.dsm.pojo.User user = (com.rulex.dsm.pojo.User) parameterObject;
-//            MetaObject metaObject = SystemMetaObject.forObject(user);
-//            String name = (String) metaObject.getValue("name");
-//            System.out.println(name);
-//            Integer age = (Integer) metaObject.getValue("age");
-//            System.out.println(age);
-////            Integer age = user.getAge();
-////            String name = user.getName();
-//        } else if (parameterObject instanceof Map) {
-//            Map paramMap = (Map) parameterObject;
-//            Iterator iterator = paramMap.entrySet().iterator();
-//            while (iterator.hasNext()) {
-//                Map.Entry<Object, Object> next = (Map.Entry<Object, Object>) iterator.next();
-//                Object key = next.getKey();
-//                Object value = next.getValue();
-//                System.out.println(key + "------" + value);
-//            }
-//        } else {
-//            System.out.println("other");
-//        }
-
     @Override
     public Object plugin(Object arg0) {//拦截器用于封装目标对象
         if (arg0 instanceof StatementHandler) {

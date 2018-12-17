@@ -1,23 +1,22 @@
 package com.rulex.bsb;
 
-import org.iq80.leveldb.Options;
+import com.rulex.bsb.utils.LevelDBUtil;
+import org.iq80.leveldb.DB;
 
-import java.io.File;
 import java.io.IOException;
-
-import static org.fusesource.leveldbjni.JniDBFactory.factory;
+import java.util.Arrays;
 
 public class Destory {
 
     public static void main(String[] args) throws IOException {
-        Options options = new Options();
-        factory.destroy(new File("data"), options);
-        factory.destroy(new File("mata"), options);
-
-
-//        ExecutorService executorService = Executors.newCachedThreadPool();
-
-
+        byte[] key = {1};
+        byte[] value1 = {12};
+        byte[] value2 = {1};
+        DB dataDB = LevelDBUtil.getDataDB();
+        dataDB.put(key, value1);
+        dataDB.put(key, value2);
+        byte[] bytes = dataDB.get(key);
+        System.out.println(Arrays.toString(bytes));
 
     }
 }
