@@ -8,8 +8,10 @@ import com.rulex.dsm.bean.Field;
 import com.rulex.dsm.bean.Source;
 import com.rulex.dsm.service.InsertService;
 import com.rulex.dsm.utils.XmlUtil;
+import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.alter.Alter;
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.drop.Drop;
@@ -68,6 +70,19 @@ public class SqlStatementInterceptor implements Interceptor {
                     column.add(c.getColumnName());
                 }
             } else if (stmt instanceof Update) {
+                Update update = (Update) stmt;
+                List<Table> tables = update.getTables();
+                boolean b = false;
+                for(Table table : tables) {
+                    for(Source source : sourceList) {
+                        if (source.getTable().equalsIgnoreCase(table.getName())) {
+                            b = true;
+                        }
+                    }
+                }
+                if (b) {
+
+                }
 
 
             } else if (stmt instanceof Delete) {
@@ -117,11 +132,11 @@ public class SqlStatementInterceptor implements Interceptor {
     }
 
     @Override
-    public Object plugin(Object arg0) {//拦截器用于封装目标对象
-        if (arg0 instanceof StatementHandler) {
-            return Plugin.wrap(arg0, this);
+    public Object plugin(Object target) {//拦截器用于封装目标对象
+        if (target instanceof StatementHandler) {
+            return Plugin.wrap(target, this);
         } else {
-            return arg0;
+            return target;
         }
     }
 
