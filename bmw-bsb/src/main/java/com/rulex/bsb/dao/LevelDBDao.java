@@ -251,6 +251,8 @@ public class LevelDBDao {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            LevelDBUtil.closeDB();
         }
         //如果算出来的header值与数据库中保存的不一样，说明数据被篡改，抛出错误
         //If the calculated header value is different from what is stored in the database, the data is tampered with and an error is thrown
@@ -325,6 +327,8 @@ public class LevelDBDao {
 
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            LevelDBUtil.closeDB();
         }
         return map;
     }
