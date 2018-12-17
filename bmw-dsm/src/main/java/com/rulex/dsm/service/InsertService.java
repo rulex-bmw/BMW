@@ -28,7 +28,6 @@ public class InsertService {
             //根据tableName，获取对应的source
             if (source.getTable().equals(tableName)) {
                 Class clazz = Class.forName("com.rulex.tools.pojo.RulexBean");
-//                Class clazz = RulexBean.class;
                 //反射获取RulexBean的内部类
                 Class innerClazz1[] = clazz.getDeclaredClasses();
                 for(Class Class1 : innerClazz1) {
@@ -123,5 +122,8 @@ public class InsertService {
         }
     }
 
-
+    /**
+     * 添加rollId和上链数据key的索引
+     *
+     */
 }
