@@ -6,7 +6,6 @@ import com.rulex.bsb.service.BSBService;
 import com.rulex.dsm.bean.Source;
 import com.rulex.dsm.service.InsertService;
 import com.rulex.dsm.utils.XmlUtil;
-import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
