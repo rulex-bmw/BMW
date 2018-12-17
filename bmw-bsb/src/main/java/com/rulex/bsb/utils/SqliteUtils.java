@@ -141,15 +141,16 @@ public class SqliteUtils {
 
 
     public static void main(String[] args) {
-//        String sql = "SELECT * FROM key_indexes";
-        String sql = "insert into key_indexes (pri_key_hash,hash_key,ts) values(?,?,?)";
+        String sql = "SELECT * FROM key_indexes";
+//        String sql = "insert into key_indexes (pri_key_hash,hash_key,ts) values(?,?,?)";
 //        String sql = "update key_indexes set pri_key_hash = ? where id = ?";
 //        String sql = "select * from key_indexes where id = ?";
 
-        Object[] o = {new byte[]{1, 2, 3}, new byte[]{4, 5, 6}, System.currentTimeMillis()};
+//        Object[] o = {new byte[]{1, 2, 3}, new byte[]{4, 5, 6}, System.currentTimeMillis()};
+//        int edit = edit(o, sql);
 
-        int edit = edit(o, sql);
-        System.out.println(edit);
+        List<Map<String, Object>> query = query(sql, null);
+        System.out.println(query);
 
 
     }

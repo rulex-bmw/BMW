@@ -41,12 +41,13 @@ public class LevelDBDao {
             DataBean.Data.Builder origin = DataBean.Data.newBuilder().setPayload(ByteString.copyFrom(CREATION_DATA))
                     .setTs(System.currentTimeMillis())
                     .setSerial(0);
+            DataBean.Header.Builder header = DataBean.Header.newBuilder().setPayload(origin.getPayload()).setSerial(origin.getSerial()).setTs(origin.getTs());
             byte[] data = origin.build().toByteArray();
             byte[] key = SHA256.getSHA256Bytes(data);
             //生成标签
             DataBean.Position position = DataBean.Position.newBuilder().setDataKey(ByteString.copyFrom(key)).setSerial(0).build();
             LevelDBUtil.getMataDB().put(WRITEPOSITION, position.toByteArray());
-            LevelDBDao.setHeaderData(origin, LevelDBUtil.getDataDB());
+            LevelDBDao.setHeaderData(header, LevelDBUtil.getDataDB());
             LevelDBUtil.getDataDB().put(key, data);
             LevelDBUtil.getMataDB().put(READPOSITION, position.toByteArray());
         } finally {
@@ -68,15 +69,14 @@ public class LevelDBDao {
             return;
         }
         try {
-            //generation timestamp
-            ByteString p = param.getPayload();
             //获取上一个hash
             DataBean.Position writeposition = DataBean.Position.parseFrom(LevelDBUtil.getMataDB().get(WRITEPOSITION));
             Long s = writeposition.getSerial();
             s++;
             //Set up herderVelue
-            DataBean.Data.Builder record = DataBean.Data.newBuilder().setPayload(p).setTs(System.currentTimeMillis()).setSerial(s);
-            setHeaderData(record, LevelDBUtil.getDataDB());
+            DataBean.Data.Builder record = DataBean.Data.newBuilder().setPayload(param.getPayload()).setTs(System.currentTimeMillis()).setSerial(s);
+            DataBean.Header.Builder header = DataBean.Header.newBuilder().setTs(record.getTs()).setSerial(record.getSerial()).setPayload(record.getPayload());
+            setHeaderData(header, LevelDBUtil.getDataDB());
             //seek key=HASH(payload,ts,serial,prevHash)
             // Take a hash of data
             record.setPrevHash(writeposition.getDataKey());
@@ -99,10 +99,10 @@ public class LevelDBDao {
      * @param db
      */
 
-    public static void setHeaderData(DataBean.Data.Builder record, DB db) {
+    public static void setHeaderData(DataBean.Header.Builder record, DB db) {
         byte[] vn_1 = db.get(HEADER_KEY);
         if (vn_1 != null) {
-            record.setPrevHash(ByteString.copyFrom(vn_1));
+            record.setPrevHeader(ByteString.copyFrom(vn_1));
         }
         db.put(HEADER_KEY, SHA256.getSHA256Bytes(record.build().toByteArray()));
     }
