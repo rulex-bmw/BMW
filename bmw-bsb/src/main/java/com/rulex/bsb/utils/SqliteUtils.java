@@ -1,7 +1,5 @@
 package com.rulex.bsb.utils;
 
-import org.apache.commons.lang.StringUtils;
-
 import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
@@ -45,8 +43,7 @@ public class SqliteUtils {
      * @return path
      */
     private static String getSqlitePath() {
-        String path = "jdbc:sqlite:" + System.getProperty("user.dir") + File.separator + INDEXES_PATH;
-        return StringUtils.replace(path, File.separator, "/");
+        return "jdbc:sqlite:" + System.getProperty("user.dir") + File.separator + INDEXES_PATH;
     }
 
 
@@ -139,18 +136,13 @@ public class SqliteUtils {
         return list;
     }
 
-
     public static void main(String[] args) {
-//        String sql = "SELECT * FROM key_indexes";
-        String sql = "insert into key_indexes (pri_key_hash,hash_key,ts) values(?,?,?)";
-//        String sql = "update key_indexes set pri_key_hash = ? where id = ?";
-//        String sql = "select * from key_indexes where id = ?";
-
-        Object[] o = {new byte[]{1, 2, 3}, new byte[]{4, 5, 6}, System.currentTimeMillis()};
-
-        int edit = edit(o, sql);
-        System.out.println(edit);
-
+        String sql = "SELECT * FROM key_indexes";
+//        String sql = "insert into key_indexes (pri_key_hash,hash_key,ts) values(?,?,?)";
+//        int edit = edit(new Object[]{new byte[]{2}, new byte[]{1, 1, 1, 1, 1, 1}, System.currentTimeMillis()}, sql);
+//        System.out.println(edit);
+        List<Map<String, Object>> query = query(sql, null);
+        System.out.println(query);
 
     }
 
