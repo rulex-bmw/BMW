@@ -1,24 +1,8 @@
 package com.rulex.bsb;
 
-import com.google.protobuf.ByteString;
-import com.rulex.bsb.dao.LevelDBDaoImpl;
-import com.rulex.bsb.pojo.DataBean;
-import com.rulex.bsb.service.BSBService;
-import com.rulex.bsb.service.Verify;
-import com.rulex.bsb.utils.LevelDBUtil;
-import org.iq80.leveldb.DB;
-import org.iq80.leveldb.DBIterator;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import javax.annotation.Resource;
-import java.io.IOException;
-import java.util.concurrent.*;
-
-import static org.fusesource.leveldbjni.JniDBFactory.asString;
-import static org.fusesource.leveldbjni.JniDBFactory.bytes;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -36,10 +20,10 @@ public class BsbApplicationTests {
 ////        bsbService.producer(build);
 //        //查询数据
 //        DB dataDB = null;
-//        if (LevelDBDaoImpl.dataDB == null) {
+//        if (LevelDBDao.dataDB == null) {
 //            dataDB = LevelDBUtil.getDb("data");
 //        } else {
-//            dataDB = LevelDBDaoImpl.dataDB;
+//            dataDB = LevelDBDao.dataDB;
 //        }
 ////        dataDB = LevelDBUtil.getDb("data");
 //        DBIterator iterator = dataDB.iterator();
@@ -48,7 +32,7 @@ public class BsbApplicationTests {
 //        int i = 0;
 //        for(iterator.seekToFirst(); iterator.hasNext(); iterator.next()) {
 //            s = asString(iterator.peekNext().getKey());
-//            if (asString(iterator.peekNext().getKey()).equalsIgnoreCase(asString(LevelDBDaoImpl.HEADER_KEY))) {
+//            if (asString(iterator.peekNext().getKey()).equalsIgnoreCase(asString(LevelDBDao.HEADER_KEY))) {
 //                asString = asString(iterator.peekNext().getValue());
 //            } else {
 //                DataBean.Data data = DataBean.Data.parseFrom(iterator.peekNext().getValue());
@@ -61,11 +45,11 @@ public class BsbApplicationTests {
 //        System.out.println("当前共有" + i + "条payload");
 //        iterator.close();
 //        dataDB.close();
-//        if (LevelDBDaoImpl.mataDB != null) {
-//            LevelDBDaoImpl.mataDB.close();
+//        if (LevelDBDao.mataDB != null) {
+//            LevelDBDao.mataDB.close();
 //        }
-//        if (LevelDBDaoImpl.dataDB != null) {
-//            LevelDBDaoImpl.dataDB.close();
+//        if (LevelDBDao.dataDB != null) {
+//            LevelDBDao.dataDB.close();
 //        }
 //    }
 
@@ -127,11 +111,11 @@ public class BsbApplicationTests {
 //            }
 //        }
 //        try {
-//            if (LevelDBDaoImpl.mataDB != null) {
-//                LevelDBDaoImpl.mataDB.close();
+//            if (LevelDBDao.mataDB != null) {
+//                LevelDBDao.mataDB.close();
 //            }
-//            if (LevelDBDaoImpl.dataDB != null) {
-//                LevelDBDaoImpl.dataDB.close();
+//            if (LevelDBDao.dataDB != null) {
+//                LevelDBDao.dataDB.close();
 //            }
 //        } catch (IOException e) {
 //            e.printStackTrace();

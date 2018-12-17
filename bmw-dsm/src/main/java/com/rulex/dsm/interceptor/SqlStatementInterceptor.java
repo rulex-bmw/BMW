@@ -3,7 +3,6 @@ package com.rulex.dsm.interceptor;
 import com.google.protobuf.ByteString;
 import com.rulex.bsb.pojo.DataBean;
 import com.rulex.bsb.service.BSBService;
-import com.rulex.bsb.service.BSBServiceImpl;
 import com.rulex.dsm.bean.Source;
 import com.rulex.dsm.service.InsertService;
 import com.rulex.dsm.utils.XmlUtil;
@@ -28,8 +27,6 @@ import java.util.Properties;
 @Intercepts({@Signature(type = StatementHandler.class, method = "update", args = {Statement.class})})
 @Component
 public class SqlStatementInterceptor implements Interceptor {
-
-    private BSBService bsbService = new BSBServiceImpl();
 
     CCJSqlParserManager parser = new CCJSqlParserManager();
 
@@ -78,9 +75,9 @@ public class SqlStatementInterceptor implements Interceptor {
                 byte[] payload = InsertService.judge(boundSql, tablename, column, sourceList);
                 if (payload != null) {
                     //调用bsb执行上链
-                    DataBean.Data data = DataBean.Data.newBuilder().setParam(ByteString.copyFrom(payload)).build();
-                    bsbService.producer(data);
-                    bsbService.customer();
+                    DataBean.Data data = DataBean.Data.newBuilder().setPayload(ByteString.copyFrom(payload)).build();
+                    BSBService.producer(data);
+                    BSBService.Consumer();
                 }
             }
             return invocation.proceed();

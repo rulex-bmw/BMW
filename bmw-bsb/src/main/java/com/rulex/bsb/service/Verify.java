@@ -1,7 +1,6 @@
 package com.rulex.bsb.service;
 
 import com.rulex.bsb.dao.LevelDBDao;
-import com.rulex.bsb.dao.LevelDBDaoImpl;
 import com.rulex.bsb.utils.LevelDBUtil;
 
 import java.io.IOException;
@@ -19,13 +18,13 @@ public class Verify {
      * Verify the partial structure header static code block
      */
     static {
-        LevelDBDao levelDBDao = new LevelDBDaoImpl();
+        LevelDBDao levelDBDao = new LevelDBDao();
 //        DB db = null;
         try {
-//            if (LevelDBDaoImpl.dataDB == null) {
+//            if (LevelDBDao.dataDB == null) {
 //                db = LevelDBUtil.getDataDB();
 //            } else {
-//                db = LevelDBDaoImpl.dataDB;
+//                db = LevelDBDao.dataDB;
 //            }
             String value = asString(LevelDBUtil.getDataDB().get(bytes("000000")));
 //            db.close();
