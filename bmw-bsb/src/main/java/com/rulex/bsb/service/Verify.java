@@ -1,6 +1,7 @@
 package com.rulex.bsb.service;
 
 import com.rulex.bsb.dao.LevelDBDao;
+import com.rulex.bsb.pojo.DataBean;
 import com.rulex.bsb.utils.LevelDBUtil;
 
 import java.io.IOException;

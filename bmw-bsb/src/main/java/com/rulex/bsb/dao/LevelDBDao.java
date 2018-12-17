@@ -176,15 +176,15 @@ public class LevelDBDao {
 
             //从数据库读取最后一条记录的key
             // Read the key of the last record from the database
-            DataBean.Data hash = DataBean.Data.parseFrom(LevelDBUtil.getMataDB().get(WRITEPOSITION));
-            byte[] lastKey = hash.getPrevHash().toByteArray();
+            DataBean.Position position = DataBean.Position.parseFrom(LevelDBUtil.getMataDB().get(WRITEPOSITION));
+            byte[] lastKey = position.getDataKey().toByteArray();
 
             //从数据库读取readPosition的key
             // Read the key for readPosition from the database
             byte[] readKey = null;
             if (LevelDBUtil.getMataDB().get(READPOSITION) != null) {
-                DataBean.Data hash2 = DataBean.Data.parseFrom(LevelDBUtil.getMataDB().get(READPOSITION));
-                readKey = hash2.getPrevHash().toByteArray();
+
+                readKey = DataBean.Position.parseFrom(LevelDBUtil.getMataDB().get(READPOSITION)).getDataKey().toByteArray();
             }
             byte[] prveKey = lastKey;
             Stack<byte[]> stack = new Stack<byte[]>();
@@ -282,14 +282,13 @@ public class LevelDBDao {
         try {
             //从数据库读取最后一条记录的key
             // Read the key of the last record from the database
-            DataBean.Data hash = DataBean.Data.parseFrom(LevelDBUtil.getMataDB().get(WRITEPOSITION));
-            byte[] lastKey = hash.getPrevHash().toByteArray();
+            DataBean.Position position = DataBean.Position.parseFrom(LevelDBUtil.getMataDB().get(WRITEPOSITION));
+            byte[] lastKey = position.getDataKey().toByteArray();
             //从数据库读取readPosition的key
             // Read the key for readPosition from the database
             byte[] readKey = null;
             if (LevelDBUtil.getMataDB().get(READPOSITION) != null) {
-                DataBean.Data hash2 = DataBean.Data.parseFrom(LevelDBUtil.getMataDB().get(READPOSITION));
-                readKey = hash2.getPrevHash().toByteArray();
+                readKey = DataBean.Position.parseFrom(LevelDBUtil.getMataDB().get(READPOSITION)).getDataKey().toByteArray();
             }
 
             byte[] prveKey = lastKey;
