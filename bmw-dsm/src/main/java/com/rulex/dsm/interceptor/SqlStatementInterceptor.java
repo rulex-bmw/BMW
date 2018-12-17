@@ -3,13 +3,17 @@ package com.rulex.dsm.interceptor;
 import com.google.protobuf.ByteString;
 import com.rulex.bsb.pojo.DataBean;
 import com.rulex.bsb.service.BSBService;
+import com.rulex.bsb.utils.DataException;
+import com.rulex.dsm.bean.Field;
 import com.rulex.dsm.bean.Source;
 import com.rulex.dsm.service.InsertService;
 import com.rulex.dsm.utils.XmlUtil;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
+import net.sf.jsqlparser.statement.alter.Alter;
 import net.sf.jsqlparser.statement.delete.Delete;
+import net.sf.jsqlparser.statement.drop.Drop;
 import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.update.Update;
 import org.apache.ibatis.executor.statement.RoutingStatementHandler;
@@ -18,7 +22,6 @@ import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.plugin.*;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -40,7 +43,7 @@ public class SqlStatementInterceptor implements Interceptor {
      * @return
      */
     @Override
-    public Object intercept(Invocation invocation) throws IOException {
+    public Object intercept(Invocation invocation) throws Exception {
         //拦截执行sql
         RoutingStatementHandler target = (RoutingStatementHandler) invocation.getTarget();
         BoundSql boundSql = target.getBoundSql();
@@ -56,21 +59,21 @@ public class SqlStatementInterceptor implements Interceptor {
             if (stmt instanceof Insert) {
                 Insert insert = (Insert) stmt;
                 tablename = insert.getTable().getName();
-                for(Source source : sourceList) {
+                for (Source source : sourceList) {
                     if (source.getTable().equalsIgnoreCase(tablename)) {
                         t = true;
                     }
                 }
                 List<Column> columns = insert.getColumns();
-                for(Column c : columns) {
+                for (Column c : columns) {
                     column.add(c.getColumnName());
                 }
             } else if (stmt instanceof Update) {
                 Update update = (Update) stmt;
                 List<Table> tables = update.getTables();
                 boolean b = false;
-                for(Table table : tables) {
-                    for(Source source : sourceList) {
+                for (Table table : tables) {
+                    for (Source source : sourceList) {
                         if (source.getTable().equalsIgnoreCase(table.getName())) {
                             b = true;
                         }
@@ -83,7 +86,32 @@ public class SqlStatementInterceptor implements Interceptor {
 
             } else if (stmt instanceof Delete) {
 
+            } else if (stmt instanceof Drop) {
+                //上区块链的表不能删除
+                Drop drop = (Drop) stmt;
+                tablename = drop.getName();
+                for (Source source : sourceList) {
+                    if (source.getTable().equalsIgnoreCase(tablename)) {
+                        throw new DataException("The data for this database table cannot be deleted because it is on the block chain.");
+                    }
+                }
+            } else if (stmt instanceof Alter) {
+                //上区块链的字段信息不能修改
+                Alter alter = (Alter) stmt;
+                tablename = alter.getTable().getName();
+                for (Source source : sourceList) {
+                    if (source.getTable().equalsIgnoreCase(tablename)) {
 
+                        for (Field field : source.getFields()) {
+
+                            if (alter.getColumnName().equalsIgnoreCase(field.getColumn())) {
+
+                                throw new DataException("The data for this database table cannot be alter because it is on the block chain.");
+
+                            }
+                        }
+                    }
+                }
             }
             if (t) {
                 //获取payload
