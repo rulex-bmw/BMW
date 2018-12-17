@@ -33,7 +33,7 @@ public class XmlUtil {
     public static List<Source> parseXML() throws DocumentException, IOException {
         List<Source> sourceList = new ArrayList<>();
         //解析source节点
-        List<Element> sources = readerXML().getRootElement().elements("source");
+        List<Element> sources = readerXML().getRootElement().elements("record");
         if (sources == null) {
             return null;
         }

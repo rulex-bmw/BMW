@@ -43,7 +43,7 @@ public class XMLReader {
         File file = new File(PathSet.xmlPath + "pojo.proto");
         String proto = String.format("package %1$s;\noption java_outer_classname = %2$s;", PathSet.packagePath, "\"RulexBean\"");
         //解析record节点
-        List<Element> records = readerXML("entity/pojo.xml").getRootElement().elements("record");
+        List<Element> records = readerXML("xml/rulex-condition.xml").getRootElement().elements("record");
         if (records == null) {
             return;
         }

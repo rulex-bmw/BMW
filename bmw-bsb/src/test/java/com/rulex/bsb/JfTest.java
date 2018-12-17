@@ -2,11 +2,9 @@ package com.rulex.bsb;
 
 
 import com.google.protobuf.ByteString;
-import com.rulex.bsb.dao.LevelDBDaoImpl;
+import com.rulex.bsb.dao.LevelDBDao;
 import com.rulex.bsb.pojo.DataBean;
 import com.rulex.bsb.service.BSBService;
-import com.rulex.bsb.service.BSBServiceImpl;
-import com.rulex.bsb.utils.LevelDBUtil;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.DBIterator;
 import org.iq80.leveldb.Options;
@@ -37,7 +35,7 @@ public class JfTest {
 //        factory.destroy(new File("mata"), options);
 
 
-        BSBService bsbService = new BSBServiceImpl();
+        BSBService bsbService = new BSBService();
         ByteString flag = ByteString.copyFrom(bytes("4"));
         ByteString param = ByteString.copyFrom(bytes("eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"));
         DataBean.Data build = DataBean.Data.newBuilder().setFlag(flag).setParam(param).build();
@@ -59,7 +57,7 @@ public class JfTest {
         String asString = null;
         for (iterator.seekToFirst(); iterator.hasNext(); iterator.next()) {
             s = asString(iterator.peekNext().getKey());
-            if (asString(iterator.peekNext().getKey()).equalsIgnoreCase(asString(LevelDBDaoImpl.HEADER_KEY))) {
+            if (asString(iterator.peekNext().getKey()).equalsIgnoreCase(asString(LevelDBDao.HEADER_KEY))) {
                 asString = asString(iterator.peekNext().getValue());
             } else {
                 DataBean.Data data = DataBean.Data.parseFrom(iterator.peekNext().getValue());
@@ -91,7 +89,7 @@ public class JfTest {
 
     @Test
     public void tds() throws IOException {
-        Iterator<Map.Entry<String, String>> entries = LevelDBDaoImpl.getHashMap().entrySet().iterator();
+        Iterator<Map.Entry<String, String>> entries = LevelDBDao.getHashMap().entrySet().iterator();
         while (entries.hasNext()) {
             Map.Entry<String, String> entry = entries.next();
 
