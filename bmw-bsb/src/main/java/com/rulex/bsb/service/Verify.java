@@ -12,7 +12,7 @@ import static org.fusesource.leveldbjni.JniDBFactory.asString;
 
 public class Verify {
 
-    public static Map<String, byte[]> levelDBKey = new HashMap<>();
+    public static Map<byte[], byte[]> levelDBKey = new HashMap<>();
 
     /**
      * Verify the partial structure header static code block
