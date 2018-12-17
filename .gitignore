@@ -7,7 +7,8 @@
 *mata/
 .classpath
 .project
-.settings     
+.settings
+.db
 ##filter databfile、sln file##
 *.mdb  
 *.ldb  
