@@ -102,7 +102,7 @@ public class LevelDBDao {
     public static void setHeaderData(DataBean.Data.Builder record, DB db) {
         byte[] vn_1 = db.get(HEADER_KEY);
         if (vn_1 != null) {
-            record.setPrevHash(ByteString.copyFrom(vn_1)).build();
+            record.setPrevHash(ByteString.copyFrom(vn_1));
         }
         db.put(HEADER_KEY, SHA256.getSHA256Bytes(record.build().toByteArray()));
     }

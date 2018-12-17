@@ -6,6 +6,7 @@ import com.rulex.bsb.pojo.DataBean;
 import com.rulex.bsb.service.BSBService;
 import com.rulex.bsb.service.Verify;
 import com.rulex.bsb.utils.LevelDBUtil;
+import com.rulex.bsb.utils.TypeUtils;
 import org.iq80.leveldb.DBIterator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +25,7 @@ public class BsbApplicationTests {
 
     @Test
     public void levelDB() throws IOException {
-//        new Verify();
+        new Verify();
         //存入levelDB
         ByteString param = ByteString.copyFrom(bytes("13afds255sgds522987eff54325747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"));
         DataBean.Data build = DataBean.Data.newBuilder().setPayload(param).build();
@@ -32,18 +33,19 @@ public class BsbApplicationTests {
         //查询数据
         DBIterator iterator = LevelDBUtil.getDataDB().iterator();
         String s = null;
-        byte[] asString = null;
+        String asString = null;
         int i = 0;
         for(iterator.seekToFirst(); iterator.hasNext(); iterator.next()) {
             byte[] key = iterator.peekNext().getKey();
-            s = asString(key);
             if (Arrays.equals(key, LevelDBDao.HEADER_KEY)) {
-                asString = iterator.peekNext().getValue();
+                s = asString(key);
+                asString = Arrays.toString(iterator.peekNext().getValue());
             } else {
+                s = TypeUtils.bytesToHexString(key);
                 DataBean.Data data = DataBean.Data.parseFrom(iterator.peekNext().getValue());
-//                asString = data;
+                asString = data.toString();
             }
-            System.out.println(s + "--------\n" + asString);
+            System.out.println(s + "--------" + asString);
             i++;
             System.out.println("----------------------------------------------------");
         }
@@ -54,12 +56,12 @@ public class BsbApplicationTests {
 
     @Test
     public void blockChain() {
-        new Verify();
-//        try {
-//            BSBService.Consumer();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+//        new Verify();
+        try {
+            BSBService.Consumer();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
