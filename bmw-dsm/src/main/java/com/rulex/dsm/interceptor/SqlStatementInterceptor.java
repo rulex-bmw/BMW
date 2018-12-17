@@ -8,7 +8,6 @@ import com.rulex.dsm.bean.Field;
 import com.rulex.dsm.bean.Source;
 import com.rulex.dsm.service.InsertService;
 import com.rulex.dsm.utils.XmlUtil;
-import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
@@ -73,8 +72,8 @@ public class SqlStatementInterceptor implements Interceptor {
                 Update update = (Update) stmt;
                 List<Table> tables = update.getTables();
                 boolean b = false;
-                for(Table table : tables) {
-                    for(Source source : sourceList) {
+                for (Table table : tables) {
+                    for (Source source : sourceList) {
                         if (source.getTable().equalsIgnoreCase(table.getName())) {
                             b = true;
                         }
