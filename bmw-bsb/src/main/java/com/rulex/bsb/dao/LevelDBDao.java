@@ -12,7 +12,7 @@ public interface LevelDBDao {
 
     void origin();
 
-    Map<String, String> verifyHeaderData() throws IOException;
+    Map<String, byte[]> verifyHeaderData() throws IOException;
 
     DataBean.Data getReadposition();
 
