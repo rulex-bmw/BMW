@@ -94,6 +94,8 @@ public class SqlStatementInterceptor implements Interceptor {
                 }
 
 
+
+
             } else if (stmt instanceof Delete) {
 
 
