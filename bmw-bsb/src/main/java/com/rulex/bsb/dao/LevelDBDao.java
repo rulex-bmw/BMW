@@ -63,6 +63,7 @@ public class LevelDBDao {
      * 3、save flag
      *
      * @param param
+     * @param hashPrimaryId SHA256之后的主键
      * @throws IOException
      */
     public static synchronized void set(DataBean.Data param, byte[] hashPrimaryId) throws IOException {
