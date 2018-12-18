@@ -15,10 +15,10 @@ import java.util.Map;
 public class BSBService {
 
 
-    public static void producer(DataBean.Data data) {
+    public static void producer(DataBean.Data data, byte[] hashPrimaryId) {
         try {
             LevelDBDao.origin();
-            LevelDBDao.set(data);
+            LevelDBDao.set(data, hashPrimaryId);
             System.out.println("producer thread id " + Thread.currentThread().getId());
         } catch (IOException e) {
             e.printStackTrace();
@@ -46,7 +46,7 @@ public class BSBService {
             //从第m+1项上链
             byte[] prevHash = readposition.getDataKey().toByteArray();
             int i;
-            for(i = 0; i < size; i++) {
+            for (i = 0; i < size; i++) {
                 byte[] currentHash = keyMap.get(prevHash);
                 if (currentHash == null || currentHash.length == 0) {
                     break;

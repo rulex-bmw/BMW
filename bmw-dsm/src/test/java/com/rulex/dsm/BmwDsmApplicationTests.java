@@ -24,17 +24,17 @@ public class BmwDsmApplicationTests {
     @Test
     public void contextLoads() {
 //        User user = new User();
-//        user.setAge(8);
-//        user.setName("张三");
+//        user.setAge(20);
+//        user.setName("王liu");
 //        int i = userDao.insertUser(user);
 //        System.out.println(i);
 //
-        int j = userDao.updateUser();
-        System.out.println(j);
-
+//        int j = userDao.updateUser();
+//        System.out.println(j);
+//
 //        List<User> users = userDao.selectAll();
 //        System.out.println(users);
-
+        userDao.dropTable("test");
     }
 
 }
