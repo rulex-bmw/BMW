@@ -1,6 +1,7 @@
 package com.rulex.dsm.bean;
 
 import com.rulex.dsm.pojo.User;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,5 +14,7 @@ public interface UserDao {
     int insertUser(User u);
 
     List<User> selectAll();
+
+    void dropTable(@Param("tableName")  String tableName);
 
 }

@@ -16,4 +16,8 @@
         select * from bmw_user;
     </select>
 
+    <update id="dropTable">
+        DROP table ${tableName}
+    </update>
+
 </mapper>

@@ -29,7 +29,7 @@ public class BsbApplicationTests {
         //存入levelDB
         ByteString param = ByteString.copyFrom(bytes("13afds255sgds522987eff54325747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"));
         DataBean.Data build = DataBean.Data.newBuilder().setPayload(param).build();
-        BSBService.producer(build);
+        BSBService.producer(build,null);
         //查询数据
         DBIterator iterator = LevelDBUtil.getDataDB().iterator();
         String s = null;

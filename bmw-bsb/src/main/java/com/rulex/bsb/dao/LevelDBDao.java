@@ -5,6 +5,7 @@ import com.rulex.bsb.pojo.DataBean;
 import com.rulex.bsb.utils.DataException;
 import com.rulex.bsb.utils.LevelDBUtil;
 import com.rulex.bsb.utils.SHA256;
+import com.rulex.bsb.utils.SqliteUtils;
 import org.iq80.leveldb.DB;
 
 import java.io.IOException;
@@ -64,7 +65,7 @@ public class LevelDBDao {
      * @param param
      * @throws IOException
      */
-    public static synchronized void set(DataBean.Data param) throws IOException {
+    public static synchronized void set(DataBean.Data param, byte[] hashPrimaryId) throws IOException {
         if (null == param.getPayload() && !(param.getPayload().toByteArray().length <= 256)) {
             return;
         }
@@ -86,6 +87,10 @@ public class LevelDBDao {
             //Save a data , data = payload, ts, prevhash, serial, sign, flag
             record.setSign(sign).setFalg(false);
             LevelDBUtil.getDataDB().put(hashkey, record.build().toByteArray());
+
+            //将PrimaryId和hashkey索引信息存入数据库
+            SqliteUtils.edit(new Object[]{hashPrimaryId, hashkey, System.currentTimeMillis()}, "insert into key_indexes (pri_key_hash,hash_key,ts) values(?,?,?)");
+
             LevelDBUtil.getMataDB().put(WRITEPOSITION, DataBean.Position.newBuilder().setDataKey(ByteString.copyFrom(hashkey)).setSerial(s).build().toByteArray());
         } finally {
             LevelDBUtil.closeDB();

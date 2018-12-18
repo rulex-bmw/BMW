@@ -4,6 +4,8 @@ import com.google.protobuf.ByteString;
 import com.rulex.bsb.pojo.DataBean;
 import com.rulex.bsb.service.BSBService;
 import com.rulex.bsb.utils.DataException;
+import com.rulex.bsb.utils.SHA256;
+import com.rulex.bsb.utils.TypeUtils;
 import com.rulex.dsm.bean.Field;
 import com.rulex.dsm.bean.Source;
 import com.rulex.dsm.service.InsertService;
@@ -116,10 +118,14 @@ public class SqlStatementInterceptor implements Interceptor {
             if (t) {
                 //获取payload
                 byte[] payload = InsertService.judge(boundSql, tablename, column, sourceList);
+                //获取PrimaryId
+                Object PrimaryId = null;
+                byte[] hashPrimaryId = SHA256.getSHA256Bytes(TypeUtils.objectToByte(PrimaryId));
+
                 if (payload != null) {
                     //调用bsb执行上链
                     DataBean.Data data = DataBean.Data.newBuilder().setPayload(ByteString.copyFrom(payload)).build();
-                    BSBService.producer(data);
+                    BSBService.producer(data, hashPrimaryId);
                     BSBService.Consumer();
                 }
             }

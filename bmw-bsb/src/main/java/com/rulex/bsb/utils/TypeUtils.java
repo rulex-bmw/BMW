@@ -1,9 +1,6 @@
 package com.rulex.bsb.utils;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
 import java.util.Arrays;
@@ -161,7 +158,7 @@ public class TypeUtils {
     public static final String bytesToHexString(byte[] bArray) {
         StringBuffer sb = new StringBuffer(bArray.length);
         String sTemp;
-        for(int i = 0; i < bArray.length; i++) {
+        for (int i = 0; i < bArray.length; i++) {
             sTemp = Integer.toHexString(0xFF & bArray[i]);
             if (sTemp.length() < 2)
                 sb.append(0);
@@ -189,7 +186,7 @@ public class TypeUtils {
             result = new byte[(hexlen / 2)];
         }
         int j = 0;
-        for(int i = 0; i < hexlen; i += 2) {
+        for (int i = 0; i < hexlen; i += 2) {
             result[j] = hexToByte(inHex.substring(i, i + 2));
             j++;
         }
@@ -201,14 +198,13 @@ public class TypeUtils {
     }
 
 
-
     /**
      * short到字节数组的转换.
      */
     public static byte[] shortToByte(short number) {
         int temp = number;
         byte[] b = new byte[2];
-        for(int i = 0; i < b.length; i++) {
+        for (int i = 0; i < b.length; i++) {
             b[i] = new Integer(temp & 0xff).byteValue();// 将最低位保存在最低位
             temp = temp >> 8;// 向右移8位
         }
@@ -232,7 +228,7 @@ public class TypeUtils {
      * uint8到字节数组的转换.
      */
     public static byte uint8ToByte(short number) {
-        return  new Integer(number & 0xff).byteValue();
+        return new Integer(number & 0xff).byteValue();
     }
 
     /**
@@ -281,13 +277,13 @@ public class TypeUtils {
      */
     public static byte[] concatByteArrays(byte[][] arrays) {
         int tl = 0;
-        for(byte[] bytes : arrays) {
+        for (byte[] bytes : arrays) {
             tl += bytes.length;
         }
         byte[] r = new byte[tl];
 
         int i = 0;
-        for(byte[] bytes : arrays) {
+        for (byte[] bytes : arrays) {
             System.arraycopy(bytes, 0, r, i, bytes.length);
             i += bytes.length;
         }
@@ -306,6 +302,55 @@ public class TypeUtils {
         byte[] prefix = new byte[src.length < n ? n - src.length : 0];
         byte[] postfix = Arrays.copyOfRange(src, src.length - (src.length > n ? n : src.length), src.length);
         return concatByteArrays(new byte[][]{prefix, postfix});
+    }
+
+
+    /**
+     * 对象转byte
+     *
+     * @param obj
+     * @return
+     */
+    public static byte[] objectToByte(Object obj) {
+        byte[] bytes = null;
+        try {
+            // object to bytearray
+            ByteArrayOutputStream bo = new ByteArrayOutputStream();
+            ObjectOutputStream oo = new ObjectOutputStream(bo);
+            oo.writeObject(obj);
+
+            bytes = bo.toByteArray();
+
+            bo.close();
+            oo.close();
+        } catch (Exception e) {
+            System.out.println("translation" + e.getMessage());
+            e.printStackTrace();
+        }
+        return bytes;
+    }
+
+    /**
+     * byte转对象
+     *
+     * @param bytes
+     * @return
+     */
+    public static Object byteToObject(byte[] bytes) {
+        Object obj = null;
+        try {
+            // bytearray to object
+            ByteArrayInputStream bi = new ByteArrayInputStream(bytes);
+            ObjectInputStream oi = new ObjectInputStream(bi);
+
+            obj = oi.readObject();
+            bi.close();
+            oi.close();
+        } catch (Exception e) {
+            System.out.println("translation" + e.getMessage());
+            e.printStackTrace();
+        }
+        return obj;
     }
 
 
