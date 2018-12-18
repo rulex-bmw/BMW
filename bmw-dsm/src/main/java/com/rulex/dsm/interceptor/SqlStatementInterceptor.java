@@ -6,6 +6,7 @@ import com.rulex.bsb.service.BSBService;
 import com.rulex.bsb.utils.DataException;
 import com.rulex.dsm.bean.Field;
 import com.rulex.dsm.bean.Source;
+import com.rulex.dsm.pojo.User;
 import com.rulex.dsm.service.InsertService;
 import com.rulex.dsm.utils.XmlUtil;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
@@ -19,11 +20,20 @@ import net.sf.jsqlparser.statement.update.Update;
 import org.apache.ibatis.executor.statement.RoutingStatementHandler;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.plugin.*;
+import org.apache.ibatis.reflection.DefaultReflectorFactory;
+import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.reflection.factory.DefaultObjectFactory;
+import org.apache.ibatis.reflection.factory.ObjectFactory;
+import org.apache.ibatis.reflection.wrapper.DefaultObjectWrapperFactory;
+import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.StringReader;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -36,6 +46,9 @@ public class SqlStatementInterceptor implements Interceptor {
 
     private List<Source> sourceList = new ArrayList<>();
 
+    private static final ObjectFactory DEFAULT_OBJECT_FACTORY = new DefaultObjectFactory();
+    private static final ObjectWrapperFactory DEFAULT_OBJECT_WRAPPER_FACTORY = new DefaultObjectWrapperFactory();
+
     /**
      * 拦截器执行方法
      *
@@ -45,8 +58,8 @@ public class SqlStatementInterceptor implements Interceptor {
     @Override
     public Object intercept(Invocation invocation) throws Exception {
         //拦截执行sql
-        RoutingStatementHandler target = (RoutingStatementHandler) invocation.getTarget();
-        BoundSql boundSql = target.getBoundSql();
+        RoutingStatementHandler statementHandler = (RoutingStatementHandler) invocation.getTarget();
+        BoundSql boundSql = statementHandler.getBoundSql();
         try {
             //获取拦截规则
             if (null == sourceList) {
@@ -59,38 +72,38 @@ public class SqlStatementInterceptor implements Interceptor {
             if (stmt instanceof Insert) {
                 Insert insert = (Insert) stmt;
                 tablename = insert.getTable().getName();
-                for (Source source : sourceList) {
+                for(Source source : sourceList) {
                     if (source.getTable().equalsIgnoreCase(tablename)) {
                         t = true;
                     }
                 }
                 List<Column> columns = insert.getColumns();
-                for (Column c : columns) {
+                for(Column c : columns) {
                     column.add(c.getColumnName());
                 }
             } else if (stmt instanceof Update) {
                 Update update = (Update) stmt;
                 List<Table> tables = update.getTables();
                 boolean b = false;
-                for (Table table : tables) {
-                    for (Source source : sourceList) {
+                for(Table table : tables) {
+                    for(Source source : sourceList) {
                         if (source.getTable().equalsIgnoreCase(table.getName())) {
                             b = true;
                         }
                     }
                 }
-                if (b) {
-
-                }
 
 
             } else if (stmt instanceof Delete) {
+
+
+
 
             } else if (stmt instanceof Drop) {
                 //上区块链的表不能删除
                 Drop drop = (Drop) stmt;
                 tablename = drop.getName();
-                for (Source source : sourceList) {
+                for(Source source : sourceList) {
                     if (source.getTable().equalsIgnoreCase(tablename)) {
                         throw new DataException("The data for this database table cannot be deleted because it is on the block chain.");
                     }
@@ -99,10 +112,10 @@ public class SqlStatementInterceptor implements Interceptor {
                 //上区块链的字段信息不能修改
                 Alter alter = (Alter) stmt;
                 tablename = alter.getTable().getName();
-                for (Source source : sourceList) {
+                for(Source source : sourceList) {
                     if (source.getTable().equalsIgnoreCase(tablename)) {
 
-                        for (Field field : source.getFields()) {
+                        for(Field field : source.getFields()) {
 
                             if (alter.getColumnName().equalsIgnoreCase(field.getColumn())) {
 
@@ -143,5 +156,82 @@ public class SqlStatementInterceptor implements Interceptor {
     public void setProperties(Properties arg0) {
     }
 
+
+    /**
+     * 包装sql后，重置到invocation中
+     *
+     * @param invocation
+     * @param sql
+     * @throws SQLException
+     */
+    private void resetSql2Invocation(Invocation invocation, String sql) throws SQLException {
+        final Object[] args = invocation.getArgs();
+        MappedStatement statement = (MappedStatement) args[0];
+        Object parameterObject = args[1];
+        BoundSql boundSql = statement.getBoundSql(parameterObject);
+        MappedStatement newStatement = newMappedStatement(statement, new BoundSqlSqlSource(boundSql));
+        MetaObject msObject = MetaObject.forObject(newStatement, new DefaultObjectFactory(), new DefaultObjectWrapperFactory(), new DefaultReflectorFactory());
+        msObject.setValue("sqlSource.boundSql.sql", sql);
+        args[0] = newStatement;
+    }
+
+    private MappedStatement newMappedStatement(MappedStatement ms, SqlSource newSqlSource) {
+        MappedStatement.Builder builder =
+                new MappedStatement.Builder(ms.getConfiguration(), ms.getId(), newSqlSource, ms.getSqlCommandType());
+        builder.resource(ms.getResource());
+        builder.fetchSize(ms.getFetchSize());
+        builder.statementType(ms.getStatementType());
+        builder.keyGenerator(ms.getKeyGenerator());
+        if (ms.getKeyProperties() != null && ms.getKeyProperties().length != 0) {
+            StringBuilder keyProperties = new StringBuilder();
+            for(String keyProperty : ms.getKeyProperties()) {
+                keyProperties.append(keyProperty).append(",");
+            }
+            keyProperties.delete(keyProperties.length() - 1, keyProperties.length());
+            builder.keyProperty(keyProperties.toString());
+        }
+        builder.timeout(ms.getTimeout());
+        builder.parameterMap(ms.getParameterMap());
+        builder.resultMaps(ms.getResultMaps());
+        builder.resultSetType(ms.getResultSetType());
+        builder.cache(ms.getCache());
+        builder.flushCacheRequired(ms.isFlushCacheRequired());
+        builder.useCache(ms.isUseCache());
+
+        return builder.build();
+    }
+
+    private String getOperateType(Invocation invocation) {
+        final Object[] args = invocation.getArgs();
+        MappedStatement ms = (MappedStatement) args[0];
+        SqlCommandType commondType = ms.getSqlCommandType();
+        if (commondType.compareTo(SqlCommandType.SELECT) == 0) {
+            return "select";
+        }
+        if (commondType.compareTo(SqlCommandType.INSERT) == 0) {
+            return "insert";
+        }
+        if (commondType.compareTo(SqlCommandType.UPDATE) == 0) {
+            return "update";
+        }
+        if (commondType.compareTo(SqlCommandType.DELETE) == 0) {
+            return "delete";
+        }
+        return null;
+    }
+
+    //    定义一个内部辅助类，作用是包装sql
+    class BoundSqlSqlSource implements SqlSource {
+        private BoundSql boundSql;
+
+        public BoundSqlSqlSource(BoundSql boundSql) {
+            this.boundSql = boundSql;
+        }
+
+        @Override
+        public BoundSql getBoundSql(Object parameterObject) {
+            return boundSql;
+        }
+    }
 
 }

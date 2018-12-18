@@ -4,7 +4,6 @@ package com.rulex.dsm.interceptor;
 import org.apache.ibatis.executor.resultset.ResultSetHandler;
 import org.apache.ibatis.plugin.*;
 import org.springframework.stereotype.Component;
-import sun.plugin2.main.server.ResultHandler;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -23,10 +22,10 @@ public class ResultSetInterceptor implements Interceptor {
         Statement statement = (Statement) args[0];
         ResultSet rs = statement.getResultSet();
         ResultSetMetaData rsmd = rs.getMetaData();
-        List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> list = new ArrayList<>();
         while (rs.next()) {
             // 将各列数据存入map集合
-            Map<String, String> ma = new HashMap<String, String>();
+            Map<String, String> ma = new HashMap<>();
             // 获取键值和每一行的各列存入map集合
             for(int i = 1; i <= rsmd.getColumnCount(); i++) {
                 // 将 列名 和 列值 存入集合
@@ -41,10 +40,6 @@ public class ResultSetInterceptor implements Interceptor {
 
         return invocation.proceed();
     }
-
-
-
-
 
 
     @Override

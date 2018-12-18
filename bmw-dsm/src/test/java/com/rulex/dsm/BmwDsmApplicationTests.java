@@ -25,15 +25,15 @@ public class BmwDsmApplicationTests {
     public void contextLoads() {
 //        User user = new User();
 //        user.setAge(8);
-//        user.setName("王五");
+//        user.setName("张三");
 //        int i = userDao.insertUser(user);
 //        System.out.println(i);
 //
-//        int j = userDao.updateUser();
-//        System.out.println(j);
+        int j = userDao.updateUser();
+        System.out.println(j);
 
-        List<User> users = userDao.selectAll();
-        System.out.println(users);
+//        List<User> users = userDao.selectAll();
+//        System.out.println(users);
 
     }
 
