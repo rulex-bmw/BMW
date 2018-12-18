@@ -74,13 +74,13 @@ public class SqlStatementInterceptor implements Interceptor {
             if (stmt instanceof Insert) {
                 Insert insert = (Insert) stmt;
                 tablename = insert.getTable().getName();
-                for(Source source : sourceList) {
+                for (Source source : sourceList) {
                     if (source.getTable().equalsIgnoreCase(tablename)) {
                         t = true;
                     }
                 }
                 List<Column> columns = insert.getColumns();
-                for(Column c : columns) {
+                for (Column c : columns) {
                     column.add(c.getColumnName());
                 }
                 if (t) {
@@ -101,8 +101,8 @@ public class SqlStatementInterceptor implements Interceptor {
                 Update update = (Update) stmt;
                 List<Table> tables = update.getTables();
                 boolean b = false;
-                for(Table table : tables) {
-                    for(Source source : sourceList) {
+                for (Table table : tables) {
+                    for (Source source : sourceList) {
                         if (source.getTable().equalsIgnoreCase(table.getName())) {
                             b = true;
                         }
@@ -113,13 +113,12 @@ public class SqlStatementInterceptor implements Interceptor {
             } else if (stmt instanceof Delete) {
 
 
-
-
             } else if (stmt instanceof Drop) {
+
                 //上区块链的表不能删除
                 Drop drop = (Drop) stmt;
                 tablename = drop.getName();
-                for(Source source : sourceList) {
+                for (Source source : sourceList) {
                     if (source.getTable().equalsIgnoreCase(tablename)) {
                         throw new DataException("The data for this database table cannot be deleted because it is on the block chain.");
                     }
@@ -128,13 +127,17 @@ public class SqlStatementInterceptor implements Interceptor {
                 //上区块链的字段信息不能修改
                 Alter alter = (Alter) stmt;
                 tablename = alter.getTable().getName();
-                for(Source source : sourceList) {
+                for (Source source : sourceList) {
                     if (source.getTable().equalsIgnoreCase(tablename)) {
 
-                        for(Field field : source.getFields()) {
+                        //修改表名报错
+                        if ((alter.getColumnName() == null)) {
+                            throw new DataException("The data for this database table cannot be alter because it is on the block chain.");
+                        }
 
+                        //修改上链的表列名报错
+                        for (Field field : source.getFields()) {
                             if (alter.getColumnName().equalsIgnoreCase(field.getColumn())) {
-
                                 throw new DataException("The data for this database table cannot be alter because it is on the block chain.");
 
                             }
@@ -191,7 +194,7 @@ public class SqlStatementInterceptor implements Interceptor {
         builder.keyGenerator(ms.getKeyGenerator());
         if (ms.getKeyProperties() != null && ms.getKeyProperties().length != 0) {
             StringBuilder keyProperties = new StringBuilder();
-            for(String keyProperty : ms.getKeyProperties()) {
+            for (String keyProperty : ms.getKeyProperties()) {
                 keyProperties.append(keyProperty).append(",");
             }
             keyProperties.delete(keyProperties.length() - 1, keyProperties.length());

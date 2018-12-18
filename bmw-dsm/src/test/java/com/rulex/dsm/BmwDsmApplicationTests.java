@@ -34,7 +34,9 @@ public class BmwDsmApplicationTests {
 //
 //        List<User> users = userDao.selectAll();
 //        System.out.println(users);
-        userDao.dropTable("test");
+//        userDao.dropTable("test");
+
+        userDao.alderTable();
     }
 
 }

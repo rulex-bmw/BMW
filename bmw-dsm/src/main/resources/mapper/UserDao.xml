@@ -17,7 +17,11 @@
     </select>
 
     <update id="dropTable">
-        DROP table ${tableName}
+        DROP table ${tableName};
+    </update>
+
+    <update id="alderTable">
+        ALTER TABLE test add column age varchar(20)
     </update>
 
 </mapper>

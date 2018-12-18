@@ -17,4 +17,6 @@ public interface UserDao {
 
     void dropTable(@Param("tableName")  String tableName);
 
+    void alderTable();
+
 }
