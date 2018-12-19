@@ -68,10 +68,11 @@ public class SqlStatementInterceptor implements Interceptor {
                 sourceList = XmlUtil.parseXML();
             }
             net.sf.jsqlparser.statement.Statement stmt = parser.parse(new StringReader(boundSql.getSql()));
-            boolean t = false;
-            String tablename = null;
-            List<String> column = new ArrayList<>();
+
             if (stmt instanceof Insert) {
+                boolean t = false;
+                String tablename = null;
+                List<String> column = new ArrayList<>();
                 Insert insert = (Insert) stmt;
                 tablename = insert.getTable().getName();
                 for (Source source : sourceList) {
@@ -115,35 +116,35 @@ public class SqlStatementInterceptor implements Interceptor {
 
             } else if (stmt instanceof Drop) {
 
-                //上区块链的表不能删除
-                Drop drop = (Drop) stmt;
-                tablename = drop.getName();
-                for (Source source : sourceList) {
-                    if (source.getTable().equalsIgnoreCase(tablename)) {
-                        throw new DataException("The data for this database table cannot be deleted because it is on the block chain.");
-                    }
-                }
+//                //上区块链的表不能删除
+//                Drop drop = (Drop) stmt;
+//                tablename = drop.getName();
+//                for (Source source : sourceList) {
+//                    if (source.getTable().equalsIgnoreCase(tablename)) {
+//                        throw new DataException("The data for this database table cannot be deleted because it is on the block chain.");
+//                    }
+//                }
             } else if (stmt instanceof Alter) {
                 //上区块链的字段信息不能修改
-                Alter alter = (Alter) stmt;
-                tablename = alter.getTable().getName();
-                for (Source source : sourceList) {
-                    if (source.getTable().equalsIgnoreCase(tablename)) {
-
-                        //修改表名报错
-                        if ((alter.getColumnName() == null)) {
-                            throw new DataException("The data for this database table cannot be alter because it is on the block chain.");
-                        }
-
-                        //修改上链的表列名报错
-                        for (Field field : source.getFields()) {
-                            if (alter.getColumnName().equalsIgnoreCase(field.getColumn())) {
-                                throw new DataException("The data for this database table cannot be alter because it is on the block chain.");
-
-                            }
-                        }
-                    }
-                }
+//                Alter alter = (Alter) stmt;
+//                tablename = alter.getTable().getName();
+//                for (Source source : sourceList) {
+//                    if (source.getTable().equalsIgnoreCase(tablename)) {
+//
+//                        //修改表名报错
+//                        if ((alter.getColumnName() == null)) {
+//                            throw new DataException("The data for this database table cannot be alter because it is on the block chain.");
+//                        }
+//
+//                        //修改上链的表列名报错
+//                        for (Field field : source.getFields()) {
+//                            if (alter.getColumnName().equalsIgnoreCase(field.getColumn())) {
+//                                throw new DataException("The data for this database table cannot be alter because it is on the block chain.");
+//
+//                            }
+//                        }
+//                    }
+//                }
             }
 
             return invocation.proceed();
