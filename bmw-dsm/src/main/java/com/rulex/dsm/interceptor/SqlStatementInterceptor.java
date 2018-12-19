@@ -65,32 +65,28 @@ public class SqlStatementInterceptor implements Interceptor {
             net.sf.jsqlparser.statement.Statement stmt = parser.parse(new StringReader(boundSql.getSql()));
 
             if (stmt instanceof Insert) {
-                boolean t = false;
-                String tablename = null;
-                List<String> column = new ArrayList<>();
+
                 Insert insert = (Insert) stmt;
-                tablename = insert.getTable().getName();
-                for (Source source : sourceList) {
-                    if (source.getTable().equalsIgnoreCase(tablename)) {
-                        t = true;
-                    }
-                }
+                String tableName = insert.getTable().getName();
                 List<Column> columns = insert.getColumns();
+                List<String> column = new ArrayList<>();
                 for (Column c : columns) {
                     column.add(c.getColumnName());
                 }
-                if (t) {
-                    //获取payload
-                    byte[] payload = InsertService.judge(boundSql, tablename, column, sourceList);
-                    //获取PrimaryId
-                    Object PrimaryId = null;
-                    byte[] hashPrimaryId = SHA256.getSHA256Bytes(TypeUtils.objectToByte(PrimaryId));
+                for (Source source : sourceList) {
+                    if (source.getTable().equalsIgnoreCase(tableName)) {
+                        //获取payload
+                        byte[] payload = InsertService.judge(boundSql, tableName, column, sourceList);
+                        //获取PrimaryId
+                        Object PrimaryId = null;
+                        byte[] hashPrimaryId = SHA256.getSHA256Bytes(TypeUtils.objectToByte(PrimaryId));
 
-                    if (payload != null) {
-                        //调用bsb执行上链
-                        DataBean.Data data = DataBean.Data.newBuilder().setPayload(ByteString.copyFrom(payload)).build();
-                        BSBService.producer(data, hashPrimaryId);
-                        BSBService.Consumer();
+                        if (payload != null) {
+                            //调用bsb执行上链
+                            DataBean.Data data = DataBean.Data.newBuilder().setPayload(ByteString.copyFrom(payload)).build();
+                            BSBService.producer(data, hashPrimaryId);
+                            BSBService.Consumer();
+                        }
                     }
                 }
             } else if (stmt instanceof Update) {
@@ -100,37 +96,34 @@ public class SqlStatementInterceptor implements Interceptor {
 
             } else if (stmt instanceof Drop) {
 
-//                //上区块链的表不能删除
-//                Drop drop = (Drop) stmt;
-//                tablename = drop.getName();
-//                for (Source source : sourceList) {
-//                    if (source.getTable().equalsIgnoreCase(tablename)) {
-//                        throw new DataException("The data for this database table cannot be deleted because it is on the block chain.");
-//                    }
-//                }
+                //上区块链的表不能删除
+                Drop drop = (Drop) stmt;
+                for (Source source : sourceList) {
+                    if (source.getTable().equalsIgnoreCase(drop.getName())) {
+                        throw new DataException("The data for this database table cannot be deleted because it is on the block chain.");
+                    }
+                }
             } else if (stmt instanceof Alter) {
-                //上区块链的字段信息不能修改
-//                Alter alter = (Alter) stmt;
-//                tablename = alter.getTable().getName();
-//                for (Source source : sourceList) {
-//                    if (source.getTable().equalsIgnoreCase(tablename)) {
-//
-//                        //修改表名报错
-//                        if ((alter.getColumnName() == null)) {
-//                            throw new DataException("The data for this database table cannot be alter because it is on the block chain.");
-//                        }
-//
-//                        //修改上链的表列名报错
-//                        for (Field field : source.getFields()) {
-//                            if (alter.getColumnName().equalsIgnoreCase(field.getColumn())) {
-//                                throw new DataException("The data for this database table cannot be alter because it is on the block chain.");
-//
-//                            }
-//                        }
-//                    }
-//                }
-            }
 
+                //上区块链的字段信息不能修改
+                Alter alter = (Alter) stmt;
+                for (Source source : sourceList) {
+                    if (source.getTable().equalsIgnoreCase(alter.getTable().getName())) {
+
+                        //修改表名报错
+                        if ((alter.getColumnName() == null)) {
+                            throw new DataException("The data for this database table cannot be alter because it is on the block chain.");
+                        }
+
+                        //修改上链的表列名报错
+                        for (Field field : source.getFields()) {
+                            if (alter.getColumnName().equalsIgnoreCase(field.getColumn())) {
+                                throw new DataException("The data for this database table cannot be alter because it is on the block chain.");
+                            }
+                        }
+                    }
+                }
+            }
             return invocation.proceed();
         } catch (Exception e) {
             e.printStackTrace();
