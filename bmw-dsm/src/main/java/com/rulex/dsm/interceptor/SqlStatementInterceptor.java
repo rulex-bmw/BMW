@@ -121,8 +121,10 @@ public class SqlStatementInterceptor implements Interceptor {
                                 throw new DataException("The data for this database table cannot be alter because it is on the block chain.");
                             }
                         }
+
                     }
                 }
+
             }
             return invocation.proceed();
         } catch (Exception e) {

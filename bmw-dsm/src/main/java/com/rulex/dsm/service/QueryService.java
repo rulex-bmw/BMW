@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class queryService {
+public class QueryService {
 
     /**
      * 查询写入区块链的信息
