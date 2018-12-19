@@ -8,12 +8,11 @@ import com.rulex.bsb.utils.SHA256;
 import com.rulex.bsb.utils.TypeUtils;
 import com.rulex.dsm.bean.Field;
 import com.rulex.dsm.bean.Source;
-import com.rulex.dsm.pojo.User;
 import com.rulex.dsm.service.InsertService;
+import com.rulex.dsm.service.UpdateService;
 import com.rulex.dsm.utils.XmlUtil;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.schema.Column;
-import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.alter.Alter;
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.drop.Drop;
@@ -29,13 +28,12 @@ import org.apache.ibatis.plugin.*;
 import org.apache.ibatis.reflection.DefaultReflectorFactory;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.factory.DefaultObjectFactory;
-import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.apache.ibatis.reflection.wrapper.DefaultObjectWrapperFactory;
-import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.StringReader;
-import java.sql.*;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -47,9 +45,6 @@ public class SqlStatementInterceptor implements Interceptor {
     CCJSqlParserManager parser = new CCJSqlParserManager();
 
     private List<Source> sourceList = new ArrayList<>();
-
-    private static final ObjectFactory DEFAULT_OBJECT_FACTORY = new DefaultObjectFactory();
-    private static final ObjectWrapperFactory DEFAULT_OBJECT_WRAPPER_FACTORY = new DefaultObjectWrapperFactory();
 
     /**
      * 拦截器执行方法
@@ -64,7 +59,7 @@ public class SqlStatementInterceptor implements Interceptor {
         BoundSql boundSql = statementHandler.getBoundSql();
         try {
             //获取拦截规则
-            if (null == sourceList) {
+            if (0 == sourceList.size()) {
                 sourceList = XmlUtil.parseXML();
             }
             net.sf.jsqlparser.statement.Statement stmt = parser.parse(new StringReader(boundSql.getSql()));
@@ -98,23 +93,8 @@ public class SqlStatementInterceptor implements Interceptor {
                     }
                 }
             } else if (stmt instanceof Update) {
-                Update update = (Update) stmt;
-                List<Table> tables = update.getTables();
-                boolean b = false;
-                for(Table table : tables) {
-                    for(Source source : sourceList) {
-                        if (source.getTable().equalsIgnoreCase(table.getName())) {
-                            b = true;
-                        }
-                    }
-                }
-
-
-
-
+                UpdateService.credibleUpdate((Update) stmt, invocation, sourceList);
             } else if (stmt instanceof Delete) {
-
-
 
 
             } else if (stmt instanceof Drop) {

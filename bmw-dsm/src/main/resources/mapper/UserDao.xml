@@ -5,11 +5,19 @@
 <mapper namespace="com.rulex.dsm.bean.UserDao">
 
     <update id="updateUser">
-        update bmw_user set username = 'test01' where age = 2;
+        update bmw_user set username = 'test01',age = 2 where id = 10 and age = 2 and username = 'test01';
     </update>
 
     <insert id="insertUser" parameterType="com.rulex.dsm.pojo.User">
         insert into bmw_user (username,age) values (#{name},#{age});
+    </insert>
+
+    <insert id="batchCreateUser" parameterType="com.rulex.dsm.pojo.User">
+        INSERT INTO bmw_user (username,age)
+        VALUES
+        <foreach collection="userList" item="model" separator=",">
+            (#{model.name}, #{model.age})
+        </foreach>
     </insert>
 
     <select id="selectAll" resultType="com.rulex.dsm.pojo.User">

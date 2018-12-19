@@ -10,6 +10,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -23,18 +24,27 @@ public class BmwDsmApplicationTests {
 
     @Test
     public void contextLoads() {
-//        User user = new User();
-//        user.setAge(20);
-//        user.setName("王liu");
-//        int i = userDao.insertUser(user);
-//        System.out.println(i);
+//        List<User> objects = new ArrayList<>();
+//        User user1 = new User();
+//        user1.setAge(20);
+//        user1.setName("王liu");
+//        User user2 = new User();
+//        user2.setAge(20);
+//        user2.setName("王liu");
+//        User user3 = new User();
+//        user3.setAge(20);
+//        user3.setName("王liu");
+//        objects.add(user1);
+//        objects.add(user2);
+//        objects.add(user3);
+//        userDao.batchCreateUser(objects);
 //
-//        int j = userDao.updateUser();
-//        System.out.println(j);
+        int j = userDao.updateUser();
+        System.out.println(j);
 //
 //        List<User> users = userDao.selectAll();
 //        System.out.println(users);
-        userDao.dropTable("test");
+//        userDao.dropTable("test");
     }
 
 }

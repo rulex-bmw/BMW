@@ -51,7 +51,7 @@ public class XmlUtil {
                 fi.setName(f.attributeValue("name"));
                 fi.setColumn(f.attributeValue("column"));
                 String isnull = f.attributeValue("isnull");
-                fi.setIsnull((isnull.equals("false") || StringUtils.isBlank(isnull)) ? false : true);
+                fi.setIsnull(isnull.equals("false") || StringUtils.isBlank(isnull) ? false : true);
                 String type = f.attributeValue("type");
                 fi.setType(type);
                 if (type.equals("Integer") || type.equals("Long") || type.equals("Float") || type.equals("Double")) {
