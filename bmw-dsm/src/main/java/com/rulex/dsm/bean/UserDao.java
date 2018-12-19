@@ -15,7 +15,9 @@ public interface UserDao {
 
     List<User> selectAll();
 
-    void dropTable(@Param("tableName")  String tableName);
+    void dropTable(@Param("tableName") String tableName);
+
+    void batchCreateUser(@Param("userList") List<User> userList);
 
     void alderTable();
 

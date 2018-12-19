@@ -3110,6 +3110,11 @@ public final class DataBean {
      * <code>repeated .FieldValue fields = 2;</code>
      */
     int getFieldsCount();
+
+    /**
+     * <code>bytes orgHashKey = 3;</code>
+     */
+    com.google.protobuf.ByteString getOrgHashKey();
   }
   /**
    * Protobuf type {@code Alteration}
@@ -3121,6 +3126,7 @@ public final class DataBean {
       AlterationOrBuilder {
     private Alteration() {
       fields_ = emptyProtobufList();
+      orgHashKey_ = com.google.protobuf.ByteString.EMPTY;
     }
     private int bitField0_;
     public static final int OPERATION_FIELD_NUMBER = 1;
@@ -3287,6 +3293,33 @@ public final class DataBean {
       fields_.remove(index);
     }
 
+    public static final int ORGHASHKEY_FIELD_NUMBER = 3;
+    private com.google.protobuf.ByteString orgHashKey_;
+    /**
+     * <code>bytes orgHashKey = 3;</code>
+     */
+    @Override
+    public com.google.protobuf.ByteString getOrgHashKey() {
+      return orgHashKey_;
+    }
+    /**
+     * <code>bytes orgHashKey = 3;</code>
+     */
+    private void setOrgHashKey(com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
+      orgHashKey_ = value;
+    }
+    /**
+     * <code>bytes orgHashKey = 3;</code>
+     */
+    private void clearOrgHashKey() {
+      
+      orgHashKey_ = getDefaultInstance().getOrgHashKey();
+    }
+
     @Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
@@ -3295,6 +3328,9 @@ public final class DataBean {
       }
       for (int i = 0; i < fields_.size(); i++) {
         output.writeMessage(2, fields_.get(i));
+      }
+      if (!orgHashKey_.isEmpty()) {
+        output.writeBytes(3, orgHashKey_);
       }
       unknownFields.writeTo(output);
     }
@@ -3312,6 +3348,10 @@ public final class DataBean {
       for (int i = 0; i < fields_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(2, fields_.get(i));
+      }
+      if (!orgHashKey_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(3, orgHashKey_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSerializedSize = size;
@@ -3552,6 +3592,30 @@ public final class DataBean {
         return this;
       }
 
+      /**
+       * <code>bytes orgHashKey = 3;</code>
+       */
+      @Override
+      public com.google.protobuf.ByteString getOrgHashKey() {
+        return instance.getOrgHashKey();
+      }
+      /**
+       * <code>bytes orgHashKey = 3;</code>
+       */
+      public Builder setOrgHashKey(com.google.protobuf.ByteString value) {
+        copyOnWrite();
+        instance.setOrgHashKey(value);
+        return this;
+      }
+      /**
+       * <code>bytes orgHashKey = 3;</code>
+       */
+      public Builder clearOrgHashKey() {
+        copyOnWrite();
+        instance.clearOrgHashKey();
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:Alteration)
     }
     @Override
@@ -3578,6 +3642,8 @@ public final class DataBean {
           Alteration other = (Alteration) arg1;
           operation_ = visitor.visitInt(operation_ != 0, operation_,    other.operation_ != 0, other.operation_);
           fields_= visitor.visitList(fields_, other.fields_);
+          orgHashKey_ = visitor.visitByteString(orgHashKey_ != com.google.protobuf.ByteString.EMPTY, orgHashKey_,
+              other.orgHashKey_ != com.google.protobuf.ByteString.EMPTY, other.orgHashKey_);
           if (visitor == MergeFromVisitor
               .INSTANCE) {
             bitField0_ |= other.bitField0_;
@@ -3613,6 +3679,11 @@ public final class DataBean {
                   }
                   fields_.add(
                       input.readMessage(FieldValue.parser(), extensionRegistry));
+                  break;
+                }
+                case 26: {
+
+                  orgHashKey_ = input.readBytes();
                   break;
                 }
                 default: {

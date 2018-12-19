@@ -18,8 +18,9 @@ public class SqliteUtils {
     static {
         String sql = "CREATE TABLE IF NOT EXISTS key_indexes (\n"
                 + "	id integer PRIMARY KEY,\n"
-                + "	pri_key_hash blob NOT NULL,\n"
-                + "	hash_key blob NOT NULL,\n"
+                + "	orgPKHash string NOT NULL,\n"
+                + "	typeHash string NOT NULL,\n"
+                + "	type integer NOT NULL,\n"
                 + "	ts integer NOT NULL\n"
                 + ");";
         PreparedStatement stmt = null;
