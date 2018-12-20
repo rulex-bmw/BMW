@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface UserDao {
 
-    int updateUser();
+    int updateUser(@Param("aaaa") String name, @Param("bbb") Integer age);
 
     int insertUser(User u);
 

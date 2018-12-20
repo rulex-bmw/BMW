@@ -4,11 +4,17 @@
     <!--<field name="userId" column="user_id" type="String" isnull="false" transforable="true" length="11"></field>-->
     <!--<field name="extcredits1" column="extcredits1" type="Integer" isnull="false" transforable="false" length="4"></field>-->
     <!--</record>-->
-    <record name="UserInfo" groupable="true" table="user_info" pojo="cn.javaex.uscat.view.UserInfo">
+    <record id="1" name="UserInfo" groupable="true" table="user_info" pojo="cn.javaex.uscat.view.UserInfo">
         <!--只是规定primaryKey，不上链-->
+        <primary>
+            <key name="" column="" type=""/>
+            <key name="" column="" type=""/>
+            <key name="" column="" type=""/>
+        </primary>
         <!--<id name="id" column="id" type="String"></id>-->
         <!--上链信息-->
-        <field name="id" column="id" type="String" isnull="false" transforable="false" length="4" fieldId="1"></field>
+        <field name="id" column="id" type="String" isnull="false" transforable="false" length="4" fieldId="1"
+               isprimaykey="true"></field>
         <field name="loginName" column="login_name" type="String" isnull="false" transforable="false"
                length="20" fieldId="2"></field>
         <field name="email" column="email" type="String" isnull="false" transforable="false" length="50"

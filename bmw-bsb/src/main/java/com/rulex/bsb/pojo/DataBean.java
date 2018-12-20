@@ -3115,6 +3115,11 @@ public final class DataBean {
      * <code>bytes orgHashKey = 3;</code>
      */
     com.google.protobuf.ByteString getOrgHashKey();
+
+    /**
+     * <code>int32 recordid = 4;</code>
+     */
+    int getRecordid();
   }
   /**
    * Protobuf type {@code Alteration}
@@ -3320,6 +3325,30 @@ public final class DataBean {
       orgHashKey_ = getDefaultInstance().getOrgHashKey();
     }
 
+    public static final int RECORDID_FIELD_NUMBER = 4;
+    private int recordid_;
+    /**
+     * <code>int32 recordid = 4;</code>
+     */
+    @Override
+    public int getRecordid() {
+      return recordid_;
+    }
+    /**
+     * <code>int32 recordid = 4;</code>
+     */
+    private void setRecordid(int value) {
+      
+      recordid_ = value;
+    }
+    /**
+     * <code>int32 recordid = 4;</code>
+     */
+    private void clearRecordid() {
+      
+      recordid_ = 0;
+    }
+
     @Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
@@ -3331,6 +3360,9 @@ public final class DataBean {
       }
       if (!orgHashKey_.isEmpty()) {
         output.writeBytes(3, orgHashKey_);
+      }
+      if (recordid_ != 0) {
+        output.writeInt32(4, recordid_);
       }
       unknownFields.writeTo(output);
     }
@@ -3352,6 +3384,10 @@ public final class DataBean {
       if (!orgHashKey_.isEmpty()) {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(3, orgHashKey_);
+      }
+      if (recordid_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(4, recordid_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSerializedSize = size;
@@ -3616,6 +3652,30 @@ public final class DataBean {
         return this;
       }
 
+      /**
+       * <code>int32 recordid = 4;</code>
+       */
+      @Override
+      public int getRecordid() {
+        return instance.getRecordid();
+      }
+      /**
+       * <code>int32 recordid = 4;</code>
+       */
+      public Builder setRecordid(int value) {
+        copyOnWrite();
+        instance.setRecordid(value);
+        return this;
+      }
+      /**
+       * <code>int32 recordid = 4;</code>
+       */
+      public Builder clearRecordid() {
+        copyOnWrite();
+        instance.clearRecordid();
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:Alteration)
     }
     @Override
@@ -3644,6 +3704,8 @@ public final class DataBean {
           fields_= visitor.visitList(fields_, other.fields_);
           orgHashKey_ = visitor.visitByteString(orgHashKey_ != com.google.protobuf.ByteString.EMPTY, orgHashKey_,
               other.orgHashKey_ != com.google.protobuf.ByteString.EMPTY, other.orgHashKey_);
+          recordid_ = visitor.visitInt(recordid_ != 0, recordid_,
+              other.recordid_ != 0, other.recordid_);
           if (visitor == MergeFromVisitor
               .INSTANCE) {
             bitField0_ |= other.bitField0_;
@@ -3684,6 +3746,11 @@ public final class DataBean {
                 case 26: {
 
                   orgHashKey_ = input.readBytes();
+                  break;
+                }
+                case 32: {
+
+                  recordid_ = input.readInt32();
                   break;
                 }
                 default: {

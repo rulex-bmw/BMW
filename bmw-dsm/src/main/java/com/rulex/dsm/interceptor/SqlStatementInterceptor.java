@@ -9,8 +9,8 @@ import com.rulex.bsb.utils.TypeUtils;
 import com.rulex.dsm.bean.Field;
 import com.rulex.dsm.bean.Source;
 import com.rulex.dsm.service.InsertService;
-import com.rulex.dsm.service.UpdateService;
 import com.rulex.dsm.utils.XmlUtil;
+import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.alter.Alter;
@@ -93,7 +93,16 @@ public class SqlStatementInterceptor implements Interceptor {
                     }
                 }
             } else if (stmt instanceof Update) {
-                UpdateService.credibleUpdate((Update) stmt, invocation, sourceList);
+                Update update = (Update) stmt;
+                List<Column> columns = update.getColumns();
+                List<Expression> expressions = update.getExpressions();
+                for(Expression expression : expressions) {
+
+                    System.out.println(expression.toString().equals("?"));
+                }
+
+                System.out.println();
+//                UpdateService.credibleUpdate((Update) stmt, invocation, sourceList);
             } else if (stmt instanceof Delete) {
 
 
