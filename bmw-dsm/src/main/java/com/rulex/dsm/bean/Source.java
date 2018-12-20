@@ -3,7 +3,15 @@ package com.rulex.dsm.bean;
 import java.util.List;
 
 public class Source {
+    public Integer getId() {
+        return id;
+    }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    private Integer id;
     private String name;    // pojo名称
     private String pojo;    // pojo具体路径
     private String table;   // 表名

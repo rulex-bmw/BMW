@@ -57,6 +57,12 @@ public class SqlStatementInterceptor implements Interceptor {
         //拦截执行sql
         RoutingStatementHandler statementHandler = (RoutingStatementHandler) invocation.getTarget();
         BoundSql boundSql = statementHandler.getBoundSql();
+
+
+        Object parameter = boundSql.getParameterObject();
+
+
+
         try {
             //获取拦截规则
             if (0 == sourceList.size()) {
@@ -65,30 +71,7 @@ public class SqlStatementInterceptor implements Interceptor {
             net.sf.jsqlparser.statement.Statement stmt = parser.parse(new StringReader(boundSql.getSql()));
 
             if (stmt instanceof Insert) {
-
-                Insert insert = (Insert) stmt;
-                String tableName = insert.getTable().getName();
-                List<Column> columns = insert.getColumns();
-                List<String> column = new ArrayList<>();
-                for (Column c : columns) {
-                    column.add(c.getColumnName());
-                }
-                for (Source source : sourceList) {
-                    if (source.getTable().equalsIgnoreCase(tableName)) {
-                        //获取payload
-                        byte[] payload = InsertService.judge(boundSql, tableName, column, sourceList);
-                        //获取PrimaryId
-                        Object PrimaryId = null;
-                        byte[] hashPrimaryId = SHA256.getSHA256Bytes(TypeUtils.objectToByte(PrimaryId));
-
-                        if (payload != null) {
-                            //调用bsb执行上链
-                            DataBean.Data data = DataBean.Data.newBuilder().setPayload(ByteString.copyFrom(payload)).build();
-                            BSBService.producer(data, hashPrimaryId);
-                            BSBService.Consumer();
-                        }
-                    }
-                }
+                InsertService.credibleInsert((Insert) stmt, boundSql, sourceList);
             } else if (stmt instanceof Update) {
                 UpdateService.credibleUpdate((Update) stmt, invocation, sourceList);
             } else if (stmt instanceof Delete) {

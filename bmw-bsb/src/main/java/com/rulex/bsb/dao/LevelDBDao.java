@@ -216,7 +216,7 @@ public class LevelDBDao {
                     }
                     break;
                 }
-                DataBean.Data data = DataBean.Data.parseFrom(LevelDBUtil.getDataDB().get(preKey));
+                DataBean.Data data = DataBean.Data.parseFrom(value);
                 preKey = data.getPrevHash().toByteArray();
                 if (preKey.length == 0 || preKey == null) {
                     break;

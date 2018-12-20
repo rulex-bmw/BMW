@@ -84,9 +84,14 @@ public final class DataBean {
       com.google.protobuf.MessageLiteOrBuilder {
 
     /**
-     * <code>int64 ts = 1;</code>
+     * <code>string ts = 1;</code>
      */
-    long getTs();
+    String getTs();
+    /**
+     * <code>string ts = 1;</code>
+     */
+    com.google.protobuf.ByteString
+        getTsBytes();
 
     /**
      * <code>bytes payload = 2;</code>
@@ -112,31 +117,56 @@ public final class DataBean {
       // @@protoc_insertion_point(message_implements:Header)
       HeaderOrBuilder {
     private Header() {
+      ts_ = "";
       payload_ = com.google.protobuf.ByteString.EMPTY;
       prevHeader_ = com.google.protobuf.ByteString.EMPTY;
     }
     public static final int TS_FIELD_NUMBER = 1;
-    private long ts_;
+    private String ts_;
     /**
-     * <code>int64 ts = 1;</code>
+     * <code>string ts = 1;</code>
      */
     @Override
-    public long getTs() {
+    public String getTs() {
       return ts_;
     }
     /**
-     * <code>int64 ts = 1;</code>
+     * <code>string ts = 1;</code>
      */
-    private void setTs(long value) {
-      
+    @Override
+    public com.google.protobuf.ByteString
+        getTsBytes() {
+      return com.google.protobuf.ByteString.copyFromUtf8(ts_);
+    }
+    /**
+     * <code>string ts = 1;</code>
+     */
+    private void setTs(
+        String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
       ts_ = value;
     }
     /**
-     * <code>int64 ts = 1;</code>
+     * <code>string ts = 1;</code>
      */
     private void clearTs() {
       
-      ts_ = 0L;
+      ts_ = getDefaultInstance().getTs();
+    }
+    /**
+     * <code>string ts = 1;</code>
+     */
+    private void setTsBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      ts_ = value.toStringUtf8();
     }
 
     public static final int PAYLOAD_FIELD_NUMBER = 2;
@@ -220,8 +250,8 @@ public final class DataBean {
     @Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (ts_ != 0L) {
-        output.writeInt64(1, ts_);
+      if (!ts_.isEmpty()) {
+        output.writeString(1, getTs());
       }
       if (!payload_.isEmpty()) {
         output.writeBytes(2, payload_);
@@ -241,9 +271,9 @@ public final class DataBean {
       if (size != -1) return size;
 
       size = 0;
-      if (ts_ != 0L) {
+      if (!ts_.isEmpty()) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(1, ts_);
+          .computeStringSize(1, getTs());
       }
       if (!payload_.isEmpty()) {
         size += com.google.protobuf.CodedOutputStream
@@ -358,26 +388,44 @@ public final class DataBean {
 
 
       /**
-       * <code>int64 ts = 1;</code>
+       * <code>string ts = 1;</code>
        */
       @Override
-      public long getTs() {
+      public String getTs() {
         return instance.getTs();
       }
       /**
-       * <code>int64 ts = 1;</code>
+       * <code>string ts = 1;</code>
        */
-      public Builder setTs(long value) {
+      @Override
+      public com.google.protobuf.ByteString
+          getTsBytes() {
+        return instance.getTsBytes();
+      }
+      /**
+       * <code>string ts = 1;</code>
+       */
+      public Builder setTs(
+          String value) {
         copyOnWrite();
         instance.setTs(value);
         return this;
       }
       /**
-       * <code>int64 ts = 1;</code>
+       * <code>string ts = 1;</code>
        */
       public Builder clearTs() {
         copyOnWrite();
         instance.clearTs();
+        return this;
+      }
+      /**
+       * <code>string ts = 1;</code>
+       */
+      public Builder setTsBytes(
+          com.google.protobuf.ByteString value) {
+        copyOnWrite();
+        instance.setTsBytes(value);
         return this;
       }
 
@@ -476,8 +524,8 @@ public final class DataBean {
         case VISIT: {
           Visitor visitor = (Visitor) arg0;
           Header other = (Header) arg1;
-          ts_ = visitor.visitLong(ts_ != 0L, ts_,
-              other.ts_ != 0L, other.ts_);
+          ts_ = visitor.visitString(!ts_.isEmpty(), ts_,
+              !other.ts_.isEmpty(), other.ts_);
           payload_ = visitor.visitByteString(payload_ != com.google.protobuf.ByteString.EMPTY, payload_,
               other.payload_ != com.google.protobuf.ByteString.EMPTY, other.payload_);
           serial_ = visitor.visitLong(serial_ != 0L, serial_,
@@ -505,9 +553,10 @@ public final class DataBean {
                 case 0:
                   done = true;
                   break;
-                case 8: {
+                case 10: {
+                  String s = input.readStringRequireUtf8();
 
-                  ts_ = input.readInt64();
+                  ts_ = s;
                   break;
                 }
                 case 18: {
@@ -599,9 +648,14 @@ public final class DataBean {
     com.google.protobuf.ByteString getPayload();
 
     /**
-     * <code>int64 ts = 2;</code>
+     * <code>string ts = 2;</code>
      */
-    long getTs();
+    String getTs();
+    /**
+     * <code>string ts = 2;</code>
+     */
+    com.google.protobuf.ByteString
+        getTsBytes();
 
     /**
      * <code>int64 serial = 3;</code>
@@ -633,6 +687,7 @@ public final class DataBean {
       DataOrBuilder {
     private Data() {
       payload_ = com.google.protobuf.ByteString.EMPTY;
+      ts_ = "";
       prevHash_ = com.google.protobuf.ByteString.EMPTY;
       sign_ = com.google.protobuf.ByteString.EMPTY;
     }
@@ -664,27 +719,51 @@ public final class DataBean {
     }
 
     public static final int TS_FIELD_NUMBER = 2;
-    private long ts_;
+    private String ts_;
     /**
-     * <code>int64 ts = 2;</code>
+     * <code>string ts = 2;</code>
      */
     @Override
-    public long getTs() {
+    public String getTs() {
       return ts_;
     }
     /**
-     * <code>int64 ts = 2;</code>
+     * <code>string ts = 2;</code>
      */
-    private void setTs(long value) {
-      
+    @Override
+    public com.google.protobuf.ByteString
+        getTsBytes() {
+      return com.google.protobuf.ByteString.copyFromUtf8(ts_);
+    }
+    /**
+     * <code>string ts = 2;</code>
+     */
+    private void setTs(
+        String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
       ts_ = value;
     }
     /**
-     * <code>int64 ts = 2;</code>
+     * <code>string ts = 2;</code>
      */
     private void clearTs() {
       
-      ts_ = 0L;
+      ts_ = getDefaultInstance().getTs();
+    }
+    /**
+     * <code>string ts = 2;</code>
+     */
+    private void setTsBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      ts_ = value.toStringUtf8();
     }
 
     public static final int SERIAL_FIELD_NUMBER = 3;
@@ -795,8 +874,8 @@ public final class DataBean {
       if (!payload_.isEmpty()) {
         output.writeBytes(1, payload_);
       }
-      if (ts_ != 0L) {
-        output.writeInt64(2, ts_);
+      if (!ts_.isEmpty()) {
+        output.writeString(2, getTs());
       }
       if (serial_ != 0L) {
         output.writeInt64(3, serial_);
@@ -823,9 +902,9 @@ public final class DataBean {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(1, payload_);
       }
-      if (ts_ != 0L) {
+      if (!ts_.isEmpty()) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(2, ts_);
+          .computeStringSize(2, getTs());
       }
       if (serial_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
@@ -968,26 +1047,44 @@ public final class DataBean {
       }
 
       /**
-       * <code>int64 ts = 2;</code>
+       * <code>string ts = 2;</code>
        */
       @Override
-      public long getTs() {
+      public String getTs() {
         return instance.getTs();
       }
       /**
-       * <code>int64 ts = 2;</code>
+       * <code>string ts = 2;</code>
        */
-      public Builder setTs(long value) {
+      @Override
+      public com.google.protobuf.ByteString
+          getTsBytes() {
+        return instance.getTsBytes();
+      }
+      /**
+       * <code>string ts = 2;</code>
+       */
+      public Builder setTs(
+          String value) {
         copyOnWrite();
         instance.setTs(value);
         return this;
       }
       /**
-       * <code>int64 ts = 2;</code>
+       * <code>string ts = 2;</code>
        */
       public Builder clearTs() {
         copyOnWrite();
         instance.clearTs();
+        return this;
+      }
+      /**
+       * <code>string ts = 2;</code>
+       */
+      public Builder setTsBytes(
+          com.google.protobuf.ByteString value) {
+        copyOnWrite();
+        instance.setTsBytes(value);
         return this;
       }
 
@@ -1112,8 +1209,8 @@ public final class DataBean {
           Data other = (Data) arg1;
           payload_ = visitor.visitByteString(payload_ != com.google.protobuf.ByteString.EMPTY, payload_,
               other.payload_ != com.google.protobuf.ByteString.EMPTY, other.payload_);
-          ts_ = visitor.visitLong(ts_ != 0L, ts_,
-              other.ts_ != 0L, other.ts_);
+          ts_ = visitor.visitString(!ts_.isEmpty(), ts_,
+              !other.ts_.isEmpty(), other.ts_);
           serial_ = visitor.visitLong(serial_ != 0L, serial_,
               other.serial_ != 0L, other.serial_);
           prevHash_ = visitor.visitByteString(prevHash_ != com.google.protobuf.ByteString.EMPTY, prevHash_,
@@ -1148,9 +1245,10 @@ public final class DataBean {
                   payload_ = input.readBytes();
                   break;
                 }
-                case 16: {
+                case 18: {
+                  String s = input.readStringRequireUtf8();
 
-                  ts_ = input.readInt64();
+                  ts_ = s;
                   break;
                 }
                 case 24: {
@@ -1242,9 +1340,9 @@ public final class DataBean {
       com.google.protobuf.MessageLiteOrBuilder {
 
     /**
-     * <code>int64 serial = 1;</code>
+     * <code>bytes serial = 1;</code>
      */
-    long getSerial();
+    com.google.protobuf.ByteString getSerial();
 
     /**
      * <code>bytes data_key = 2;</code>
@@ -1260,30 +1358,34 @@ public final class DataBean {
       // @@protoc_insertion_point(message_implements:Position)
       PositionOrBuilder {
     private Position() {
+      serial_ = com.google.protobuf.ByteString.EMPTY;
       dataKey_ = com.google.protobuf.ByteString.EMPTY;
     }
     public static final int SERIAL_FIELD_NUMBER = 1;
-    private long serial_;
+    private com.google.protobuf.ByteString serial_;
     /**
-     * <code>int64 serial = 1;</code>
+     * <code>bytes serial = 1;</code>
      */
     @Override
-    public long getSerial() {
+    public com.google.protobuf.ByteString getSerial() {
       return serial_;
     }
     /**
-     * <code>int64 serial = 1;</code>
+     * <code>bytes serial = 1;</code>
      */
-    private void setSerial(long value) {
-      
+    private void setSerial(com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
       serial_ = value;
     }
     /**
-     * <code>int64 serial = 1;</code>
+     * <code>bytes serial = 1;</code>
      */
     private void clearSerial() {
       
-      serial_ = 0L;
+      serial_ = getDefaultInstance().getSerial();
     }
 
     public static final int DATA_KEY_FIELD_NUMBER = 2;
@@ -1316,8 +1418,8 @@ public final class DataBean {
     @Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (serial_ != 0L) {
-        output.writeInt64(1, serial_);
+      if (!serial_.isEmpty()) {
+        output.writeBytes(1, serial_);
       }
       if (!dataKey_.isEmpty()) {
         output.writeBytes(2, dataKey_);
@@ -1331,9 +1433,9 @@ public final class DataBean {
       if (size != -1) return size;
 
       size = 0;
-      if (serial_ != 0L) {
+      if (!serial_.isEmpty()) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(1, serial_);
+          .computeBytesSize(1, serial_);
       }
       if (!dataKey_.isEmpty()) {
         size += com.google.protobuf.CodedOutputStream
@@ -1440,22 +1542,22 @@ public final class DataBean {
 
 
       /**
-       * <code>int64 serial = 1;</code>
+       * <code>bytes serial = 1;</code>
        */
       @Override
-      public long getSerial() {
+      public com.google.protobuf.ByteString getSerial() {
         return instance.getSerial();
       }
       /**
-       * <code>int64 serial = 1;</code>
+       * <code>bytes serial = 1;</code>
        */
-      public Builder setSerial(long value) {
+      public Builder setSerial(com.google.protobuf.ByteString value) {
         copyOnWrite();
         instance.setSerial(value);
         return this;
       }
       /**
-       * <code>int64 serial = 1;</code>
+       * <code>bytes serial = 1;</code>
        */
       public Builder clearSerial() {
         copyOnWrite();
@@ -1510,8 +1612,8 @@ public final class DataBean {
         case VISIT: {
           Visitor visitor = (Visitor) arg0;
           Position other = (Position) arg1;
-          serial_ = visitor.visitLong(serial_ != 0L, serial_,
-              other.serial_ != 0L, other.serial_);
+          serial_ = visitor.visitByteString(serial_ != com.google.protobuf.ByteString.EMPTY, serial_,
+              other.serial_ != com.google.protobuf.ByteString.EMPTY, other.serial_);
           dataKey_ = visitor.visitByteString(dataKey_ != com.google.protobuf.ByteString.EMPTY, dataKey_,
               other.dataKey_ != com.google.protobuf.ByteString.EMPTY, other.dataKey_);
           if (visitor == MergeFromVisitor
@@ -1535,9 +1637,9 @@ public final class DataBean {
                 case 0:
                   done = true;
                   break;
-                case 8: {
+                case 10: {
 
-                  serial_ = input.readInt64();
+                  serial_ = input.readBytes();
                   break;
                 }
                 case 18: {
@@ -1619,9 +1721,14 @@ public final class DataBean {
     com.google.protobuf.ByteString getPayload();
 
     /**
-     * <code>int64 ts = 2;</code>
+     * <code>string ts = 2;</code>
      */
-    long getTs();
+    String getTs();
+    /**
+     * <code>string ts = 2;</code>
+     */
+    com.google.protobuf.ByteString
+        getTsBytes();
 
     /**
      * <code>int64 serial = 3;</code>
@@ -1643,6 +1750,7 @@ public final class DataBean {
       RecordOrBuilder {
     private Record() {
       payload_ = com.google.protobuf.ByteString.EMPTY;
+      ts_ = "";
       prevHash_ = com.google.protobuf.ByteString.EMPTY;
     }
     public static final int PAYLOAD_FIELD_NUMBER = 1;
@@ -1673,27 +1781,51 @@ public final class DataBean {
     }
 
     public static final int TS_FIELD_NUMBER = 2;
-    private long ts_;
+    private String ts_;
     /**
-     * <code>int64 ts = 2;</code>
+     * <code>string ts = 2;</code>
      */
     @Override
-    public long getTs() {
+    public String getTs() {
       return ts_;
     }
     /**
-     * <code>int64 ts = 2;</code>
+     * <code>string ts = 2;</code>
      */
-    private void setTs(long value) {
-      
+    @Override
+    public com.google.protobuf.ByteString
+        getTsBytes() {
+      return com.google.protobuf.ByteString.copyFromUtf8(ts_);
+    }
+    /**
+     * <code>string ts = 2;</code>
+     */
+    private void setTs(
+        String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  
       ts_ = value;
     }
     /**
-     * <code>int64 ts = 2;</code>
+     * <code>string ts = 2;</code>
      */
     private void clearTs() {
       
-      ts_ = 0L;
+      ts_ = getDefaultInstance().getTs();
+    }
+    /**
+     * <code>string ts = 2;</code>
+     */
+    private void setTsBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+      
+      ts_ = value.toStringUtf8();
     }
 
     public static final int SERIAL_FIELD_NUMBER = 3;
@@ -1753,8 +1885,8 @@ public final class DataBean {
       if (!payload_.isEmpty()) {
         output.writeBytes(1, payload_);
       }
-      if (ts_ != 0L) {
-        output.writeInt64(2, ts_);
+      if (!ts_.isEmpty()) {
+        output.writeString(2, getTs());
       }
       if (serial_ != 0L) {
         output.writeInt64(3, serial_);
@@ -1775,9 +1907,9 @@ public final class DataBean {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(1, payload_);
       }
-      if (ts_ != 0L) {
+      if (!ts_.isEmpty()) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(2, ts_);
+          .computeStringSize(2, getTs());
       }
       if (serial_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
@@ -1912,26 +2044,44 @@ public final class DataBean {
       }
 
       /**
-       * <code>int64 ts = 2;</code>
+       * <code>string ts = 2;</code>
        */
       @Override
-      public long getTs() {
+      public String getTs() {
         return instance.getTs();
       }
       /**
-       * <code>int64 ts = 2;</code>
+       * <code>string ts = 2;</code>
        */
-      public Builder setTs(long value) {
+      @Override
+      public com.google.protobuf.ByteString
+          getTsBytes() {
+        return instance.getTsBytes();
+      }
+      /**
+       * <code>string ts = 2;</code>
+       */
+      public Builder setTs(
+          String value) {
         copyOnWrite();
         instance.setTs(value);
         return this;
       }
       /**
-       * <code>int64 ts = 2;</code>
+       * <code>string ts = 2;</code>
        */
       public Builder clearTs() {
         copyOnWrite();
         instance.clearTs();
+        return this;
+      }
+      /**
+       * <code>string ts = 2;</code>
+       */
+      public Builder setTsBytes(
+          com.google.protobuf.ByteString value) {
+        copyOnWrite();
+        instance.setTsBytes(value);
         return this;
       }
 
@@ -2008,8 +2158,8 @@ public final class DataBean {
           Record other = (Record) arg1;
           payload_ = visitor.visitByteString(payload_ != com.google.protobuf.ByteString.EMPTY, payload_,
               other.payload_ != com.google.protobuf.ByteString.EMPTY, other.payload_);
-          ts_ = visitor.visitLong(ts_ != 0L, ts_,
-              other.ts_ != 0L, other.ts_);
+          ts_ = visitor.visitString(!ts_.isEmpty(), ts_,
+              !other.ts_.isEmpty(), other.ts_);
           serial_ = visitor.visitLong(serial_ != 0L, serial_,
               other.serial_ != 0L, other.serial_);
           prevHash_ = visitor.visitByteString(prevHash_ != com.google.protobuf.ByteString.EMPTY, prevHash_,
@@ -2040,9 +2190,10 @@ public final class DataBean {
                   payload_ = input.readBytes();
                   break;
                 }
-                case 16: {
+                case 18: {
+                  String s = input.readStringRequireUtf8();
 
-                  ts_ = input.readInt64();
+                  ts_ = s;
                   break;
                 }
                 case 24: {
@@ -3112,9 +3263,9 @@ public final class DataBean {
     int getFieldsCount();
 
     /**
-     * <code>bytes orgHashKey = 3;</code>
+     * <code>bytes first_hash = 3;</code>
      */
-    com.google.protobuf.ByteString getOrgHashKey();
+    com.google.protobuf.ByteString getFirstHash();
   }
   /**
    * Protobuf type {@code Alteration}
@@ -3126,7 +3277,7 @@ public final class DataBean {
       AlterationOrBuilder {
     private Alteration() {
       fields_ = emptyProtobufList();
-      orgHashKey_ = com.google.protobuf.ByteString.EMPTY;
+      firstHash_ = com.google.protobuf.ByteString.EMPTY;
     }
     private int bitField0_;
     public static final int OPERATION_FIELD_NUMBER = 1;
@@ -3293,31 +3444,31 @@ public final class DataBean {
       fields_.remove(index);
     }
 
-    public static final int ORGHASHKEY_FIELD_NUMBER = 3;
-    private com.google.protobuf.ByteString orgHashKey_;
+    public static final int FIRST_HASH_FIELD_NUMBER = 3;
+    private com.google.protobuf.ByteString firstHash_;
     /**
-     * <code>bytes orgHashKey = 3;</code>
+     * <code>bytes first_hash = 3;</code>
      */
     @Override
-    public com.google.protobuf.ByteString getOrgHashKey() {
-      return orgHashKey_;
+    public com.google.protobuf.ByteString getFirstHash() {
+      return firstHash_;
     }
     /**
-     * <code>bytes orgHashKey = 3;</code>
+     * <code>bytes first_hash = 3;</code>
      */
-    private void setOrgHashKey(com.google.protobuf.ByteString value) {
+    private void setFirstHash(com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
   
-      orgHashKey_ = value;
+      firstHash_ = value;
     }
     /**
-     * <code>bytes orgHashKey = 3;</code>
+     * <code>bytes first_hash = 3;</code>
      */
-    private void clearOrgHashKey() {
+    private void clearFirstHash() {
       
-      orgHashKey_ = getDefaultInstance().getOrgHashKey();
+      firstHash_ = getDefaultInstance().getFirstHash();
     }
 
     @Override
@@ -3329,8 +3480,8 @@ public final class DataBean {
       for (int i = 0; i < fields_.size(); i++) {
         output.writeMessage(2, fields_.get(i));
       }
-      if (!orgHashKey_.isEmpty()) {
-        output.writeBytes(3, orgHashKey_);
+      if (!firstHash_.isEmpty()) {
+        output.writeBytes(3, firstHash_);
       }
       unknownFields.writeTo(output);
     }
@@ -3349,9 +3500,9 @@ public final class DataBean {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(2, fields_.get(i));
       }
-      if (!orgHashKey_.isEmpty()) {
+      if (!firstHash_.isEmpty()) {
         size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(3, orgHashKey_);
+          .computeBytesSize(3, firstHash_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSerializedSize = size;
@@ -3593,26 +3744,26 @@ public final class DataBean {
       }
 
       /**
-       * <code>bytes orgHashKey = 3;</code>
+       * <code>bytes first_hash = 3;</code>
        */
       @Override
-      public com.google.protobuf.ByteString getOrgHashKey() {
-        return instance.getOrgHashKey();
+      public com.google.protobuf.ByteString getFirstHash() {
+        return instance.getFirstHash();
       }
       /**
-       * <code>bytes orgHashKey = 3;</code>
+       * <code>bytes first_hash = 3;</code>
        */
-      public Builder setOrgHashKey(com.google.protobuf.ByteString value) {
+      public Builder setFirstHash(com.google.protobuf.ByteString value) {
         copyOnWrite();
-        instance.setOrgHashKey(value);
+        instance.setFirstHash(value);
         return this;
       }
       /**
-       * <code>bytes orgHashKey = 3;</code>
+       * <code>bytes first_hash = 3;</code>
        */
-      public Builder clearOrgHashKey() {
+      public Builder clearFirstHash() {
         copyOnWrite();
-        instance.clearOrgHashKey();
+        instance.clearFirstHash();
         return this;
       }
 
@@ -3642,8 +3793,8 @@ public final class DataBean {
           Alteration other = (Alteration) arg1;
           operation_ = visitor.visitInt(operation_ != 0, operation_,    other.operation_ != 0, other.operation_);
           fields_= visitor.visitList(fields_, other.fields_);
-          orgHashKey_ = visitor.visitByteString(orgHashKey_ != com.google.protobuf.ByteString.EMPTY, orgHashKey_,
-              other.orgHashKey_ != com.google.protobuf.ByteString.EMPTY, other.orgHashKey_);
+          firstHash_ = visitor.visitByteString(firstHash_ != com.google.protobuf.ByteString.EMPTY, firstHash_,
+              other.firstHash_ != com.google.protobuf.ByteString.EMPTY, other.firstHash_);
           if (visitor == MergeFromVisitor
               .INSTANCE) {
             bitField0_ |= other.bitField0_;
@@ -3683,7 +3834,7 @@ public final class DataBean {
                 }
                 case 26: {
 
-                  orgHashKey_ = input.readBytes();
+                  firstHash_ = input.readBytes();
                   break;
                 }
                 default: {

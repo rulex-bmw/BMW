@@ -25,9 +25,12 @@ public class BmwDsmApplicationTests {
     @Test
     public void contextLoads() {
 //        List<User> objects = new ArrayList<>();
-//        User user1 = new User();
-//        user1.setAge(20);
-//        user1.setName("王liu");
+        User user1 = new User();
+        user1.setAge(20);
+        user1.setName("王liu");
+
+        userDao.insertUser(user1);
+
 //        User user2 = new User();
 //        user2.setAge(20);
 //        user2.setName("王liu");
@@ -39,8 +42,8 @@ public class BmwDsmApplicationTests {
 //        objects.add(user3);
 //        userDao.batchCreateUser(objects);
 //
-        int j = userDao.updateUser();
-        System.out.println(j);
+//        int j = userDao.updateUser();
+//        System.out.println(j);
 //
 //        List<User> users = userDao.selectAll();
 //        System.out.println(users);

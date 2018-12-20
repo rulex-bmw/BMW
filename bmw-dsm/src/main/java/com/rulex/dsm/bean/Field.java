@@ -13,6 +13,16 @@ public class Field {
     private String minvalue;    // 最小值
     private Integer length;     // 长度
 
+    public Integer getFieldId() {
+        return fieldId;
+    }
+
+    public void setFieldId(Integer fieldId) {
+        this.fieldId = fieldId;
+    }
+
+    private Integer fieldId;
+
     public String getName() {
         return name;
     }
