@@ -43,7 +43,7 @@ public class SqlUtils {
             List<Expression> expressions = update.getExpressions();
             for(int i = 0; i < size; i++) {// 所有列循环
                 Expression value = expressions.get(i);
-                if (!value.toString().equals("?")) {// 不使用占位符
+                if (!value.toString().equals("?")) {// 不使用占位符,直接获取value
                     String column = columns.get(i).getColumnName();
                     for(Field field : fields) {
                         if (field.getColumn().equalsIgnoreCase(column)) {
