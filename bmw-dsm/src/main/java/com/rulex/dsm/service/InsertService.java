@@ -71,7 +71,7 @@ public class InsertService {
         //生成payload
         DataBean.Alteration.Builder alteration = DataBean.Alteration.newBuilder();
         alteration.setOperationValue(1);
-        alteration.setSourceId(source.getId());
+        alteration.setRecordid(source.getId());
 
         //处理拦截的数据
         Object parameter = boundSql.getParameterObject();

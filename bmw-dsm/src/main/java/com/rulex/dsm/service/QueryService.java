@@ -30,8 +30,7 @@ public class QueryService {
             DataBean.Data data = DataBean.Data.parseFrom(LevelDBUtil.getDataDB().get(hashKey));
             DataBean.Alteration alteration = DataBean.Alteration.parseFrom(data.getPayload().toByteArray());
             ByteString orgHashKey = alteration.getOrgHashKey();
-            int sourceId = alteration.getSourceId();
-
+            int sourceId = alteration.getRecordid();
             byte[] preHash = data.getPrevHash().toByteArray();
 
             List<byte[]> payloads = new ArrayList();
