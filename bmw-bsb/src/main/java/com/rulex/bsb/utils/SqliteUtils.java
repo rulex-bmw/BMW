@@ -122,7 +122,8 @@ public class SqliteUtils {
                 // 将各列数据存入map集合
                 Map<String, Object> ma = new HashMap<>();
                 // 获取键值和每一行的各列存入map集合
-                for(int i = 1; i <= rsmd.getColumnCount(); i++) {
+                int count = rsmd.getColumnCount();
+                for(int i = 1; i <= count; i++) {
                     // 将 列名 和 列值 存入集合
                     ma.put(rsmd.getColumnName(i), rs.getObject(i));
                 }

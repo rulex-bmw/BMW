@@ -45,7 +45,7 @@ public class XmlUtil {
             source.setTable(s.attributeValue("table"));
             source.setPojo(s.attributeValue("pojo"));
             List<Field> field = new ArrayList<>();
-            List<Element> fields = s.elements();
+            List<Element> fields = s.elements("field");
             for(Element f : fields) {
                 Field fi = new Field();
                 fi.setName(f.attributeValue("name"));

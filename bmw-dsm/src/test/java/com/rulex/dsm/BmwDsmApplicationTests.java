@@ -10,8 +10,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -28,9 +26,6 @@ public class BmwDsmApplicationTests {
         User user1 = new User();
         user1.setAge(20);
         user1.setName("王liu");
-
-        userDao.insertUser(user1);
-
 //        User user2 = new User();
 //        user2.setAge(20);
 //        user2.setName("王liu");
@@ -41,9 +36,10 @@ public class BmwDsmApplicationTests {
 //        objects.add(user2);
 //        objects.add(user3);
 //        userDao.batchCreateUser(objects);
+//        userDao.insertUser(user1);
 //
-//        int j = userDao.updateUser();
-//        System.out.println(j);
+        int j = userDao.updateUser("test01", 10);
+        System.out.println(j);
 //
 //        List<User> users = userDao.selectAll();
 //        System.out.println(users);

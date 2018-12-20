@@ -17,6 +17,8 @@ public class Source {
     private String table;   // 表名
     private Boolean groupable;  // 是否可合并
     private List<Field> fields; // 成员变量
+    private List<Primary> keys; // 所有主键:autoincrement或者联合主键
+
 
     public String getName() {
         return name;
@@ -56,6 +58,22 @@ public class Source {
 
     public void setFields(List<Field> fields) {
         this.fields = fields;
+    }
+
+    public List<Primary> getKeys() {
+        return keys;
+    }
+
+    public void setKeys(List<Primary> keys) {
+        this.keys = keys;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     @Override

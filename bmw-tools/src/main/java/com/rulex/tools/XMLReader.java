@@ -59,7 +59,7 @@ public class XMLReader {
 
                 //不合并
             } else {
-                List<Element> fields = record.elements();
+                List<Element> fields = record.elements("field");
                 for(Element field : fields) {
                     String paramName = field.attributeValue("name");
                     if (StringUtils.isBlank(paramName)) {
