@@ -19,4 +19,6 @@ public interface UserDao {
 
     void batchCreateUser(@Param("userList") List<User> userList);
 
+    void alderTable();
+
 }

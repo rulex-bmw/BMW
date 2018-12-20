@@ -135,9 +135,4 @@ public class InsertService {
         return builder;
     }
 
-
-    /**
-     * 添加rollId和上链数据key的索引
-     *
-     */
 }
