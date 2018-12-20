@@ -12,7 +12,7 @@ public class Field {
     private String maxvalue;    // 最大值
     private String minvalue;    // 最小值
     private Integer length;     // 长度
-    private Integer fieldid;    //fieldId
+    private Integer fieldId;    //fieldId
     private boolean isprimaykey;    //是否是主键
 
     public String getName() {
@@ -95,12 +95,12 @@ public class Field {
         this.length = length;
     }
 
-    public Integer getFieldid() {
-        return fieldid;
+    public Integer getFieldId() {
+        return fieldId;
     }
 
-    public void setFieldid(Integer fieldid) {
-        this.fieldid = fieldid;
+    public void setFieldId(Integer fieldId) {
+        this.fieldId = fieldId;
     }
 
     public boolean isIsprimaykey() {
@@ -124,7 +124,7 @@ public class Field {
                 ", maxvalue='" + maxvalue + '\'' +
                 ", minvalue='" + minvalue + '\'' +
                 ", length=" + length +
-                ", fieldid=" + fieldid +
+                ", fieldId=" + fieldId +
                 ", isprimaykey=" + isprimaykey +
                 '}';
     }

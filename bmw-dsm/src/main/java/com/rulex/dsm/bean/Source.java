@@ -69,14 +69,17 @@ public class Source {
         this.id = id;
     }
 
+
     @Override
     public String toString() {
         return "Source{" +
-                "name='" + name + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", pojo='" + pojo + '\'' +
                 ", table='" + table + '\'' +
                 ", groupable=" + groupable +
                 ", fields=" + fields +
+                ", keys=" + keys +
                 '}';
     }
 }
