@@ -11,6 +11,8 @@ import com.rulex.dsm.bean.Source;
 import com.rulex.dsm.service.InsertService;
 import com.rulex.dsm.utils.XmlUtil;
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
+import net.sf.jsqlparser.expression.operators.relational.ItemsList;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.alter.Alter;
@@ -32,6 +34,7 @@ import org.apache.ibatis.reflection.wrapper.DefaultObjectWrapperFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.StringReader;
+import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -58,11 +61,6 @@ public class SqlStatementInterceptor implements Interceptor {
         RoutingStatementHandler statementHandler = (RoutingStatementHandler) invocation.getTarget();
         BoundSql boundSql = statementHandler.getBoundSql();
 
-
-        Object parameter = boundSql.getParameterObject();
-
-
-
         try {
             //获取拦截规则
             if (0 == sourceList.size()) {
@@ -71,6 +69,11 @@ public class SqlStatementInterceptor implements Interceptor {
             net.sf.jsqlparser.statement.Statement stmt = parser.parse(new StringReader(boundSql.getSql()));
 
             if (stmt instanceof Insert) {
+                Object parameter = boundSql.getParameterObject();
+
+                Class clazz = parameter.getClass();
+
+
                 InsertService.credibleInsert((Insert) stmt, boundSql, sourceList);
             } else if (stmt instanceof Update) {
                 Update update = (Update) stmt;

@@ -10,6 +10,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -38,8 +40,14 @@ public class BmwDsmApplicationTests {
 //        userDao.batchCreateUser(objects);
 //        userDao.insertUser(user1);
 //
-        int j = userDao.updateUser("test01", 10);
-        System.out.println(j);
+
+        Map map=new HashMap();
+
+        map.put("name","xiaohong");
+        map.put("sex",20);
+        userDao.insertMapUser(map);
+//        int j = userDao.updateUser("test01", 10);
+//        System.out.println(j);
 //
 //        List<User> users = userDao.selectAll();
 //        System.out.println(users);

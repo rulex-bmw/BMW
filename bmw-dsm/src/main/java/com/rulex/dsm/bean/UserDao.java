@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface UserDao {
@@ -12,6 +13,8 @@ public interface UserDao {
     int updateUser(@Param("aaaa") String name, @Param("bbb") Integer age);
 
     int insertUser(User u);
+
+    int insertMapUser(Map<String,Object>  map);
 
     List<User> selectAll();
 

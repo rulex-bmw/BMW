@@ -16,12 +16,12 @@ import java.util.Map;
 public class QueryService {
 
     /**
-     * 查询写入区块链的信息
+     * 查询写入区块链的最新状态信息
      *
      * @param hashKey 上链信息key
-     * @return 该key对应的上链信息
+     * @return 该hashKey对应的上链信息
      */
-    public static Map queryInfo(byte[] hashKey) {
+    public static Map<String, Object> queryInfo(byte[] hashKey) {
 
         Map<String, Object> returnMap = new HashMap<>();
         try {
@@ -30,7 +30,7 @@ public class QueryService {
             DataBean.Data data = DataBean.Data.parseFrom(LevelDBUtil.getDataDB().get(hashKey));
             DataBean.Alteration alteration = DataBean.Alteration.parseFrom(data.getPayload().toByteArray());
             ByteString orgHashKey = alteration.getOrgHashKey();
-            int sourceId = alteration.getRecordid();
+            int recordid = alteration.getRecordid();
             byte[] preHash = data.getPrevHash().toByteArray();
 
             List<byte[]> payloads = new ArrayList();
@@ -53,8 +53,7 @@ public class QueryService {
             //获取所需的上链数据
             for (Source source : sourceList) {
 
-                if (source.getId() == sourceId) {
-
+                if (source.getId() == recordid) {
 
                     fieldOk:
                     for (Field field : source.getFields()) {
@@ -108,29 +107,28 @@ public class QueryService {
      */
     public static Object typeHandle(String fieldType, DataBean.FieldValue fieldValue) {
 
-        Object value = null;
         if (DataTypes.wrapper_Int.getName().equals(fieldType) || DataTypes.primeval_int.getName().equals(fieldType)) {
-            value = fieldValue.getIntValue();
+            return fieldValue.getIntValue();
         } else if (DataTypes.wrapper_Long.getName().equals(fieldType) || DataTypes.primeval_long.getName().equals(fieldType)) {
 
-            value = fieldValue.getLongValue();
+            return fieldValue.getLongValue();
         } else if (DataTypes.wrapper_Double.getName().equals(fieldType) || DataTypes.primeval_double.getName().equals(fieldType)) {
 
-            value = fieldValue.getDoubleValue();
+            return fieldValue.getDoubleValue();
         } else if (DataTypes.wrapper_Float.getName().equals(fieldType) || DataTypes.primeval_float.getName().equals(fieldType)) {
 
-            value = fieldValue.getFloatValue();
+            return fieldValue.getFloatValue();
         } else if (DataTypes.primeval_string.getName().equals(fieldType)) {
 
-            value = fieldValue.getStrValue();
+            return fieldValue.getStrValue();
         } else if (DataTypes.primeval_boolean.getName().equals(fieldType)) {
 
-            value = fieldValue.getBoolValue();
+            return fieldValue.getBoolValue();
         } else if (DataTypes.primeval_ByteString.getName().equals(fieldType)) {
 
-            value = fieldValue.getBytesValue();
+            return fieldValue.getBytesValue();
         }
-        return value;
+        return null;
     }
 
 
