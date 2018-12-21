@@ -25,21 +25,20 @@ public class BmwDsmApplicationTests {
 //        List<User> objects = new ArrayList<>();
         User user1 = new User();
         user1.setAge(20);
-        user1.setName("王liu");
+        user1.setName("张三");
 //        User user2 = new User();
 //        user2.setAge(20);
-//        user2.setName("王liu");
-//        User user3 = new User();
-//        user3.setAge(20);
-//        user3.setName("王liu");
+//        user2.setName("李四");
 //        objects.add(user1);
 //        objects.add(user2);
-//        objects.add(user3);
 //        userDao.batchCreateUser(objects);
 //        userDao.insertUser(user1);
 //
-        int j = userDao.updateUser("test01", 10);
-        System.out.println(j);
+        int i = userDao.editUser(user1);
+        System.out.println(i);
+
+//        int j = userDao.updateUser("test01", 10);
+//        System.out.println(j);
 //
 //        List<User> users = userDao.selectAll();
 //        System.out.println(users);

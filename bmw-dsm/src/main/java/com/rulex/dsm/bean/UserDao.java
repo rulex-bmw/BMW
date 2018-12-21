@@ -11,6 +11,8 @@ public interface UserDao {
 
     int updateUser(@Param("aaaa") String name, @Param("bbb") Integer age);
 
+    int editUser(User user);
+
     int insertUser(User u);
 
     List<User> selectAll();

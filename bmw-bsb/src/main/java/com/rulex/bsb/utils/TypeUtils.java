@@ -122,7 +122,7 @@ public class TypeUtils {
     public static byte[] double2Bytes(double d) {
         long value = Double.doubleToRawLongBits(d);
         byte[] byteRet = new byte[8];
-        for (int i = 0; i < 8; i++) {
+        for(int i = 0; i < 8; i++) {
             byteRet[i] = (byte) ((value >> 8 * i) & 0xff);
         }
         return byteRet;
@@ -131,7 +131,7 @@ public class TypeUtils {
 
     public static double bytes2Double(byte[] arr) {
         long value = 0;
-        for (int i = 0; i < 8; i++) {
+        for(int i = 0; i < 8; i++) {
             value |= ((long) (arr[i] & 0xff)) << (8 * i);
         }
         return Double.longBitsToDouble(value);
@@ -158,7 +158,7 @@ public class TypeUtils {
     public static final String bytesToHexString(byte[] bArray) {
         StringBuffer sb = new StringBuffer(bArray.length);
         String sTemp;
-        for (int i = 0; i < bArray.length; i++) {
+        for(int i = 0; i < bArray.length; i++) {
             sTemp = Integer.toHexString(0xFF & bArray[i]);
             if (sTemp.length() < 2)
                 sb.append(0);
@@ -186,7 +186,7 @@ public class TypeUtils {
             result = new byte[(hexlen / 2)];
         }
         int j = 0;
-        for (int i = 0; i < hexlen; i += 2) {
+        for(int i = 0; i < hexlen; i += 2) {
             result[j] = hexToByte(inHex.substring(i, i + 2));
             j++;
         }
@@ -204,7 +204,7 @@ public class TypeUtils {
     public static byte[] shortToByte(short number) {
         int temp = number;
         byte[] b = new byte[2];
-        for (int i = 0; i < b.length; i++) {
+        for(int i = 0; i < b.length; i++) {
             b[i] = new Integer(temp & 0xff).byteValue();// 将最低位保存在最低位
             temp = temp >> 8;// 向右移8位
         }
@@ -277,13 +277,13 @@ public class TypeUtils {
      */
     public static byte[] concatByteArrays(byte[][] arrays) {
         int tl = 0;
-        for (byte[] bytes : arrays) {
+        for(byte[] bytes : arrays) {
             tl += bytes.length;
         }
         byte[] r = new byte[tl];
 
         int i = 0;
-        for (byte[] bytes : arrays) {
+        for(byte[] bytes : arrays) {
             System.arraycopy(bytes, 0, r, i, bytes.length);
             i += bytes.length;
         }
@@ -351,6 +351,21 @@ public class TypeUtils {
             e.printStackTrace();
         }
         return obj;
+    }
+
+    /**
+     * 统计指定字符数量
+     *
+     * @returno
+     */
+    public static int strCount(String str, String searchStr) {
+        int a = str.indexOf(searchStr);//*第一个出现的索引位置
+        int count = 0;
+        while (a != -1) {
+            count++;
+            a = str.indexOf(searchStr, a + 1);//*从这个索引往后开始第一个出现的位置
+        }
+        return count;
     }
 
 

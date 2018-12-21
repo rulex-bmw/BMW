@@ -7,6 +7,9 @@
     <update id="updateUser" parameterType="java.lang.Object">
         update bmw_user set age = #{bbb}, username = #{aaaa} where id =10;
     </update>
+    <update id="editUser" parameterType="com.rulex.dsm.pojo.User">
+        update bmw_user set age = #{age}, username = #{name} where id =10;
+    </update>
 
     <insert id="insertUser" parameterType="com.rulex.dsm.pojo.User">
         insert into bmw_user (username,age) values (#{name},#{age});

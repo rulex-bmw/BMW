@@ -3,14 +3,13 @@ package com.rulex.dsm.utils;
 import com.rulex.bsb.utils.TypeUtils;
 import com.rulex.dsm.bean.Field;
 import com.rulex.dsm.bean.Source;
-import com.rulex.dsm.interceptor.SqlStatementInterceptor;
+import com.rulex.dsm.interceptor.BMWStmtInterceptor;
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ public class XmlUtil {
         //本地测试使用
 //        File file = new File(SqlStatementInterceptor.class.getResource("/").getPath() + "rulex-condition1.xml");
 
-        InputStream inputStream = SqlStatementInterceptor.class.getClassLoader().getResourceAsStream("xml/rulex-condition.xml");
+        InputStream inputStream = BMWStmtInterceptor.class.getClassLoader().getResourceAsStream("xml/rulex-condition.xml");
         Document doc = sr.read(inputStream);
         inputStream.close();
         return doc;
