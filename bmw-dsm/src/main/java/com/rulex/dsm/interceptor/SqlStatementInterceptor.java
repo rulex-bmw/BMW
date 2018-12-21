@@ -69,11 +69,6 @@ public class SqlStatementInterceptor implements Interceptor {
             net.sf.jsqlparser.statement.Statement stmt = parser.parse(new StringReader(boundSql.getSql()));
 
             if (stmt instanceof Insert) {
-                Object parameter = boundSql.getParameterObject();
-
-                Class clazz = parameter.getClass();
-
-
                 InsertService.credibleInsert((Insert) stmt, boundSql, sourceList);
             } else if (stmt instanceof Update) {
                 Update update = (Update) stmt;
