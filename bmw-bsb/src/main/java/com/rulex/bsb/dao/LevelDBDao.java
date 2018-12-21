@@ -162,11 +162,10 @@ public class LevelDBDao {
 
     /**
      * Verify the offset structure header
-     *
-     * @return Map<String, byte[]> levelDB数据库保存的上链数据的key.
-     * map的value为levelDB数据库数据的key,map的key为上一条levelDB数据库数据的key
+     * <p>
      * The value of the key.
      * map of the data base is the key of the database data, and the key of the map is the key of the last database data
+     *
      * @throws IOException
      */
     public Map<byte[], byte[]> verifyHeaderData() throws IOException {
@@ -176,12 +175,10 @@ public class LevelDBDao {
         Map<byte[], byte[]> map = new HashMap<>();
         try {
 
-            //从数据库读取最后一条记录的key
             // Read the key of the last record from the database
             DataBean.Position position = DataBean.Position.parseFrom(LevelDBUtil.getMataDB().get(WRITEPOSITION));
             byte[] lastKey = position.getDataKey().toByteArray();
 
-            //从数据库读取readPosition的key
             // Read the key for readPosition from the database
             byte[] readKey = null;
             if (LevelDBUtil.getMataDB().get(READPOSITION) != null) {
@@ -192,18 +189,17 @@ public class LevelDBDao {
             Stack<byte[]> stack = new Stack<>();
             stack.push(lastKey);
 
-            //从数据库读取所需的记录，并保存所有的key
-            //Read the required records from the database and save all the keys
+            // Read the required records from the database and save all the keys
             boolean flag = true;
             if (asString(preKey).equals(asString(readKey))) {
                 flag = false;
             }
             while (true) {
-                //mapValue为map的vale值,map的value为数据库数据的key,map的key为上一条数据库数据的key
-                //The value of the map
+
+                // The value of the map
                 byte[] mapValue = preKey;
                 byte[] value = LevelDBUtil.getDataDB().get(preKey);
-                //value为null说明数据被篡改，抛出错误
+
                 // A value of null indicates that the data has been tampered with and an error has been thrown
                 if (value == null) {
                     try {
@@ -219,24 +215,22 @@ public class LevelDBDao {
                     break;
                 }
                 stack.push(preKey);
-                //将LevelDB数据库的key保存进map里
-                //Save the key of LevelDB database into map
+
+                // Save the key of LevelDB database into map
                 if (flag) {
                     map.put(preKey, mapValue);
                 }
-                //排除掉已上区块链的数据
-                //Exclude data that is already on the blockChain
+
+                // Exclude data that is already on the blockChain
                 if (asString(preKey).equals(asString(readKey))) {
                     flag = false;
                 }
             }
 
-            //从数据库读取header的值
-            //Read the value of the header from the database
+            // Read the value of the header from the database
             headerValue = LevelDBUtil.getDataDB().get(HEADER_KEY);
 
-            //验算header值
-            //Check the header values
+            // Check the header values
             while (!stack.isEmpty()) {
                 byte[] value = stack.pop();
                 DataBean.Data data = DataBean.Data.parseFrom(LevelDBUtil.getDataDB().get(value));
@@ -256,8 +250,8 @@ public class LevelDBDao {
         } finally {
             LevelDBUtil.closeDB();
         }
-        //如果算出来的header值与数据库中保存的不一样，说明数据被篡改，抛出错误
-        //If the calculated header value is different from what is stored in the database, the data is tampered with and an error is thrown
+
+        // If the calculated header value is different from what is stored in the database, the data is tampered with and an error is thrown
         if (!Arrays.equals(headerValue, startValue)) {
             try {
                 throw new DataException("Sorry, the database data is abnormal, please check whether the data has been tampered！");
@@ -273,22 +267,21 @@ public class LevelDBDao {
 
     /**
      * Get the hash map to make it easier to find the next key
-     *
-     * @return Map<String, byte[]> data库的key.
-     * map的value为数据库数据的key,map的key为上一条数据库数据的key
+     * <p>
      * The value of the key.
      * map of the data base is the key of the database data, and the key of the map is the key of the last database data
+     *
      * @throws IOException
      */
     public static Map<byte[], byte[]> getHashMap() throws IOException {
 
         Map<byte[], byte[]> map = new HashMap<>();
         try {
-            //从数据库读取最后一条记录的key
+
             // Read the key of the last record from the database
             DataBean.Position position = DataBean.Position.parseFrom(LevelDBUtil.getMataDB().get(WRITEPOSITION));
             byte[] lastKey = position.getDataKey().toByteArray();
-            //从数据库读取readPosition的key
+
             // Read the key for readPosition from the database
             byte[] readKey = null;
             if (LevelDBUtil.getMataDB().get(READPOSITION) != null) {
@@ -297,15 +290,14 @@ public class LevelDBDao {
 
             byte[] preKey = lastKey;
 
-            //从数据库读取所需的记录，并保存所有的key
-            //Read the required records from the database and save all the keys
+            // Read the required records from the database and save all the keys
             boolean flag = true;
             if (asString(readKey).equals(asString(preKey))) {
                 flag = false;
             }
             while (flag) {
-                //mapValue为map的vale值,map的value为数据库数据的key,map的key为上一条数据库数据的key
-                //The value of the map
+
+                // The value of the map
                 byte[] mapValue = preKey;
                 DataBean.Data data = DataBean.Data.parseFrom(LevelDBUtil.getDataDB().get(preKey));
                 preKey = data.getPrevHash().toByteArray();
@@ -314,13 +306,12 @@ public class LevelDBDao {
                     break;
                 }
 
-                //将LevelDB数据库的key保存进map里
-                //Save the key of LevelDB database into map
+                // Save the key of LevelDB database into map
                 if (flag) {
                     map.put(preKey, mapValue);
                 }
-                //排除掉已上区块链的数据
-                //Exclude data that is already on the blockChain
+
+                // Exclude data that is already on the blockChain
                 if (asString(preKey).equals(asString(readKey))) {
                     flag = false;
                 }

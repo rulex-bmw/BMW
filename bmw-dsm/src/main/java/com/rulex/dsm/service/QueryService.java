@@ -26,7 +26,7 @@ public class QueryService {
         Map<String, Object> returnMap = new HashMap<>();
         try {
 
-            //获取该块的相关首块的hashKey
+            // 获取该块的相关首块的hashKey
             DataBean.Data data = DataBean.Data.parseFrom(LevelDBUtil.getDataDB().get(hashKey));
             DataBean.Alteration alteration = DataBean.Alteration.parseFrom(data.getPayload().toByteArray());
             ByteString orgHashKey = alteration.getOrgHashKey();
@@ -39,7 +39,7 @@ public class QueryService {
                 data = DataBean.Data.parseFrom(LevelDBUtil.getDataDB().get(preHash));
                 preHash = data.getPrevHash().toByteArray();
 
-                //对比当前数据与所查块的首块hashKey是否相等,若相等保存在payloads中
+                // 对比当前数据与所查块的首块hashKey是否相等,若相等保存在payloads中
                 if (orgHashKey.equals(DataBean.Alteration.parseFrom(data.getPayload().toByteArray()).getOrgHashKey())) {
 
                     payloads.add(data.getPayload().toByteArray());
@@ -47,10 +47,10 @@ public class QueryService {
             }
 
 
-            //获取上链数据规则
+            // 获取上链数据规则
             List<Source> sourceList = XmlUtil.parseXML();
 
-            //获取所需的上链数据
+            // 获取所需的上链数据
             for (Source source : sourceList) {
 
                 if (source.getId() == recordid) {
@@ -62,7 +62,7 @@ public class QueryService {
 
                             DataBean.Alteration altera = DataBean.Alteration.parseFrom(payload);
 
-                            //如果该对象信息被删除，直接返回
+                            // 如果该对象信息被删除，直接返回
                             if (altera.getOperation().getNumber() == 0) {
 
                                 returnMap.put("0", "该查询对象已被删除");
@@ -70,7 +70,7 @@ public class QueryService {
 
                             } else {
 
-                                //将最新的fieldValue返回
+                                // 将最新的fieldValue返回
                                 for (DataBean.FieldValue fieldValue : altera.getFieldsList()) {
 
                                     if (fieldValue.getField() == field.getFieldId()) {
