@@ -9,10 +9,7 @@ import com.rulex.bsb.utils.SqliteUtils;
 import org.iq80.leveldb.DB;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 import static org.fusesource.leveldbjni.JniDBFactory.asString;
 import static org.fusesource.leveldbjni.JniDBFactory.bytes;
@@ -63,10 +60,10 @@ public class LevelDBDao {
      * 3、save flag
      *
      * @param param
-     * @param hashPrimaryId SHA256之后的主键
+     * @param orgPKHash
      * @throws IOException
      */
-    public static synchronized void set(DataBean.Data param, byte[] hashPrimaryId) throws IOException {
+    public static synchronized void set(DataBean.Data param, String orgPKHash) throws IOException {
         if (null == param.getPayload() && !(param.getPayload().toByteArray().length <= 256)) {
             return;
         }
@@ -90,7 +87,7 @@ public class LevelDBDao {
             LevelDBUtil.getDataDB().put(hashkey, record.build().toByteArray());
 
             //将PrimaryId和hashkey索引信息存入数据库
-            SqliteUtils.edit(new Object[]{hashPrimaryId, hashkey, System.currentTimeMillis()}, "insert into key_indexes (pri_key_hash,hash_key,ts) values(?,?,?)");
+            SqliteUtils.edit(new Object[]{orgPKHash, Base64.getEncoder().encodeToString(hashkey), 1, System.currentTimeMillis()}, "insert into key_indexes (orgPKHash,typeHash,type,ts) values(?,?,?,?)");
 
             LevelDBUtil.getMataDB().put(WRITEPOSITION, DataBean.Position.newBuilder().setDataKey(ByteString.copyFrom(hashkey)).setSerial(s).build().toByteArray());
         } finally {

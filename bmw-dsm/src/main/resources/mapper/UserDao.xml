@@ -12,8 +12,12 @@
     </update>
 
     <insert id="insertUser" parameterType="com.rulex.dsm.pojo.User">
-        insert into bmw_user (username,age) values (#{name},#{age});
+        insert into bmw_user (username,age) values (#{name},11);
     </insert>
+
+    <update id="insertMapUser" parameterType="Map">
+        insert into bmw_user (username,age) values (#{name},12);
+    </update>
 
     <insert id="batchCreateUser" parameterType="com.rulex.dsm.pojo.User">
         INSERT INTO bmw_user (username,age)

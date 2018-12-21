@@ -49,10 +49,16 @@ public class BMWStmtInterceptor implements Interceptor {
         BoundSql boundSql = statementHandler.getBoundSql();
         List<Source> sourceList = bmwExecutorInterceptor.sourceList;
 
+
         try {
             net.sf.jsqlparser.statement.Statement stmt = parser.parse(new StringReader(boundSql.getSql()));
 
             if (stmt instanceof Insert) {
+                Object parameter = boundSql.getParameterObject();
+
+                Class clazz = parameter.getClass();
+
+
                 InsertService.credibleInsert((Insert) stmt, boundSql, sourceList);
             } else if (stmt instanceof Update) {
                 // 获取当前线程的sql

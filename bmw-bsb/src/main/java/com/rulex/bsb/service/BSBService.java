@@ -15,10 +15,10 @@ import java.util.Map;
 public class BSBService {
 
 
-    public static void producer(DataBean.Data data, byte[] hashPrimaryId) {
+    public static void producer(DataBean.Data data, String orgPKHash) {
         try {
             LevelDBDao.origin();
-            LevelDBDao.set(data, hashPrimaryId);
+            LevelDBDao.set(data, orgPKHash);
             System.out.println("producer thread id " + Thread.currentThread().getId());
         } catch (IOException e) {
             e.printStackTrace();
