@@ -32,6 +32,7 @@ public class BmwDsmApplicationTests {
 //        User user2 = new User();
 //        user2.setAge(20);
 //        user2.setName("李四");
+
 //        objects.add(user1);
 //        objects.add(user2);
 //        userDao.batchCreateUser(objects);

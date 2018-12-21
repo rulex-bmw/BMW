@@ -9,7 +9,7 @@
 .project
 .settings
 *.db
-*test/
+*src/main/test/
 ##filter databfile、sln file##
 *.mdb  
 *.ldb  
