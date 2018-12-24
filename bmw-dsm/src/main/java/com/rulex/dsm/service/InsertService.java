@@ -3,26 +3,20 @@ package com.rulex.dsm.service;
 import com.google.protobuf.ByteString;
 import com.rulex.bsb.pojo.DataBean;
 import com.rulex.bsb.service.BSBService;
-import com.rulex.bsb.utils.LevelDBUtil;
 import com.rulex.bsb.utils.SHA256;
 import com.rulex.bsb.utils.TypeUtils;
 import com.rulex.dsm.bean.Field;
 import com.rulex.dsm.bean.Primary;
 import com.rulex.dsm.bean.Source;
 import com.rulex.dsm.pojo.DataTypes;
-import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
-import net.sf.jsqlparser.expression.operators.relational.ItemsList;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.insert.Insert;
 import org.apache.ibatis.mapping.BoundSql;
-import sun.misc.BASE64Encoder;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.sql.Connection;
 import java.util.*;
-
-import static com.rulex.bsb.utils.TypeUtils.objectToByte;
 
 public class InsertService {
 
@@ -32,8 +26,9 @@ public class InsertService {
      * @param insert     拦截的insert对象
      * @param boundSql   获取sql参数
      * @param sourceList xml解析拦截规则
+     * @param connection 获取数据库连接信息
      */
-    public static void credibleInsert(Insert insert, BoundSql boundSql, List<Source> sourceList) {
+    public static void credibleInsert(Insert insert, BoundSql boundSql, List<Source> sourceList, Connection connection) {
 
         try {
             String tableName = insert.getTable().getName();
@@ -49,18 +44,20 @@ public class InsertService {
                     byte[] payload = payloadKeyMap.get("payload");
 
                     // 获取PrimaryId
-                    String orgPKHash = null;
                     if (source.getKeys().size() == 1) {
 
+                        Thread insertThread = new InsertThread(connection, payload);
+
+                        insertThread.start();
 
                     } else {
-                        orgPKHash = Base64.getEncoder().encodeToString(payloadKeyMap.get("keys"));
-                    }
-                    if (payload != null) {
-                        // 调用bsb执行上链
-                        DataBean.Data data = DataBean.Data.newBuilder().setPayload(ByteString.copyFrom(payload)).build();
-                        BSBService.producer(data, orgPKHash);
-                        BSBService.Consumer();
+                        String orgPKHash = Base64.getEncoder().encodeToString(payloadKeyMap.get("keys"));
+                        if (payload != null) {
+                            // 调用bsb执行上链
+                            DataBean.Data data = DataBean.Data.newBuilder().setPayload(ByteString.copyFrom(payload)).build();
+                            BSBService.producer(data, orgPKHash);
+                            BSBService.Consumer();
+                        }
                     }
                 }
             }
