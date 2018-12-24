@@ -120,10 +120,10 @@ public class QueryService {
             return fieldValue.getFloatValue();
         } else if (DataTypes.primeval_string.getName().equals(fieldType)) {
 
-            return fieldValue.getStrValue();
+            return fieldValue.getStringValue();
         } else if (DataTypes.primeval_boolean.getName().equals(fieldType)) {
 
-            return fieldValue.getBoolValue();
+            return fieldValue.getBooleanValue();
         } else if (DataTypes.primeval_ByteString.getName().equals(fieldType)) {
 
             return fieldValue.getBytesValue();
