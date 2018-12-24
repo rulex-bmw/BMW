@@ -234,10 +234,10 @@ public class InsertService {
             return fieldValue.setFloatValue((float) value).setField(fieldId).build();
         } else if (DataTypes.primeval_string.getName().equals(fieldType)) {
 
-            return fieldValue.setStrValue((String) value).setField(fieldId).build();
+            return fieldValue.setStringValue((String) value).setField(fieldId).build();
         } else if (DataTypes.primeval_boolean.getName().equals(fieldType)) {
 
-            return fieldValue.setBoolValue((boolean) value).setField(fieldId).build();
+            return fieldValue.setBooleanValue((boolean) value).setField(fieldId).build();
         } else if (DataTypes.primeval_ByteString.getName().equals(fieldType)) {
 
             return fieldValue.setBytesValue(ByteString.copyFrom((byte[]) value)).setField(fieldId).build();
