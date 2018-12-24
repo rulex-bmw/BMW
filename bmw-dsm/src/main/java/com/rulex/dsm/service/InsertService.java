@@ -217,27 +217,28 @@ public class InsertService {
      */
     public static DataBean.FieldValue typeHandle(String fieldType, Object value, int fieldId) {
 
-        DataBean.FieldValue.Builder fieldValue = DataBean.FieldValue.newBuilder();
+        DataBean.FieldValue.Builder fieldValue = DataBean.FieldValue.newBuilder().setField(fieldId);
+
         if (DataTypes.wrapper_Int.getName().equals(fieldType) || DataTypes.primeval_int.getName().equals(fieldType)) {
-            return fieldValue.setIntValue((int) value).setField(fieldId).build();
+            return fieldValue.setIntValue((int) value).build();
         } else if (DataTypes.wrapper_Long.getName().equals(fieldType) || DataTypes.primeval_long.getName().equals(fieldType)) {
 
-            return fieldValue.setLongValue((long) value).setField(fieldId).build();
+            return fieldValue.setLongValue((long) value).build();
         } else if (DataTypes.wrapper_Double.getName().equals(fieldType) || DataTypes.primeval_double.getName().equals(fieldType)) {
 
-            return fieldValue.setDoubleValue((double) value).setField(fieldId).build();
+            return fieldValue.setDoubleValue((double) value).build();
         } else if (DataTypes.wrapper_Float.getName().equals(fieldType) || DataTypes.primeval_float.getName().equals(fieldType)) {
 
-            return fieldValue.setFloatValue((float) value).setField(fieldId).build();
+            return fieldValue.setFloatValue((float) value).build();
         } else if (DataTypes.primeval_string.getName().equals(fieldType)) {
 
-            return fieldValue.setStringValue((String) value).setField(fieldId).build();
+            return fieldValue.setStringValue((String) value).build();
         } else if (DataTypes.primeval_boolean.getName().equals(fieldType)) {
 
-            return fieldValue.setBooleanValue((boolean) value).setField(fieldId).build();
+            return fieldValue.setBooleanValue((boolean) value).build();
         } else if (DataTypes.primeval_ByteString.getName().equals(fieldType)) {
 
-            return fieldValue.setBytesValue(ByteString.copyFrom((byte[]) value)).setField(fieldId).build();
+            return fieldValue.setBytesValue(ByteString.copyFrom((byte[]) value)).build();
         }
         return null;
     }

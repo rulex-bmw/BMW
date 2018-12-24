@@ -38,9 +38,7 @@ public class InsertThread extends Thread {
             Object priKey = null;
 
             while (rs.next()) {
-
                 priKey = rs.getObject(1);
-
             }
 
             String orgPKHash = Base64.getEncoder().encodeToString(SHA256.getSHA256Bytes(TypeUtils.objectToByte(priKey)));
