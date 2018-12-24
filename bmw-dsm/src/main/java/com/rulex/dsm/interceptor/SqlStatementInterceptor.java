@@ -1,18 +1,11 @@
 package com.rulex.dsm.interceptor;
 
-import com.google.protobuf.ByteString;
-import com.rulex.bsb.pojo.DataBean;
-import com.rulex.bsb.service.BSBService;
 import com.rulex.bsb.utils.DataException;
-import com.rulex.bsb.utils.SHA256;
-import com.rulex.bsb.utils.TypeUtils;
 import com.rulex.dsm.bean.Field;
 import com.rulex.dsm.bean.Source;
 import com.rulex.dsm.service.InsertService;
 import com.rulex.dsm.utils.XmlUtil;
 import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
-import net.sf.jsqlparser.expression.operators.relational.ItemsList;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.alter.Alter;
@@ -34,7 +27,6 @@ import org.apache.ibatis.reflection.wrapper.DefaultObjectWrapperFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.StringReader;
-import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
