@@ -40,7 +40,6 @@ public class BmwDsmApplicationTests {
 //
 
         Map map=new HashMap();
-
         map.put("name","xiaohong");
         map.put("sex",20);
         userDao.insertMapUser(map);
