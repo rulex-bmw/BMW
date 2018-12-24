@@ -8,7 +8,9 @@ public enum DataTypes {
     primeval_float("float"), wrapper_Float("Float"),
     primeval_string("String"),
     primeval_boolean("boolean"),
-    primeval_ByteString("ByteString");
+    primeval_ByteString("byte[]"),
+    primeval_timestamp("timestamp"),
+    primeval_datatime("datatime");
 
     private String name;
 

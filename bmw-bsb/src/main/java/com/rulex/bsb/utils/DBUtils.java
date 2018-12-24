@@ -33,9 +33,9 @@ public class DBUtils {
     // 关闭数据库
     public static void closeConn(Connection c, PreparedStatement p, ResultSet rs) {
         try {
-            if (c != null) c.close();
-            if (p != null) p.close();
             if (rs != null) rs.close();
+            if (p != null) p.close();
+            if (c != null) c.close();
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

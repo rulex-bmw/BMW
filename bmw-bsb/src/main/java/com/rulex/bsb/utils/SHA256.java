@@ -5,6 +5,8 @@ import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SHA256 {
 
@@ -74,6 +76,17 @@ public class SHA256 {
             e.printStackTrace();
         }
         return hash;
+    }
+
+    public static void main(String[] args) {
+        Map<byte[], byte[]> m = new HashMap<>();
+        byte[] key = SHA256.getSHA256Bytes(new byte[]{1});
+        byte[] value = {1};
+        m.put(key, value);
+        System.out.println(m.size());
+        System.out.println(m.get(key));
+
+
     }
 
 }

@@ -4,11 +4,14 @@ import java.util.List;
 
 public class Source {
 
-    private String name;
-    private String pojo;
-    private String table;
-    private Boolean groupable;
-    private List<Field> fields;
+    private Integer id;
+    private String name;    // pojo名称
+    private String pojo;    // pojo具体路径
+    private String table;   // 表名
+    private Boolean groupable;  // 是否可合并
+    private List<Field> fields; // 成员变量
+    private List<Primary> keys; // 所有主键:autoincrement或者联合主键
+
 
     public String getName() {
         return name;
@@ -50,14 +53,33 @@ public class Source {
         this.fields = fields;
     }
 
+    public List<Primary> getKeys() {
+        return keys;
+    }
+
+    public void setKeys(List<Primary> keys) {
+        this.keys = keys;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+
     @Override
     public String toString() {
         return "Source{" +
-                "name='" + name + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", pojo='" + pojo + '\'' +
                 ", table='" + table + '\'' +
                 ", groupable=" + groupable +
                 ", fields=" + fields +
+                ", keys=" + keys +
                 '}';
     }
 }

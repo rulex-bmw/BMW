@@ -1,11 +1,9 @@
 package com.rulex.bsb.utils;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 
 public class TypeUtils {
 
@@ -124,7 +122,7 @@ public class TypeUtils {
     public static byte[] double2Bytes(double d) {
         long value = Double.doubleToRawLongBits(d);
         byte[] byteRet = new byte[8];
-        for (int i = 0; i < 8; i++) {
+        for(int i = 0; i < 8; i++) {
             byteRet[i] = (byte) ((value >> 8 * i) & 0xff);
         }
         return byteRet;
@@ -133,7 +131,7 @@ public class TypeUtils {
 
     public static double bytes2Double(byte[] arr) {
         long value = 0;
-        for (int i = 0; i < 8; i++) {
+        for(int i = 0; i < 8; i++) {
             value |= ((long) (arr[i] & 0xff)) << (8 * i);
         }
         return Double.longBitsToDouble(value);
@@ -172,26 +170,31 @@ public class TypeUtils {
     /**
      * 把16进制字符串转换成字节数组
      *
-     * @param hex
+     * @param
      * @return
      */
-    public static byte[] hexStringToByte(String hex) {
-        if (hex.length() % 2 != 0) {
-            hex = "0" + hex;
+    public static byte[] hexStringToByte(String inHex) {
+        int hexlen = inHex.length();
+        byte[] result;
+        if (hexlen % 2 == 1) {
+            //奇数
+            hexlen++;
+            result = new byte[(hexlen / 2)];
+            inHex = "0" + inHex;
+        } else {
+            //偶数
+            result = new byte[(hexlen / 2)];
         }
-        int len = (hex.length() / 2);
-        byte[] result = new byte[len];
-        char[] achar = hex.toCharArray();
-        for(int i = 0; i < len; i++) {
-            int pos = i * 2;
-            result[i] = (byte) (toByte(achar[pos]) << 4 | toByte(achar[pos + 1]));
+        int j = 0;
+        for(int i = 0; i < hexlen; i += 2) {
+            result[j] = hexToByte(inHex.substring(i, i + 2));
+            j++;
         }
         return result;
     }
 
-    private static byte toByte(char c) {
-        byte b = (byte) "0123456789ABCDEF".indexOf(c);
-        return b;
+    public static byte hexToByte(String inHex) {
+        return (byte) Integer.parseInt(inHex, 16);
     }
 
 
@@ -225,7 +228,7 @@ public class TypeUtils {
      * uint8到字节数组的转换.
      */
     public static byte uint8ToByte(short number) {
-        return  new Integer(number & 0xff).byteValue();
+        return new Integer(number & 0xff).byteValue();
     }
 
     /**
@@ -265,5 +268,105 @@ public class TypeUtils {
     public static long getUint32(long l) {
         return l & 0x00000000ffffffff;
     }
+
+    /**
+     * 合并数组
+     *
+     * @param arrays
+     * @return
+     */
+    public static byte[] concatByteArrays(byte[][] arrays) {
+        int tl = 0;
+        for(byte[] bytes : arrays) {
+            tl += bytes.length;
+        }
+        byte[] r = new byte[tl];
+
+        int i = 0;
+        for(byte[] bytes : arrays) {
+            System.arraycopy(bytes, 0, r, i, bytes.length);
+            i += bytes.length;
+        }
+
+        return r;
+    }
+
+    /**
+     * 输出数组从最后开始指定n长度的数组
+     *
+     * @param src
+     * @param n
+     * @return
+     */
+    public static byte[] lastNBytes(byte[] src, int n) {
+        byte[] prefix = new byte[src.length < n ? n - src.length : 0];
+        byte[] postfix = Arrays.copyOfRange(src, src.length - (src.length > n ? n : src.length), src.length);
+        return concatByteArrays(new byte[][]{prefix, postfix});
+    }
+
+
+    /**
+     * 对象转byte
+     *
+     * @param obj
+     * @return
+     */
+    public static byte[] objectToByte(Object obj) {
+        byte[] bytes = null;
+        try {
+            // object to bytearray
+            ByteArrayOutputStream bo = new ByteArrayOutputStream();
+            ObjectOutputStream oo = new ObjectOutputStream(bo);
+            oo.writeObject(obj);
+
+            bytes = bo.toByteArray();
+
+            bo.close();
+            oo.close();
+        } catch (Exception e) {
+            System.out.println("translation" + e.getMessage());
+            e.printStackTrace();
+        }
+        return bytes;
+    }
+
+    /**
+     * byte转对象
+     *
+     * @param bytes
+     * @return
+     */
+    public static Object byteToObject(byte[] bytes) {
+        Object obj = null;
+        try {
+            // bytearray to object
+            ByteArrayInputStream bi = new ByteArrayInputStream(bytes);
+            ObjectInputStream oi = new ObjectInputStream(bi);
+
+            obj = oi.readObject();
+            bi.close();
+            oi.close();
+        } catch (Exception e) {
+            System.out.println("translation" + e.getMessage());
+            e.printStackTrace();
+        }
+        return obj;
+    }
+
+    /**
+     * 统计指定字符数量
+     *
+     * @returno
+     */
+    public static int strCount(String str, String searchStr) {
+        int a = str.indexOf(searchStr);//*第一个出现的索引位置
+        int count = 0;
+        while (a != -1) {
+            count++;
+            a = str.indexOf(searchStr, a + 1);//*从这个索引往后开始第一个出现的位置
+        }
+        return count;
+    }
+
 
 }

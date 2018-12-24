@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rulex.dsm.bean.UserDao">
+
+    <update id="updateUser" parameterType="java.lang.Object">
+        update bmw_user set age = #{bbb}, username = #{aaaa} where id =10;
+    </update>
+    <update id="editUser" parameterType="com.rulex.dsm.pojo.User">
+        update bmw_user set age = #{age}, username = #{name} where id =10;
+    </update>
+
+    <insert id="insertUser" parameterType="com.rulex.dsm.pojo.User">
+        insert into bmw_user (username,age) values (#{name},11);
+    </insert>
+
+    <update id="insertMapUser" parameterType="Map">
+        insert into bmw_user (username,age) values (#{name},12);
+    </update>
+
+    <insert id="batchCreateUser" parameterType="com.rulex.dsm.pojo.User">
+        INSERT INTO bmw_user (username,age)
+        VALUES
+        <foreach collection="userList" item="model" separator=",">
+            (#{model.name}, #{model.age})
+        </foreach>
+    </insert>
+
+    <select id="selectAll" resultType="com.rulex.dsm.pojo.User">
+        select * from bmw_user;
+    </select>
+
+    <update id="dropTable">
+        DROP table ${tableName};
+    </update>
+
+    <update id="alderTable">
+        ALTER TABLE test add column age varchar(20)
+    </update>
+
+</mapper>
