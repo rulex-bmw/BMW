@@ -1,5 +1,9 @@
 package com.rulex.dsm.service;
 
+import com.google.protobuf.ByteString;
+import com.rulex.bsb.pojo.DataBean;
+import com.rulex.bsb.service.BSBService;
+import com.rulex.bsb.utils.SqliteUtils;
 import com.rulex.bsb.utils.TypeUtils;
 import com.rulex.dsm.bean.Field;
 import com.rulex.dsm.bean.Primary;
@@ -16,6 +20,8 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -38,9 +44,9 @@ public class UpdateService {
                 for(Source source : sourceList) {
                     if (source.getTable().equalsIgnoreCase(tablename)) {
 
-                        List<Map<String, Object>> params = getParamters(update, source);// 获取update所有需要拦截的参数
+                        List<Map<String, Object>> params = getParamters(update, source);// 获取update所有需要拦截的参数， key is column
 
-                        List<Map<String, Object>> keys = executerSql(invocation, source, tablename, " " + update.getWhere());
+                        List<Map<String, Object>> keys = executerSql(invocation, source, tablename, " " + update.getWhere());// 所有主键key, key is column
 
                         // 是否修改主键
                         boolean b = false;
@@ -48,24 +54,27 @@ public class UpdateService {
 
                         for(Map<String, Object> key : keys) {
 
-                            String primayKey = getPrimayKey(key, source);
-                            
-                            // 查询orgPKHash 找到typeHash
+                            Map<String, String> orgHash = getOrgHash(getPrimayKey(key, source));// 获取orgPKHash和typeHash
+
+                            if (b) {
+                                // 修改主键
+                                String sql = "insert into key_indexes (orgPKHash,typeHash,type,ts) values(?,?,?,?);";
+                                Object[] obj = {orgHash.get("orgPKHash"), getNewKey(params.get(1), key, source), 2, System.currentTimeMillis()};
+                                SqliteUtils.edit(obj, sql);
+                            }
+
+                            // 生成payload
+                            byte[] payload = generatePayload(params.get(0), orgHash.get("typeHash"), source);
+
+                            // 执行上链
+                            BSBService.producer(DataBean.Data.newBuilder().setPayload(ByteString.copyFrom(payload)).build(), null);
 
                         }
-
-
-                        // 生成原始hash
-                           /* String orgpkHash = Base64.getEncoder().encodeToString(SHA256.getSHA256Bytes(TypeUtils.concatByteArrays(bytes)));
-                            String sqliteSql = "select typeHash from key_indexes where orgPKHash = ?;";
-                            List<Map<String, Object>> query = SqliteUtils.query(sqliteSql, new Object[]{orgpkHash});
-*/
-
                     }
                 }
             }
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 
@@ -91,6 +100,7 @@ public class UpdateService {
         }
         return count != 0 ? true : false;
     }
+
 
     /**
      * 将sql参数赋值
@@ -160,6 +170,7 @@ public class UpdateService {
         }
         return value;
     }
+
 
     /**
      * 获取所有要拦截的参数和主键
@@ -249,7 +260,9 @@ public class UpdateService {
         // 编写查询语句
         String select = "selce * from " + tablename + " where " + where;
         // 获取查询结果中，所有的primarykey
-        PreparedStatement pps = ((PreparedStatement) invocation.getArgs()[0]).getConnection().prepareStatement(select, Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement pps = ((PreparedStatement) invocation.getArgs()[0])
+                .getConnection().prepareStatement(select, Statement.RETURN_GENERATED_KEYS);
+
         ResultSet rs = pps.executeQuery();
         ResultSetMetaData metaData = rs.getMetaData();
 
@@ -276,6 +289,7 @@ public class UpdateService {
         return primarykeys;
     }
 
+
     /**
      * 获取主键
      *
@@ -291,6 +305,106 @@ public class UpdateService {
             k[i] = TypeUtils.objectToByte(key.get(keys.get(i)));
         }
         return Base64.getEncoder().encodeToString(TypeUtils.concatByteArrays(k));
+    }
+
+
+    /**
+     * 获取originHash
+     *
+     * @param hash 当前主键
+     * @return typeHash insert时的原始hash
+     */
+    public static Map<String, String> getOrgHash(String hash) {
+        Map<String, String> index = new HashMap<>();
+        String sqliteSql = "select typeHash from key_indexes where orgPKHash = ?;";
+        List<Map<String, Object>> query = SqliteUtils.query(sqliteSql, new Object[]{hash});
+        if (query.size() == 0) {
+            sqliteSql = "select orgPKHash from key_indexes where typeHash = ?;";
+            query = SqliteUtils.query(sqliteSql, new Object[]{hash});
+            getOrgHash((String) query.get(1).get("orgPKHash"));
+        } else {
+            index.put("orgPKHash", hash);
+            index.put("typeHash", (String) query.get(1).get("typeHash"));
+            return index;
+        }
+        return null;
+    }
+
+
+    /**
+     * 获取最新主键
+     *
+     * @param newkey  修改后的主键值
+     * @param formkey 修改前的主键值
+     * @param source
+     * @return 最新主键
+     */
+    public static String getNewKey(Map<String, Object> newkey, Map<String, Object> formkey, Source source) {
+        List<Primary> keys = source.getKeys();
+        int size = keys.size();
+        byte[][] k = new byte[size][];
+        for(int i = 0; i < size; i++) {
+            String column = keys.get(i).getColumn();
+            Object o = newkey.get(column);
+            if (o == null) {
+                k[i] = TypeUtils.objectToByte(formkey.get(column));
+            } else {
+                k[i] = TypeUtils.objectToByte(o);
+            }
+        }
+        return Base64.getEncoder().encodeToString(TypeUtils.concatByteArrays(k));
+    }
+
+
+    /**
+     * 生成payload
+     *
+     * @param params   所有修改的参数
+     * @param typeHash 原始hash
+     * @param source
+     * @return payload
+     */
+    public static byte[] generatePayload(Map<String, Object> params, String typeHash, Source source)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+
+        DataBean.Alteration.Builder alteration = DataBean.Alteration.newBuilder();
+        List<Field> fields = source.getFields();
+
+        for(Field field : fields) {
+            DataBean.FieldValue.Builder f = DataBean.FieldValue.newBuilder();
+            Object value = params.get(field.getColumn());
+
+            if (value != null) {
+                f.setField(field.getFieldId());
+                setParamter(f, value, field.getType()); // 设置value
+
+                alteration.addFields(f.build());
+            }
+        }
+
+        return alteration.setRecordid(source.getId())
+                .setOperation(DataBean.Operation.UPDATE)
+                .setOrgHashKey(ByteString.copyFrom(Base64.getDecoder().decode(typeHash)))
+                .build().toByteArray();
+    }
+
+
+    /**
+     * 反射设置指定数据类型的值
+     *
+     * @param field
+     * @param value
+     * @param type
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     */
+    public static void setParamter(DataBean.FieldValue.Builder field, Object value, String type)
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
+        Class<? extends DataBean.FieldValue.Builder> aClass = field.getClass();
+        Method method = aClass.getMethod("set" + TypeUtils.InitialsLow2Up(type) + "Value", Object.class);
+        method.invoke(field, value);
     }
 
 }

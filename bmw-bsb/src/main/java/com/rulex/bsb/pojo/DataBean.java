@@ -2134,14 +2134,14 @@ public final class DataBean {
     int getIntValue();
 
     /**
-     * <code>string strValue = 3;</code>
+     * <code>string stringValue = 3;</code>
      */
-    String getStrValue();
+    String getStringValue();
     /**
-     * <code>string strValue = 3;</code>
+     * <code>string stringValue = 3;</code>
      */
     com.google.protobuf.ByteString
-        getStrValueBytes();
+        getStringValueBytes();
 
     /**
      * <code>double doubleValue = 4;</code>
@@ -2154,9 +2154,9 @@ public final class DataBean {
     com.google.protobuf.ByteString getBytesValue();
 
     /**
-     * <code>bool boolValue = 6;</code>
+     * <code>bool booleanValue = 6;</code>
      */
-    boolean getBoolValue();
+    boolean getBooleanValue();
 
     /**
      * <code>int64 longValue = 7;</code>
@@ -2185,10 +2185,10 @@ public final class DataBean {
     public enum ValueCase
         implements com.google.protobuf.Internal.EnumLite {
       INTVALUE(2),
-      STRVALUE(3),
+      STRINGVALUE(3),
       DOUBLEVALUE(4),
       BYTESVALUE(5),
-      BOOLVALUE(6),
+      BOOLEANVALUE(6),
       LONGVALUE(7),
       FLOATVALUE(8),
       VALUE_NOT_SET(0);
@@ -2207,10 +2207,10 @@ public final class DataBean {
       public static ValueCase forNumber(int value) {
         switch (value) {
           case 2: return INTVALUE;
-          case 3: return STRVALUE;
+          case 3: return STRINGVALUE;
           case 4: return DOUBLEVALUE;
           case 5: return BYTESVALUE;
-          case 6: return BOOLVALUE;
+          case 6: return BOOLEANVALUE;
           case 7: return LONGVALUE;
           case 8: return FLOATVALUE;
           case 0: return VALUE_NOT_SET;
@@ -2287,12 +2287,12 @@ public final class DataBean {
       }
     }
 
-    public static final int STRVALUE_FIELD_NUMBER = 3;
+    public static final int STRINGVALUE_FIELD_NUMBER = 3;
     /**
-     * <code>string strValue = 3;</code>
+     * <code>string stringValue = 3;</code>
      */
     @Override
-    public String getStrValue() {
+    public String getStringValue() {
       String ref = "";
       if (valueCase_ == 3) {
         ref = (String) value_;
@@ -2300,11 +2300,11 @@ public final class DataBean {
       return ref;
     }
     /**
-     * <code>string strValue = 3;</code>
+     * <code>string stringValue = 3;</code>
      */
     @Override
     public com.google.protobuf.ByteString
-        getStrValueBytes() {
+        getStringValueBytes() {
       String ref = "";
       if (valueCase_ == 3) {
         ref = (String) value_;
@@ -2312,9 +2312,9 @@ public final class DataBean {
       return com.google.protobuf.ByteString.copyFromUtf8(ref);
     }
     /**
-     * <code>string strValue = 3;</code>
+     * <code>string stringValue = 3;</code>
      */
-    private void setStrValue(
+    private void setStringValue(
         String value) {
       if (value == null) {
     throw new NullPointerException();
@@ -2323,18 +2323,18 @@ public final class DataBean {
       value_ = value;
     }
     /**
-     * <code>string strValue = 3;</code>
+     * <code>string stringValue = 3;</code>
      */
-    private void clearStrValue() {
+    private void clearStringValue() {
       if (valueCase_ == 3) {
         valueCase_ = 0;
         value_ = null;
       }
     }
     /**
-     * <code>string strValue = 3;</code>
+     * <code>string stringValue = 3;</code>
      */
-    private void setStrValueBytes(
+    private void setStringValueBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
@@ -2403,28 +2403,28 @@ public final class DataBean {
       }
     }
 
-    public static final int BOOLVALUE_FIELD_NUMBER = 6;
+    public static final int BOOLEANVALUE_FIELD_NUMBER = 6;
     /**
-     * <code>bool boolValue = 6;</code>
+     * <code>bool booleanValue = 6;</code>
      */
     @Override
-    public boolean getBoolValue() {
+    public boolean getBooleanValue() {
       if (valueCase_ == 6) {
         return (Boolean) value_;
       }
       return false;
     }
     /**
-     * <code>bool boolValue = 6;</code>
+     * <code>bool booleanValue = 6;</code>
      */
-    private void setBoolValue(boolean value) {
+    private void setBooleanValue(boolean value) {
       valueCase_ = 6;
       value_ = value;
     }
     /**
-     * <code>bool boolValue = 6;</code>
+     * <code>bool booleanValue = 6;</code>
      */
-    private void clearBoolValue() {
+    private void clearBooleanValue() {
       if (valueCase_ == 6) {
         valueCase_ = 0;
         value_ = null;
@@ -2498,7 +2498,7 @@ public final class DataBean {
             2, (int)((Integer) value_));
       }
       if (valueCase_ == 3) {
-        output.writeString(3, getStrValue());
+        output.writeString(3, getStringValue());
       }
       if (valueCase_ == 4) {
         output.writeDouble(
@@ -2540,7 +2540,7 @@ public final class DataBean {
       }
       if (valueCase_ == 3) {
         size += com.google.protobuf.CodedOutputStream
-          .computeStringSize(3, getStrValue());
+          .computeStringSize(3, getStringValue());
       }
       if (valueCase_ == 4) {
         size += com.google.protobuf.CodedOutputStream
@@ -2728,44 +2728,44 @@ public final class DataBean {
       }
 
       /**
-       * <code>string strValue = 3;</code>
+       * <code>string stringValue = 3;</code>
        */
       @Override
-      public String getStrValue() {
-        return instance.getStrValue();
+      public String getStringValue() {
+        return instance.getStringValue();
       }
       /**
-       * <code>string strValue = 3;</code>
+       * <code>string stringValue = 3;</code>
        */
       @Override
       public com.google.protobuf.ByteString
-          getStrValueBytes() {
-        return instance.getStrValueBytes();
+          getStringValueBytes() {
+        return instance.getStringValueBytes();
       }
       /**
-       * <code>string strValue = 3;</code>
+       * <code>string stringValue = 3;</code>
        */
-      public Builder setStrValue(
+      public Builder setStringValue(
           String value) {
         copyOnWrite();
-        instance.setStrValue(value);
+        instance.setStringValue(value);
         return this;
       }
       /**
-       * <code>string strValue = 3;</code>
+       * <code>string stringValue = 3;</code>
        */
-      public Builder clearStrValue() {
+      public Builder clearStringValue() {
         copyOnWrite();
-        instance.clearStrValue();
+        instance.clearStringValue();
         return this;
       }
       /**
-       * <code>string strValue = 3;</code>
+       * <code>string stringValue = 3;</code>
        */
-      public Builder setStrValueBytes(
+      public Builder setStringValueBytes(
           com.google.protobuf.ByteString value) {
         copyOnWrite();
-        instance.setStrValueBytes(value);
+        instance.setStringValueBytes(value);
         return this;
       }
 
@@ -2818,26 +2818,26 @@ public final class DataBean {
       }
 
       /**
-       * <code>bool boolValue = 6;</code>
+       * <code>bool booleanValue = 6;</code>
        */
       @Override
-      public boolean getBoolValue() {
-        return instance.getBoolValue();
+      public boolean getBooleanValue() {
+        return instance.getBooleanValue();
       }
       /**
-       * <code>bool boolValue = 6;</code>
+       * <code>bool booleanValue = 6;</code>
        */
-      public Builder setBoolValue(boolean value) {
+      public Builder setBooleanValue(boolean value) {
         copyOnWrite();
-        instance.setBoolValue(value);
+        instance.setBooleanValue(value);
         return this;
       }
       /**
-       * <code>bool boolValue = 6;</code>
+       * <code>bool booleanValue = 6;</code>
        */
-      public Builder clearBoolValue() {
+      public Builder clearBooleanValue() {
         copyOnWrite();
-        instance.clearBoolValue();
+        instance.clearBooleanValue();
         return this;
       }
 
@@ -2920,7 +2920,7 @@ public final class DataBean {
                   valueCase_ == 2, value_, other.value_);
               break;
             }
-            case STRVALUE: {
+            case STRINGVALUE: {
               value_ = visitor.visitOneofString(
                  valueCase_ == 3, value_, other.value_);
               break;
@@ -2935,7 +2935,7 @@ public final class DataBean {
                   valueCase_ == 5, value_, other.value_);
               break;
             }
-            case BOOLVALUE: {
+            case BOOLEANVALUE: {
               value_ = visitor.visitOneofBoolean(
                   valueCase_ == 6, value_, other.value_);
               break;

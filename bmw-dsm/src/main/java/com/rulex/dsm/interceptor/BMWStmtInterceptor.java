@@ -65,8 +65,9 @@ public class BMWStmtInterceptor implements Interceptor {
                 long id = Thread.currentThread().getId();
                 String sql = bmwExecutorInterceptor.sqls.get(id);
                 if (null != sql && StringUtils.isBlank(sql)) {
-
                     bmwExecutorInterceptor.sqls.remove(id);
+
+                    // 将修改变为可信数据
                     UpdateService.credibleUpdate((Update) parser.parse(new StringReader(sql)), invocation, sourceList);
                 }
 
