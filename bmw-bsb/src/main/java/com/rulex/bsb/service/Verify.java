@@ -21,6 +21,7 @@ public class Verify {
     static {
         LevelDBDao levelDBDao = new LevelDBDao();
         try {
+
             // Determine if there is a first message
             String value = asString(LevelDBUtil.getDataDB().get(HEADER_KEY));
 
@@ -32,9 +33,9 @@ public class Verify {
         }
     }
 
-    public static void main(String[] args) {
-
-        System.out.println("start");
-
-    }
+//    public static void main(String[] args) {
+//
+//        System.out.println("start");
+//
+//    }
 }

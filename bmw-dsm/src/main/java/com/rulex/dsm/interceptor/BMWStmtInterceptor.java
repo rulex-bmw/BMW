@@ -5,6 +5,8 @@ import com.rulex.dsm.bean.Field;
 import com.rulex.dsm.bean.Source;
 import com.rulex.dsm.service.InsertService;
 import com.rulex.dsm.service.UpdateService;
+import com.rulex.dsm.utils.XmlUtil;
+import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.statement.alter.Alter;
 import net.sf.jsqlparser.statement.delete.Delete;
@@ -54,11 +56,6 @@ public class BMWStmtInterceptor implements Interceptor {
             net.sf.jsqlparser.statement.Statement stmt = parser.parse(new StringReader(boundSql.getSql()));
 
             if (stmt instanceof Insert) {
-                Object parameter = boundSql.getParameterObject();
-
-                Class clazz = parameter.getClass();
-
-
                 InsertService.credibleInsert((Insert) stmt, boundSql, sourceList);
             } else if (stmt instanceof Update) {
                 // 获取当前线程的sql
