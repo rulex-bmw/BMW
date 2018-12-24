@@ -12,6 +12,8 @@ public interface UserDao {
 
     int updateUser(@Param("aaaa") String name, @Param("bbb") Integer age);
 
+    int editUser(User user);
+
     int insertUser(User u);
 
     int insertMapUser(Map<String,Object>  map);

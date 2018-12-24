@@ -4,42 +4,39 @@ import com.rulex.bsb.utils.DataException;
 import com.rulex.dsm.bean.Field;
 import com.rulex.dsm.bean.Source;
 import com.rulex.dsm.service.InsertService;
+import com.rulex.dsm.service.UpdateService;
 import com.rulex.dsm.utils.XmlUtil;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
-import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.alter.Alter;
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.drop.Drop;
 import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.update.Update;
+import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.executor.statement.RoutingStatementHandler;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.SqlCommandType;
-import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.plugin.*;
-import org.apache.ibatis.reflection.DefaultReflectorFactory;
-import org.apache.ibatis.reflection.MetaObject;
-import org.apache.ibatis.reflection.factory.DefaultObjectFactory;
-import org.apache.ibatis.reflection.wrapper.DefaultObjectWrapperFactory;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.io.StringReader;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-@Intercepts({@Signature(type = StatementHandler.class, method = "update", args = {Statement.class})})
+@Intercepts(
+        {@Signature(type = StatementHandler.class, method = "update", args = {Statement.class})}
+)
 @Component
-public class SqlStatementInterceptor implements Interceptor {
+public class BMWStmtInterceptor implements Interceptor {
 
     CCJSqlParserManager parser = new CCJSqlParserManager();
 
-    private List<Source> sourceList = new ArrayList<>();
+    @Resource
+    private BMWExecutorInterceptor bmwExecutorInterceptor;
 
     /**
      * 拦截器执行方法
@@ -49,47 +46,43 @@ public class SqlStatementInterceptor implements Interceptor {
      */
     @Override
     public Object intercept(Invocation invocation) throws Exception {
-        //拦截执行sql
+
         RoutingStatementHandler statementHandler = (RoutingStatementHandler) invocation.getTarget();
         BoundSql boundSql = statementHandler.getBoundSql();
+        List<Source> sourceList = bmwExecutorInterceptor.sourceList;
+
 
         try {
-            //获取拦截规则
-            if (0 == sourceList.size()) {
-                sourceList = XmlUtil.parseXML();
-            }
             net.sf.jsqlparser.statement.Statement stmt = parser.parse(new StringReader(boundSql.getSql()));
 
             if (stmt instanceof Insert) {
                 InsertService.credibleInsert((Insert) stmt, boundSql, sourceList);
             } else if (stmt instanceof Update) {
-                Update update = (Update) stmt;
-                List<Column> columns = update.getColumns();
-                List<Expression> expressions = update.getExpressions();
-                for(Expression expression : expressions) {
+                // 获取当前线程的sql
+                long id = Thread.currentThread().getId();
+                String sql = bmwExecutorInterceptor.sqls.get(id);
+                if (null != sql && StringUtils.isBlank(sql)) {
 
-                    System.out.println(expression.toString().equals("?"));
+                    bmwExecutorInterceptor.sqls.remove(id);
+                    UpdateService.credibleUpdate((Update) parser.parse(new StringReader(sql)), invocation, sourceList);
                 }
 
-                System.out.println();
-//                UpdateService.credibleUpdate((Update) stmt, invocation, sourceList);
             } else if (stmt instanceof Delete) {
-
 
             } else if (stmt instanceof Drop) {
 
-                //上区块链的表不能删除
+                // 上区块链的表不能删除
                 Drop drop = (Drop) stmt;
-                for (Source source : sourceList) {
+                for(Source source : sourceList) {
                     if (source.getTable().equalsIgnoreCase(drop.getName())) {
                         throw new DataException("The data for this database table cannot be deleted because it is on the block chain.");
                     }
                 }
             } else if (stmt instanceof Alter) {
 
-                //上区块链的字段信息不能修改
+                // 上区块链的字段信息不能修改
                 Alter alter = (Alter) stmt;
-                for (Source source : sourceList) {
+                for(Source source : sourceList) {
                     if (source.getTable().equalsIgnoreCase(alter.getTable().getName())) {
 
                         //修改表名报错
@@ -98,7 +91,7 @@ public class SqlStatementInterceptor implements Interceptor {
                         }
 
                         //修改上链的表列名报错
-                        for (Field field : source.getFields()) {
+                        for(Field field : source.getFields()) {
                             if (alter.getColumnName().equalsIgnoreCase(field.getColumn())) {
                                 throw new DataException("The data for this database table cannot be alter because it is on the block chain.");
                             }
@@ -135,7 +128,7 @@ public class SqlStatementInterceptor implements Interceptor {
      * @param invocation
      * @param sql
      * @throws SQLException
-     */
+     *//*
     private void resetSql2Invocation(Invocation invocation, String sql) throws SQLException {
         final Object[] args = invocation.getArgs();
         MappedStatement statement = (MappedStatement) args[0];
@@ -156,7 +149,7 @@ public class SqlStatementInterceptor implements Interceptor {
         builder.keyGenerator(ms.getKeyGenerator());
         if (ms.getKeyProperties() != null && ms.getKeyProperties().length != 0) {
             StringBuilder keyProperties = new StringBuilder();
-            for (String keyProperty : ms.getKeyProperties()) {
+            for(String keyProperty : ms.getKeyProperties()) {
                 keyProperties.append(keyProperty).append(",");
             }
             keyProperties.delete(keyProperties.length() - 1, keyProperties.length());
@@ -204,6 +197,6 @@ public class SqlStatementInterceptor implements Interceptor {
         public BoundSql getBoundSql(Object parameterObject) {
             return boundSql;
         }
-    }
+    }*/
 
 }
