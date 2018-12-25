@@ -28,7 +28,7 @@ public class InsertThread extends Thread {
         // 编写查询语句
         try {
             //等待新增数据完成
-            Thread.sleep(10);
+            Thread.sleep(11);
 
             //获得新增数据的自增主键
             String select = "SELECT LAST_INSERT_ID();";
@@ -40,7 +40,7 @@ public class InsertThread extends Thread {
             while (rs.next()) {
                 priKey = rs.getObject(1);
             }
-
+            System.out.println(priKey+"------------------------------");
             String orgPKHash = Base64.getEncoder().encodeToString(SHA256.getSHA256Bytes(TypeUtils.objectToByte(priKey)));
             if (payload != null) {
                 // 调用bsb执行上链
