@@ -260,7 +260,7 @@ public class UpdateService {
     public static List<Map<String, Object>> executerSql(Invocation invocation, Source source, String tablename, String where) throws Exception {
         List<Map<String, Object>> primarykeys = new ArrayList<>();
         // 编写查询语句
-        String select = "selce * from " + tablename + " where " + where;
+        String select = "select * from " + tablename + " where " + where;
         // 获取查询结果中，所有的primarykey
         PreparedStatement pps = ((PreparedStatement) invocation.getArgs()[0])
                 .getConnection().prepareStatement(select, Statement.RETURN_GENERATED_KEYS);

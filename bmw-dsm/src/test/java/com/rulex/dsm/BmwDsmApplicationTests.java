@@ -70,7 +70,7 @@ public class BmwDsmApplicationTests {
     @Test
     public void test() {
         com.rulex.dsm.pojo.Test test = new com.rulex.dsm.pojo.Test();
-        test.setWallet(100.00);
+        test.setWallet(300.00);
         test.setAge(20);
         int i = testDao.editTest(test);
         System.out.println(i);
