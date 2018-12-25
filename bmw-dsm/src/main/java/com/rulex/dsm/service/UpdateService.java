@@ -56,6 +56,8 @@ public class UpdateService {
 
                             Map<String, String> orgHash = getOrgHash(getPrimayKey(key, source));// 获取orgPKHash和typeHash
 
+                            if (null == orgHash) continue;// 未找到原始hash，不执行上链
+
                             if (b) {
                                 // 修改主键
                                 String sql = "insert into key_indexes (orgPKHash,typeHash,type,ts) values(?,?,?,?);";
@@ -318,16 +320,22 @@ public class UpdateService {
         Map<String, String> index = new HashMap<>();
         String sqliteSql = "select typeHash from key_indexes where orgPKHash = ?;";
         List<Map<String, Object>> query = SqliteUtils.query(sqliteSql, new Object[]{hash});
+
         if (query.size() == 0) {
+
+            // 根据最新keyHash查找orgPKHash
             sqliteSql = "select orgPKHash from key_indexes where typeHash = ?;";
             query = SqliteUtils.query(sqliteSql, new Object[]{hash});
-            getOrgHash((String) query.get(1).get("orgPKHash"));
+
+            if (query.size() == 0) return null;// 未找到orgPKHash，返回null
+
+            return getOrgHash((String) query.get(0).get("orgPKHash"));
         } else {
+
             index.put("orgPKHash", hash);
-            index.put("typeHash", (String) query.get(1).get("typeHash"));
+            index.put("typeHash", (String) query.get(0).get("typeHash"));
             return index;
         }
-        return null;
     }
 
 

@@ -2,6 +2,7 @@ package com.rulex.dsm.utils;
 
 import com.rulex.bsb.utils.TypeUtils;
 import com.rulex.dsm.bean.Field;
+import com.rulex.dsm.bean.Primary;
 import com.rulex.dsm.bean.Source;
 import com.rulex.dsm.interceptor.BMWStmtInterceptor;
 import org.apache.commons.lang.StringUtils;
@@ -43,6 +44,7 @@ public class XmlUtil {
             source.setGroupable(Boolean.valueOf(s.attributeValue("groupable")));
             source.setTable(s.attributeValue("table"));
             source.setPojo(s.attributeValue("pojo"));
+            source.setKeys(parsePrimary(s.elements("key")));
             List<Field> field = new ArrayList<>();
             List<Element> fields = s.elements("field");
             for(Element f : fields) {
@@ -67,7 +69,7 @@ public class XmlUtil {
                 String length = f.attributeValue("length");
                 if (!StringUtils.isBlank(length)) fi.setLength(Integer.valueOf(length));
                 String transforable = f.attributeValue("transforable");
-                fi.setTransforable(transforable.equals("false") || StringUtils.isBlank(transforable) ? false : true);
+                fi.setTransforable(StringUtils.isBlank(transforable) || transforable.equals("false") ? false : true);
                 field.add(fi);
             }
             source.setFields(field);
@@ -76,5 +78,17 @@ public class XmlUtil {
         return sourceList;
     }
 
+
+    public static List<Primary> parsePrimary(List<Element> keys) {
+        List<Primary> primays = new ArrayList<>();
+        for(Element key : keys) {
+            Primary primary = new Primary();
+            primary.setName(key.attributeValue("name"));
+            primary.setColumn(key.attributeValue("column"));
+            primary.setType(key.attributeValue("type"));
+            primays.add(primary);
+        }
+        return primays;
+    }
 
 }

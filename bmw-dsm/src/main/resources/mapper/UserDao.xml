@@ -12,7 +12,7 @@
     </update>
 
     <insert id="insertUser" parameterType="com.rulex.dsm.pojo.User">
-        insert into bmw_user (username,age) values (#{name},11);
+        insert into bmw_user (username,age) values (#{name},#{age});
     </insert>
 
     <update id="insertMapUser" parameterType="Map">
@@ -38,5 +38,9 @@
     <update id="alderTable">
         ALTER TABLE test add column age varchar(20)
     </update>
+
+    <delete id="delUser" parameterType="java.lang.Object">
+        DELETE FROM bmw_user where id = #{id};
+    </delete>
 
 </mapper>

@@ -3,10 +3,9 @@ package com.rulex.dsm.interceptor;
 import com.rulex.bsb.utils.DataException;
 import com.rulex.dsm.bean.Field;
 import com.rulex.dsm.bean.Source;
+import com.rulex.dsm.service.DelService;
 import com.rulex.dsm.service.InsertService;
 import com.rulex.dsm.service.UpdateService;
-import com.rulex.dsm.utils.XmlUtil;
-import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.statement.alter.Alter;
 import net.sf.jsqlparser.statement.delete.Delete;
@@ -27,9 +26,9 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Properties;
 
-@Intercepts(
-        {@Signature(type = StatementHandler.class, method = "update", args = {Statement.class})}
-)
+@Intercepts({
+        @Signature(type = StatementHandler.class, method = "update", args = {Statement.class})
+})
 @Component
 public class BMWStmtInterceptor implements Interceptor {
 
@@ -69,6 +68,15 @@ public class BMWStmtInterceptor implements Interceptor {
                 }
 
             } else if (stmt instanceof Delete) {
+                long id = Thread.currentThread().getId();
+                String sql = bmwExecutorInterceptor.sqls.get(id);
+                if (null != sql && StringUtils.isBlank(sql)) {
+                    bmwExecutorInterceptor.sqls.remove(id);
+
+                    // 标记数据已删除
+                    DelService.credibleDel((Delete) parser.parse(new StringReader(sql)), invocation, sourceList);
+
+                }
 
             } else if (stmt instanceof Drop) {
 

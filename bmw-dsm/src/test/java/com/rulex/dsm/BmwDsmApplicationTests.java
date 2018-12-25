@@ -1,5 +1,6 @@
 package com.rulex.dsm;
 
+import com.rulex.dsm.bean.TestDao;
 import com.rulex.dsm.bean.UserDao;
 import com.rulex.dsm.pojo.User;
 import org.junit.Test;
@@ -10,8 +11,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -21,6 +20,9 @@ public class BmwDsmApplicationTests {
 
     @Resource
     private UserDao userDao;
+
+    @Resource
+    private TestDao testDao;
 
     @Test
     public void contextLoads() {
@@ -36,17 +38,17 @@ public class BmwDsmApplicationTests {
 //        objects.add(user1);
 //        objects.add(user2);
 //        userDao.batchCreateUser(objects);
-//        userDao.insertUser(user1);
-//
+        userDao.insertUser(user1);
 
-        Map map=new HashMap();
-        map.put("name","xiaohong");
-        map.put("sex",20);
-        userDao.insertMapUser(map);
+//        Map map=new HashMap();
+//        map.put("name","xiaohong");
+//        map.put("sex",20);
+//        userDao.insertMapUser(map);
 //        int j = userDao.updateUser("test01", 10);
 //        System.out.println(j);
-        int i = userDao.editUser(user1);
-        System.out.println(i);
+
+//        int i = userDao.editUser(user1);
+//        System.out.println(i);
 
 //        int j = userDao.updateUser("test01", 10);
 //        System.out.println(j);
@@ -54,6 +56,22 @@ public class BmwDsmApplicationTests {
 //        List<User> users = userDao.selectAll();
 //        System.out.println(users);
 //        userDao.dropTable("test");
+
+//        userDao.delUser(9);
+//        System.out.println();
+
+    }
+
+
+    @Test
+    public void test() {
+        com.rulex.dsm.pojo.Test test = new com.rulex.dsm.pojo.Test();
+        test.setWallet(100.00);
+        test.setAge(20);
+        int i = testDao.editTest(test);
+        System.out.println(i);
+
+
     }
 
 }
