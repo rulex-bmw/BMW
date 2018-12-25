@@ -72,7 +72,7 @@ public class XmlUtil {
      */
     public static List<Field> parseFields(List<Element> field) {
         List<Field> fields = new ArrayList<>();
-        for(Element f : field) {
+        for (Element f : field) {
             Field fi = new Field();
             fi.setName(f.attributeValue("name"));
             fi.setColumn(f.attributeValue("column"));
@@ -114,15 +114,22 @@ public class XmlUtil {
             primary.setName(key.attributeValue("name"));
             primary.setColumn(key.attributeValue("column"));
             primary.setType(key.attributeValue("type"));
+            String isnull = key.attributeValue("isAuto");
+            primary.setAuto(isnull.equals("false") || StringUtils.isBlank(isnull) ? false : true);
             primays.add(primary);
         }
         return primays;
     }
 
+    /**
+     * 解析数据库连接信息
+     *
+     * @param con 数据库连接信息Element
+     * @return Connection：数据库连接信息
+     */
     public static Connection parseConnection(Element con) {
 
         Connection connection = new Connection();
-
         Map<String, String> connectionMap = new HashMap<>();
         List<Element> fields = con.elements("field");
         for (Element fie : fields) {
