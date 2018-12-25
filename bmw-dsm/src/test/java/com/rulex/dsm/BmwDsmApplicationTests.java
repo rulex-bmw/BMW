@@ -39,6 +39,8 @@ public class BmwDsmApplicationTests {
 //        objects.add(user2);
 //        userDao.batchCreateUser(objects);
         userDao.insertUser(user1);
+//
+        userDao.insertUser(user1);
 
 //        Map map=new HashMap();
 //        map.put("name","xiaohong");
@@ -46,6 +48,8 @@ public class BmwDsmApplicationTests {
 //        userDao.insertMapUser(map);
 //        int j = userDao.updateUser("test01", 10);
 //        System.out.println(j);
+//        int i = userDao.editUser(user1);
+//        System.out.println(i);
 
 //        int i = userDao.editUser(user1);
 //        System.out.println(i);
