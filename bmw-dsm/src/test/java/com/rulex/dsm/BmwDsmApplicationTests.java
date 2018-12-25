@@ -1,5 +1,6 @@
 package com.rulex.dsm;
 
+import com.rulex.bsb.utils.SqliteUtils;
 import com.rulex.dsm.bean.TestDao;
 import com.rulex.dsm.bean.UserDao;
 import com.rulex.dsm.pojo.User;
@@ -11,6 +12,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -92,5 +95,7 @@ public class BmwDsmApplicationTests {
         System.out.println(i);
 
 
+//        List<Map<String, Object>> maps= SqliteUtils.query("select * from key_indexes",null);
+//        System.out.println(maps);
     }
 }

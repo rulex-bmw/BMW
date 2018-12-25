@@ -4,10 +4,10 @@
         <!--只是规定primaryKey，不上链-->
         <key name="id" column="id" type="Integer" isAuto="true"/>
         <!--上链信息-->
-        <field name="username" column="username" type="string" isnull="false" fieldId="1"></field>
-        <field name="age" column="age" type="integer" isnull="false" fieldId="2"></field>
-        <field name="phone" column="phone" type="integer" isnull="false" fieldId="3"></field>
-        <field name="wallet" column="wallet" type="double" isnull="false" fieldId="4"></field>
+        <field name="username" column="username" type="String" isnull="false" fieldId="1"></field>
+        <field name="age" column="age" type="Integer" isnull="false" fieldId="2"></field>
+        <field name="phone" column="phone" type="Long" isnull="false" fieldId="3"></field>
+        <field name="wallet" column="wallet" type="Double" isnull="false" fieldId="4"></field>
         <connection>
             <field name="url" value="jdbc:mysql://localhost:3306/test"></field>
             <field name="driver" value="com.mysql.jdbc.Driver"></field>

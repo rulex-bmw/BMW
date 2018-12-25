@@ -32,11 +32,12 @@ public class Primary {
         this.column = column;
     }
 
-    public Boolean isAuto() {
+    public Boolean getIsAuto() {
         return isAuto;
     }
 
-    public void setAuto(Boolean auto) {
-        isAuto = auto;
+    public void setIsAuto(Boolean isAuto) {
+        this.isAuto = isAuto;
     }
+
 }

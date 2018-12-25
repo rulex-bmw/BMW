@@ -76,6 +76,9 @@ public class XmlUtil {
             Field fi = new Field();
             fi.setName(f.attributeValue("name"));
             fi.setColumn(f.attributeValue("column"));
+            if (!StringUtils.isBlank(f.attributeValue("fieldId"))) {
+                fi.setFieldId(Integer.valueOf(f.attributeValue("fieldId")));
+            }
             String isnull = f.attributeValue("isnull");
             fi.setIsnull(isnull.equals("false") || StringUtils.isBlank(isnull) ? false : true);
             String type = f.attributeValue("type");
@@ -115,7 +118,7 @@ public class XmlUtil {
             primary.setColumn(key.attributeValue("column"));
             primary.setType(key.attributeValue("type"));
             String isnull = key.attributeValue("isAuto");
-            primary.setAuto(isnull.equals("false") || StringUtils.isBlank(isnull) ? false : true);
+            primary.setIsAuto(isnull.equals("false") || StringUtils.isBlank(isnull) ? false : true);
             primays.add(primary);
         }
         return primays;

@@ -7,8 +7,6 @@ import com.rulex.bsb.utils.SHA256;
 import com.rulex.bsb.utils.TypeUtils;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.Base64;
 
 public class InsertThread extends Thread {
@@ -28,18 +26,18 @@ public class InsertThread extends Thread {
         // 编写查询语句
         try {
             //等待新增数据完成
-            Thread.sleep(11);
+            Thread.sleep(15);
 
-            //获得新增数据的自增主键
-            String select = "SELECT LAST_INSERT_ID();";
-            PreparedStatement pps = connection.prepareStatement(select);
-            ResultSet rs = pps.executeQuery();
+//            //获得新增数据的自增主键
+//            String select = "SELECT LAST_INSERT_ID();";
+//            PreparedStatement pps = connection.prepareStatement(select);
+//            ResultSet rs = pps.executeQuery();
 
-            Object priKey = null;
+            Object priKey = 12;
 
-            while (rs.next()) {
-                priKey = rs.getObject(1);
-            }
+//            while (rs.next()) {
+//                priKey = rs.getObject(1);
+//            }
             System.out.println(priKey+"------------------------------");
             String orgPKHash = Base64.getEncoder().encodeToString(SHA256.getSHA256Bytes(TypeUtils.objectToByte(priKey)));
             if (payload != null) {

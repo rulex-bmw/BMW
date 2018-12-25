@@ -44,7 +44,7 @@ public class InsertService {
                     byte[] payload = payloadKeyMap.get("payload");
 
                     // 获取PrimaryId
-                    if (source.getKeys().size() == 1) {
+                    if (source.getKeys().size() == 1 && source.getKeys().get(0).getIsAuto()) {
 
                         Thread insertThread = new InsertThread(connection, payload);
 
@@ -88,16 +88,19 @@ public class InsertService {
 
         alteration.addAllFields(map.get("Values"));
 
-        // 处理复合主键
-        byte[] initial = new byte[0];
-        int length;
-        for (Object key : map.get("Values")) {
-            byte[] byteKey = TypeUtils.objectToByte(key);
-            length = initial.length;
-            initial = Arrays.copyOf(initial, byteKey.length + length);
-            System.arraycopy(byteKey, 0, initial, length, byteKey.length);
+        byte[] byteKeys = null;
+        if (map.get("keys").size() != 0) {
+            // 处理复合主键
+            byte[] initial = new byte[0];
+            int length;
+            for (Object key : map.get("Values")) {
+                byte[] byteKey = TypeUtils.objectToByte(key);
+                length = initial.length;
+                initial = Arrays.copyOf(initial, byteKey.length + length);
+                System.arraycopy(byteKey, 0, initial, length, byteKey.length);
+            }
+            byteKeys = SHA256.getSHA256Bytes(initial);
         }
-        byte[] byteKeys = SHA256.getSHA256Bytes(initial);
 
         // 处理返回结果
         Map<String, byte[]> returnMap = new HashMap();
@@ -149,7 +152,7 @@ public class InsertService {
 
                             fieldValues.add(typeHandle(field.getType(), value, field.getFieldId()));
 
-                            if (primaries.size() != 1) {
+                            if (!(primaries.size() == 1 && primaries.get(0).getIsAuto())) {
                                 for (Primary primary : primaries) {
                                     // 获取复合主键的其中一项的值
                                     if (columnName.equalsIgnoreCase(primary.getColumn())) {
@@ -169,7 +172,7 @@ public class InsertService {
 
                             fieldValues.add(typeHandle(field.getType(), map.get(property), field.getFieldId()));
 
-                            if (primaries.size() != 1) {
+                            if (!(primaries.size() == 1 && primaries.get(0).getIsAuto())) {
                                 for (Primary primary : primaries) {
                                     // 获取复合主键的其中一项的值
                                     if (columnName.equalsIgnoreCase(primary.getColumn())) {
@@ -185,7 +188,7 @@ public class InsertService {
                     else {
                         fieldValues.add(typeHandle(field.getType(), expressionValue, field.getFieldId()));
 
-                        if (primaries.size() != 1) {
+                        if (!(primaries.size() == 1 && primaries.get(0).getIsAuto())) {
                             for (Primary primary : primaries) {
                                 // 获取复合主键的其中一项的值
                                 if (columnName.equalsIgnoreCase(primary.getColumn())) {
