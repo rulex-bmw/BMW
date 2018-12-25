@@ -8,5 +8,5 @@ public interface TestDao {
 
     int editTest(Test test);
 
-
+    int insertTest(Test test);
 }

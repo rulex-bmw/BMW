@@ -1,6 +1,7 @@
 package com.rulex.dsm.utils;
 
 import com.rulex.bsb.utils.TypeUtils;
+import com.rulex.dsm.bean.Connection;
 import com.rulex.dsm.bean.Field;
 import com.rulex.dsm.bean.Primary;
 import com.rulex.dsm.bean.Source;
@@ -14,7 +15,9 @@ import org.dom4j.io.SAXReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class XmlUtil {
 
@@ -38,16 +41,18 @@ public class XmlUtil {
         if (sources == null) {
             return null;
         }
-        for(Element s : sources) {
+        for (Element s : sources) {
             Source source = new Source();
             source.setName(TypeUtils.InitialsLow2Up(s.attribute("name").getValue()));
             source.setGroupable(Boolean.valueOf(s.attributeValue("groupable")));
             source.setTable(s.attributeValue("table"));
             source.setPojo(s.attributeValue("pojo"));
             source.setKeys(parsePrimary(s.elements("key")));
+            source.setConnection(parseConnection(s.element("connection")));
+
             List<Field> field = new ArrayList<>();
             List<Element> fields = s.elements("field");
-            for(Element f : fields) {
+            for (Element f : fields) {
                 Field fi = new Field();
                 fi.setName(f.attributeValue("name"));
                 fi.setColumn(f.attributeValue("column"));
@@ -81,7 +86,7 @@ public class XmlUtil {
 
     public static List<Primary> parsePrimary(List<Element> keys) {
         List<Primary> primays = new ArrayList<>();
-        for(Element key : keys) {
+        for (Element key : keys) {
             Primary primary = new Primary();
             primary.setName(key.attributeValue("name"));
             primary.setColumn(key.attributeValue("column"));
@@ -89,6 +94,20 @@ public class XmlUtil {
             primays.add(primary);
         }
         return primays;
+    }
+
+    public static Connection parseConnection(Element con) {
+
+        Connection connection = new Connection();
+
+        Map<String, String> connectionMap = new HashMap<>();
+        List<Element> fields = con.elements("field");
+        for (Element fie : fields) {
+            connectionMap.put(fie.attributeValue("name"), fie.attributeValue("value"));
+        }
+
+        connection.setField(connectionMap);
+        return connection;
     }
 
 }

@@ -78,4 +78,19 @@ public class BmwDsmApplicationTests {
 
     }
 
+
+
+    @Test
+    public void test2() {
+        com.rulex.dsm.pojo.Test test = new com.rulex.dsm.pojo.Test();
+        test.setPhone(1312222222l);
+        test.setWallet(12.10);
+        test.setUsername("zhangsan");
+        test.setAge(20);
+        test.setTall(170);
+        int i = testDao.insertTest(test);
+        System.out.println(i);
+
+
+    }
 }

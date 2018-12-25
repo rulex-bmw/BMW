@@ -9,10 +9,10 @@
         <field name="phone" column="phone" type="integer" isnull="false" fieldId="3"></field>
         <field name="wallet" column="wallet" type="double" isnull="false" fieldId="4"></field>
         <connection>
-            <field name="url" value=""></field>
-            <field name="driver" value=""></field>
-            <field name="username" value=""></field>
-            <field name="passward" value=""></field>
+            <field name="url" value="jdbc:mysql://localhost:3306/test"></field>
+            <field name="driver" value="com.mysql.jdbc.Driver"></field>
+            <field name="username" value="root"></field>
+            <field name="password" value="root"></field>
         </connection>
     </record>
 </schema>

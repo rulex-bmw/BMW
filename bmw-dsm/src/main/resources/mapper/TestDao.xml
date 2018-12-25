@@ -8,5 +8,7 @@
         UPDATE bmw_test set wallet=#{wallet} where age <![CDATA[ <= ]]> #{age};
     </update>
 
-
+    <insert id="insertTest" parameterType="com.rulex.dsm.pojo.Test">
+        insert into bmw_test(username,age,phone,tall,wallet) values (#{username},#{age},#{phone},#{tall},#{wallet});
+    </insert>
 </mapper>
