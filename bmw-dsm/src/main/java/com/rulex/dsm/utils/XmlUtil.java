@@ -1,7 +1,7 @@
 package com.rulex.dsm.utils;
 
 import com.rulex.bsb.utils.TypeUtils;
-import com.rulex.dsm.bean.Connection;
+import com.rulex.dsm.bean.ConnectionProperties;
 import com.rulex.dsm.bean.Field;
 import com.rulex.dsm.bean.Primary;
 import com.rulex.dsm.bean.Source;
@@ -55,7 +55,7 @@ public class XmlUtil {
             source.setGroupable(Boolean.valueOf(s.attributeValue("groupable")));
             source.setTable(s.attributeValue("table"));
             source.setPojo(s.attributeValue("pojo"));
-            source.setConnection(parseConnection(s.element("connection")));
+            source.setConProperties(parseConnection(s.element("connection")));
             source.setKeys(parsePrimary(s.elements("key")));// 解析所有主键
             source.setFields(parseFields(s.elements("field")));// 解析所有上链信息
             sourceList.add(source);
@@ -128,19 +128,19 @@ public class XmlUtil {
      * 解析数据库连接信息
      *
      * @param con 数据库连接信息Element
-     * @return Connection：数据库连接信息
+     * @return ConnectionProperties：数据库连接信息
      */
-    public static Connection parseConnection(Element con) {
+    public static ConnectionProperties parseConnection(Element con) {
 
-        Connection connection = new Connection();
+        ConnectionProperties conProperties = new ConnectionProperties();
         Map<String, String> connectionMap = new HashMap<>();
         List<Element> fields = con.elements("field");
         for (Element fie : fields) {
             connectionMap.put(fie.attributeValue("name"), fie.attributeValue("value"));
         }
 
-        connection.setField(connectionMap);
-        return connection;
+        conProperties.setField(connectionMap);
+        return conProperties;
     }
 
 }
