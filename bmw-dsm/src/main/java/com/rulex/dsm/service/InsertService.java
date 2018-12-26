@@ -9,6 +9,9 @@ import com.rulex.dsm.bean.Field;
 import com.rulex.dsm.bean.Primary;
 import com.rulex.dsm.bean.Source;
 import com.rulex.dsm.pojo.DataTypes;
+import net.sf.jsqlparser.expression.DoubleValue;
+import net.sf.jsqlparser.expression.LongValue;
+import net.sf.jsqlparser.expression.StringValue;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.insert.Insert;
@@ -93,7 +96,7 @@ public class InsertService {
             // 处理复合主键
             byte[] initial = new byte[0];
             int length;
-            for (Object key : map.get("Values")) {
+            for (Object key : map.get("keys")) {
                 byte[] byteKey = TypeUtils.objectToByte(key);
                 length = initial.length;
                 initial = Arrays.copyOf(initial, byteKey.length + length);
@@ -128,18 +131,25 @@ public class InsertService {
 
         // 复合主键集合
         List<Primary> primaries = source.getKeys();
-        List<Object> primaryKeys = new ArrayList<>(primaries.size());
-
+        List<Object> primaryKeys = new ArrayList<>();
+        for (Primary primary : primaries) {
+            primaryKeys.add(primary);
+        }
         Class clazz = parameter.getClass();
-        // 如果执行sql的方法参数类型是对象
 
-        for (Field field : source.getFields()) {
-            for (String columnName : columnNames) {
+        int index = -1;
+        for (String columnName : columnNames) {
+
+            //处理ParameterMappings下标
+            ExpressionList expression = (ExpressionList) insert.getItemsList();
+            Object expressionValue = expression.getExpressions().get(columnNames.indexOf(columnName));
+            if (expressionValue.toString().equals("?")) {
+                index = index + 1;
+            }
+
+            for (Field field : source.getFields()) {
                 // 获取上链的column
                 if (field.getColumn().equalsIgnoreCase(columnName)) {
-
-                    ExpressionList expression = (ExpressionList) insert.getItemsList();
-                    Object expressionValue = expression.getExpressions().get(columnNames.indexOf(columnName));
 
                     // 用对象给sql占位符赋值
                     if (expressionValue.toString().equals("?")) {
@@ -150,7 +160,8 @@ public class InsertService {
                             Method method = clazz.getMethod("get" + fieldName);
                             Object value = method.invoke(parameter);
 
-                            fieldValues.add(typeHandle(field.getType(), value, field.getFieldId()));
+                            Map<String, Object> map = typeHandle(field.getType(), value, field.getFieldId());
+                            fieldValues.add((DataBean.FieldValue) map.get("FieldValue"));
 
                             if (!(primaries.size() == 1 && primaries.get(0).getIsAuto())) {
                                 for (Primary primary : primaries) {
@@ -166,18 +177,19 @@ public class InsertService {
                         // 如果执行sql的方法参数类型是map
                         else if (parameter instanceof java.util.HashMap) {
 
-                            String property = boundSql.getParameterMappings().get(columnNames.indexOf(columnName)).getProperty();
+                            String property = boundSql.getParameterMappings().get(index).getProperty();
 
                             Map<Object, Object> map = (Map<Object, Object>) parameter;
 
-                            fieldValues.add(typeHandle(field.getType(), map.get(property), field.getFieldId()));
+                            Map<String, Object> retMap = typeHandle(field.getType(), map.get(property), field.getFieldId());
+                            fieldValues.add((DataBean.FieldValue) retMap.get("FieldValue"));
 
                             if (!(primaries.size() == 1 && primaries.get(0).getIsAuto())) {
                                 for (Primary primary : primaries) {
                                     // 获取复合主键的其中一项的值
                                     if (columnName.equalsIgnoreCase(primary.getColumn())) {
 
-                                        primaryKeys.set(primaries.indexOf(primary), map.get(property));
+                                        primaryKeys.set(primaries.indexOf(primary), retMap.get("value"));
 
                                     }
                                 }
@@ -186,14 +198,16 @@ public class InsertService {
                     }
                     // 直接是在sql中定义值
                     else {
-                        fieldValues.add(typeHandle(field.getType(), expressionValue, field.getFieldId()));
+                        Map<String, Object> map = typeHandle(field.getType(), expressionValue, field.getFieldId());
+
+                        fieldValues.add((DataBean.FieldValue) map.get("FieldValue"));
 
                         if (!(primaries.size() == 1 && primaries.get(0).getIsAuto())) {
                             for (Primary primary : primaries) {
                                 // 获取复合主键的其中一项的值
                                 if (columnName.equalsIgnoreCase(primary.getColumn())) {
 
-                                    primaryKeys.set(primaries.indexOf(primary), expressionValue);
+                                    primaryKeys.set(primaries.indexOf(primary), map.get("value"));
 
                                 }
                             }
@@ -216,32 +230,64 @@ public class InsertService {
      *
      * @param fieldType field的type
      * @param value     Builder对象的属性值
-     * @return DataBean.FieldValue 处理后的Builder对象
+     * @return Map<String,Object> 处理后的Builder对象和value值
      */
-    public static DataBean.FieldValue typeHandle(String fieldType, Object value, int fieldId) {
+    public static Map<String, Object> typeHandle(String fieldType, Object value, int fieldId) {
 
         DataBean.FieldValue.Builder fieldValue = DataBean.FieldValue.newBuilder().setField(fieldId);
 
+        Map<String, Object> map = new HashMap();
+
         if (DataTypes.wrapper_Int.getName().equals(fieldType) || DataTypes.primeval_int.getName().equals(fieldType)) {
-            return fieldValue.setIntValue((int) value).build();
+            if (value instanceof LongValue) {
+                map.put("FieldValue", fieldValue.setIntValue((int) (((LongValue) value).getValue())).build());
+                map.put("value", (int) ((LongValue) value).getValue());
+                return map;
+            }
+
+            map.put("FieldValue", fieldValue.setIntValue((int) value).build());
+            map.put("value", value);
+            return map;
         } else if (DataTypes.wrapper_Long.getName().equals(fieldType) || DataTypes.primeval_long.getName().equals(fieldType)) {
-
-            return fieldValue.setLongValue((long) value).build();
+            if (value instanceof LongValue) {
+                map.put("FieldValue", fieldValue.setLongValue(((LongValue) value).getValue()).build());
+                map.put("value", ((LongValue) value).getValue());
+                return map;
+            }
+            map.put("FieldValue", fieldValue.setLongValue((long) value).build());
+            map.put("value", value);
+            return map;
         } else if (DataTypes.wrapper_Double.getName().equals(fieldType) || DataTypes.primeval_double.getName().equals(fieldType)) {
-
-            return fieldValue.setDoubleValue((double) value).build();
+            if (value instanceof DoubleValue) {
+                map.put("FieldValue", fieldValue.setDoubleValue(((DoubleValue) value).getValue()).build());
+                map.put("value", ((DoubleValue) value).getValue());
+                return map;
+            }
+            map.put("FieldValue", fieldValue.setDoubleValue((double) value).build());
+            map.put("value", value);
+            return map;
         } else if (DataTypes.wrapper_Float.getName().equals(fieldType) || DataTypes.primeval_float.getName().equals(fieldType)) {
-
-            return fieldValue.setFloatValue((float) value).build();
+            map.put("FieldValue", fieldValue.setFloatValue((float) value).build());
+            map.put("value", value);
+            return map;
         } else if (DataTypes.primeval_string.getName().equals(fieldType)) {
+            if (value instanceof StringValue) {
+                map.put("FieldValue", fieldValue.setStringValue(((StringValue) value).getValue()).build());
+                map.put("value", ((StringValue) value).getValue());
+                return map;
+            }
+            map.put("FieldValue", fieldValue.setStringValue((String) value).build());
+            map.put("value", value);
+            return map;
 
-            return fieldValue.setStringValue((String) value).build();
         } else if (DataTypes.primeval_boolean.getName().equals(fieldType)) {
-
-            return fieldValue.setBooleanValue((boolean) value).build();
+            map.put("FieldValue", fieldValue.setBooleanValue((boolean) value).build());
+            map.put("value", value);
+            return map;
         } else if (DataTypes.primeval_ByteString.getName().equals(fieldType)) {
-
-            return fieldValue.setBytesValue(ByteString.copyFrom((byte[]) value)).build();
+            map.put("FieldValue", fieldValue.setBytesValue(ByteString.copyFrom((byte[]) value)).build());
+            map.put("value", value);
+            return map;
         }
         return null;
     }
