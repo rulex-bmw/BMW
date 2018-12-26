@@ -1,7 +1,6 @@
 package com.rulex.dsm;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.rulex.bsb.dao.LevelDBDao;
 import com.rulex.bsb.pojo.DataBean;
 import com.rulex.bsb.utils.LevelDBUtil;
 import com.rulex.bsb.utils.SqliteUtils;
@@ -15,10 +14,11 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
+import sun.misc.BASE64Encoder;
 
 import javax.annotation.Resource;
-import java.io.IOException;
-import java.util.HashMap;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -94,23 +94,23 @@ public class BmwDsmApplicationTests {
 
     @Test
     public void insert() {
-//        com.rulex.dsm.pojo.Test test = new com.rulex.dsm.pojo.Test();
-//        test.setPhone(13222222332l);
-//        test.setWallet(12.11);
-//        test.setUsername("zhangsan");
-//        test.setAge(23);
-//        test.setTall(170);
-//        int i = testDao.insertTest(test);
+        com.rulex.dsm.pojo.Test test = new com.rulex.dsm.pojo.Test();
+        test.setPhone(13144234235235l);
+        test.setWallet(45.11);
+        test.setUsername("lisi2");
+        test.setAge(12);
+        test.setTall(163);
+        int i = testDao.insertTest(test);
 
-        Map map=new HashMap();
+//        Map map=new HashMap();
+//
+//        map.put("phone2",13222222322l);
+//        map.put("wallet",12.10);
+//        map.put("username","zhangsan2");
+//        map.put("age2",15);
+//        map.put("tall2",170);
 
-        map.put("phone2",13222222322l);
-        map.put("wallet",12.10);
-        map.put("username","zhangsan2");
-        map.put("age2",15);
-        map.put("tall2",170);
-
-      int i = testDao.insertMapTest(map);
+//        int i = testDao.insertMapTest(map);
 
 
         List<Map<String, Object>> maps = SqliteUtils.query("select * from key_indexes", null);
@@ -125,20 +125,12 @@ public class BmwDsmApplicationTests {
 
         try {
             byte[] writeKey = DataBean.Position.parseFrom(LevelDBUtil.getMataDB().get(WRITEPOSITION)).getDataKey().toByteArray();
-
-
-            DataBean.Data data = DataBean.Data.parseFrom(writeKey);
-            byte[] preKey = data.getPrevHash().toByteArray();
-
+            System.out.println(Base64.getEncoder().encodeToString(writeKey));
             QueryService.queryInfo(writeKey);
 
         } catch (InvalidProtocolBufferException e) {
             e.printStackTrace();
         }
-
-
-
-
 
 
 //        List<Map<String, Object>> maps = SqliteUtils.query("select * from key_indexes", null);

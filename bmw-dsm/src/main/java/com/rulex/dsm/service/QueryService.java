@@ -34,15 +34,17 @@ public class QueryService {
             byte[] preHash = data.getPrevHash().toByteArray();
 
             List<byte[]> payloads = new ArrayList();
-            while (preHash != null) {
+            while (preHash != null && preHash.length != 0) {
 
                 data = DataBean.Data.parseFrom(LevelDBUtil.getDataDB().get(preHash));
                 preHash = data.getPrevHash().toByteArray();
 
                 // 对比当前数据与所查块的首块hashKey是否相等,若相等保存在payloads中
-                if (orgHashKey.equals(DataBean.Alteration.parseFrom(data.getPayload().toByteArray()).getOrgHashKey())) {
+                if (preHash.length != 0) {
+                    if (orgHashKey.equals(DataBean.Alteration.parseFrom(data.getPayload().toByteArray()).getOrgHashKey())) {
 
-                    payloads.add(data.getPayload().toByteArray());
+                        payloads.add(data.getPayload().toByteArray());
+                    }
                 }
             }
 

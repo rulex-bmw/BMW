@@ -87,6 +87,7 @@ public class LevelDBDao {
             LevelDBUtil.getDataDB().put(hashkey, record.build().toByteArray());
 
             if (orgPKHash != null) {
+                System.out.println(Base64.getEncoder().encodeToString(hashkey));
                 //将PrimaryId和hashkey索引信息存入Sqlite数据库
                 SqliteUtils.edit(new Object[]{orgPKHash, Base64.getEncoder().encodeToString(hashkey), 1, System.currentTimeMillis()}, "insert into key_indexes (orgPKHash,typeHash,type,ts) values(?,?,?,?)");
             }
