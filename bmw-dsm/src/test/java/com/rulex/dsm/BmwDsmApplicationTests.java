@@ -1,5 +1,6 @@
 package com.rulex.dsm;
 
+import com.rulex.bsb.dao.LevelDBDao;
 import com.rulex.bsb.utils.SqliteUtils;
 import com.rulex.dsm.bean.TestDao;
 import com.rulex.dsm.bean.UserDao;
@@ -12,8 +13,12 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.rulex.bsb.dao.LevelDBDao.getHashMap;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -85,17 +90,26 @@ public class BmwDsmApplicationTests {
 
     @Test
     public void test2() {
-        com.rulex.dsm.pojo.Test test = new com.rulex.dsm.pojo.Test();
-        test.setPhone(1312222222l);
-        test.setWallet(12.10);
-        test.setUsername("zhangsan");
-        test.setAge(20);
-        test.setTall(170);
-        int i = testDao.insertTest(test);
-        System.out.println(i);
+//        com.rulex.dsm.pojo.Test test = new com.rulex.dsm.pojo.Test();
+//        test.setPhone(13222222332l);
+//        test.setWallet(12.10);
+//        test.setUsername("zhangsan");
+//        test.setAge(11);
+//        test.setTall(170);
+//        int i = testDao.insertTest(test);
 
+        Map map=new HashMap();
 
-//        List<Map<String, Object>> maps= SqliteUtils.query("select * from key_indexes",null);
-//        System.out.println(maps);
+        map.put("phone2",13222222322l);
+        map.put("wallet",12.10);
+        map.put("username","zhangsan2");
+        map.put("age2",15);
+        map.put("tall2",170);
+
+      int i = testDao.insertMapTest(map);
+
+        List<Map<String, Object>> maps= SqliteUtils.query("select * from key_indexes",null);
+        System.out.println(maps);
+
     }
 }
