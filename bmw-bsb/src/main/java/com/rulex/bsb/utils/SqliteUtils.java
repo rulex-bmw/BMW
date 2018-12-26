@@ -138,15 +138,5 @@ public class SqliteUtils {
         return list;
     }
 
-    public static void main(String[] args) {
-        String sql = "SELECT * FROM key_indexes";
-//        String sql = "insert into key_indexes (pri_key_hash,hash_key,ts) values(?,?,?)";
-//        int edit = edit(new Object[]{new byte[]{2}, new byte[]{1, 1, 1, 1, 1, 1}, System.currentTimeMillis()}, sql);
-//        System.out.println(edit);
-        List<Map<String, Object>> query = query(sql, null);
-        System.out.println(query);
-
-    }
-
 
 }

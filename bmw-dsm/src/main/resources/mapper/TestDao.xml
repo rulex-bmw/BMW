@@ -4,9 +4,35 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.rulex.dsm.bean.TestDao">
 
-    <update id="editTest" parameterType="com.rulex.dsm.pojo.Test">
-        UPDATE bmw_test set wallet=#{wallet} where age <![CDATA[ <= ]]> #{age};
+    <update id="editWithEntity" parameterType="com.rulex.dsm.pojo.Test">
+        UPDATE bmw_test set rank=1,wallet=#{wallet} where age <![CDATA[ <= ]]> #{age};
     </update>
+    <update id="editWithMap" parameterType="java.util.Map">
+        UPDATE bmw_test set rank=1,wallet=#{wallet} where age <![CDATA[ <= ]]> #{age};
+    </update>
+    <update id="editWithParam" parameterType="java.lang.Object">
+        UPDATE bmw_test set rank=1,wallet=#{wallet} where age <![CDATA[ <= ]]> #{age};
+    </update>
+
+    <update id="editPhone" parameterType="com.rulex.dsm.pojo.Test">
+        UPDATE bmw_test set phone=#{phone} where username= #{username};
+    </update>
+
+    <update id="modifyTall" parameterType="com.rulex.dsm.pojo.Test">
+        UPDATE bmw_test set tall=#{tall} where id= #{id};
+    </update>
+
+    <update id="modifyUsername" parameterType="com.rulex.dsm.pojo.Test">
+        UPDATE bmw_test set username=#{username} where id= #{id};
+    </update>
+
+    <update id="modifyMoreParam" parameterType="com.rulex.dsm.pojo.Test">
+        UPDATE bmw_test set username=#{username},wallet=#{wallet} where id= #{id};
+    </update>
+
+    <delete id="del" parameterType="com.rulex.dsm.pojo.Test">
+        DELETE FROM bmw_test where id=#{id};
+    </delete>
 
     <insert id="insertTest" parameterType="com.rulex.dsm.pojo.Test">
         insert into bmw_test(username,age,phone,tall,wallet) values (#{username},#{age},#{phone},#{tall},#{wallet});

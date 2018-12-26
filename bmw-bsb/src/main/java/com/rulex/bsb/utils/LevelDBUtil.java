@@ -18,7 +18,7 @@ public class LevelDBUtil {
     private static DB mataDB = null;
 
     private static final String DATA_PATH = "rulex_data";
-    private static final String FLAG_PATH = "rulex_mata";
+    private static final String FLAG_PATH = "rulex_meta";
 
     private LevelDBUtil() {
 
