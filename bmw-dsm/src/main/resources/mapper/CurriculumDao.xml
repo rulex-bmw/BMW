@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rulex.dsm.bean.CurriculumDao">
+
+    <update id="modifyParam" parameterType="com.rulex.dsm.pojo.Curriculum">
+        update curriculum set stu_num=#{stuNum},credit=#{credit} where teacher=#{teacher} and classroom=#{classroom} and project=#{project};
+    </update>
+
+    <update id="modifyPrimary" parameterType="com.rulex.dsm.pojo.Curriculum">
+        update curriculum set stu_num=#{stuNum},credit=#{credit},teacher=#{teacher} where classroom=#{classroom};
+    </update>
+
+    <delete id="delProject" parameterType="com.rulex.dsm.pojo.Curriculum">
+        DELETE FROM curriculum WHERE teacher=#{teacher} and classroom=#{classroom} and project=#{project};
+    </delete>
+
+</mapper>

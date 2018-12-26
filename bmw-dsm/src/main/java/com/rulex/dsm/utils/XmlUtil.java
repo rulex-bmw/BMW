@@ -48,7 +48,7 @@ public class XmlUtil {
         if (sources == null) {
             return null;
         }
-        for (Element s : sources) {
+        for(Element s : sources) {
             Source source = new Source();
             source.setId(Integer.valueOf(s.attributeValue("id")));
             source.setName(TypeUtils.InitialsLow2Up(s.attribute("name").getValue()));
@@ -98,6 +98,8 @@ public class XmlUtil {
             if (!StringUtils.isBlank(length)) fi.setLength(Integer.valueOf(length));
             String transforable = f.attributeValue("transforable");
             fi.setTransforable(StringUtils.isBlank(transforable) || transforable.equals("false") ? false : true);
+            String fieldId = f.attributeValue("fieldId");
+            fi.setFieldId(Integer.valueOf(fieldId));
             fields.add(fi);
         }
         return fields;
@@ -112,7 +114,7 @@ public class XmlUtil {
      */
     public static List<Primary> parsePrimary(List<Element> keys) {
         List<Primary> primays = new ArrayList<>();
-        for (Element key : keys) {
+        for(Element key : keys) {
             Primary primary = new Primary();
             primary.setName(key.attributeValue("name"));
             primary.setColumn(key.attributeValue("column"));
@@ -135,7 +137,7 @@ public class XmlUtil {
         ConnectionProperties conProperties = new ConnectionProperties();
         Map<String, String> connectionMap = new HashMap<>();
         List<Element> fields = con.elements("field");
-        for (Element fie : fields) {
+        for(Element fie : fields) {
             connectionMap.put(fie.attributeValue("name"), fie.attributeValue("value"));
         }
 
