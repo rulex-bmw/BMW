@@ -87,14 +87,13 @@ public class BmwDsmApplicationTests {
     }
 
 
-
     @Test
     public void test2() {
 //        com.rulex.dsm.pojo.Test test = new com.rulex.dsm.pojo.Test();
 //        test.setPhone(13222222332l);
-//        test.setWallet(12.10);
+//        test.setWallet(12.11);
 //        test.setUsername("zhangsan");
-//        test.setAge(11);
+//        test.setAge(23);
 //        test.setTall(170);
 //        int i = testDao.insertTest(test);
 
@@ -108,8 +107,10 @@ public class BmwDsmApplicationTests {
 
       int i = testDao.insertMapTest(map);
 
-        List<Map<String, Object>> maps= SqliteUtils.query("select * from key_indexes",null);
-        System.out.println(maps);
 
+        List<Map<String, Object>> maps = SqliteUtils.query("select * from key_indexes", null);
+        System.out.println("索引信息条数" + maps.size());
+        System.out.println("最近新增索引信息" + maps.get(maps.size() - 1));
+        System.out.println("上条索引信息" + maps.get(maps.size() - 2));
     }
 }

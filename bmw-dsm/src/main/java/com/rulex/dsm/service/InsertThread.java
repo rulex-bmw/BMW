@@ -5,43 +5,75 @@ import com.rulex.bsb.pojo.DataBean;
 import com.rulex.bsb.service.BSBService;
 import com.rulex.bsb.utils.SHA256;
 import com.rulex.bsb.utils.TypeUtils;
+import com.rulex.dsm.bean.ConnectionProperties;
+import com.rulex.dsm.bean.Source;
+
 
 import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.Base64;
+import java.util.List;
+import java.util.Map;
 
 public class InsertThread extends Thread {
 
-
-    public Connection connection;
+    //上链信息
     public byte[] payload;
+    //拦截的数据库表
+    public String tableName;
+    //拦截条件
+    public Source source;
+    //查询自增主键where条件
+    public List<String> whereValues;
 
-    public InsertThread(Connection connection, byte[] payload) {
-        this.connection = connection;
+    public InsertThread(Source source, byte[] payload, String tableName, List<String> whereValues) {
+        this.source = source;
         this.payload = payload;
+        this.tableName = tableName;
+        this.whereValues = whereValues;
 
     }
 
     @Override
     public void run() {
-        // 编写查询语句
+        Object priKey = null;
         try {
-            //等待新增数据完成
-            Thread.sleep(15);
+            Map<String, String> map = source.getConProperties().getField();
 
-//            //获得新增数据的自增主键
-//            String select = "SELECT LAST_INSERT_ID();";
-//            PreparedStatement pps = connection.prepareStatement(select);
-//            ResultSet rs = pps.executeQuery();
+            //创建数据库连接
+            Class.forName(map.get("driver"));
+            String url = map.get("url");
+            String user = map.get("username");
+            String password = map.get("password");
+            Connection con = DriverManager.getConnection(url, user, password);
 
-            Object priKey = 12;
+            //获得新增数据的自增主键
+            String primaryKey = source.getKeys().get(0).getColumn();
 
-//            while (rs.next()) {
-//                priKey = rs.getObject(1);
-//            }
-            System.out.println(priKey+"------------------------------");
+            StringBuilder select = new StringBuilder("SELECT " + primaryKey + " FROM " + tableName + " WHERE ");
+            for (String app : whereValues) {
+
+                if (whereValues.get(0).equals(app)) {
+                    select.append(app);
+                } else {
+                    select.append(" and " + app);
+                }
+            }
+            select.append(" ORDER BY " + primaryKey + " ASC;");
+            PreparedStatement pps = con.prepareStatement(select.toString());
+            ResultSet rs = pps.executeQuery();
+
+            while (rs.next()) {
+                priKey = rs.getObject(primaryKey);
+            }
+
+            //base64处理主键
             String orgPKHash = Base64.getEncoder().encodeToString(SHA256.getSHA256Bytes(TypeUtils.objectToByte(priKey)));
+
             if (payload != null) {
-                // 调用bsb执行上链
+                // 调用bsb执行上链，建立主键索引表
                 DataBean.Data data = DataBean.Data.newBuilder().setPayload(ByteString.copyFrom(payload)).build();
                 BSBService.producer(data, orgPKHash);
                 BSBService.Consumer();

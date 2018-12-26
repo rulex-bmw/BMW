@@ -86,7 +86,7 @@ public class BMWStmtInterceptor implements Interceptor {
 
                 // 上区块链的表不能删除
                 Drop drop = (Drop) stmt;
-                for(Source source : sourceList) {
+                for (Source source : sourceList) {
                     if (source.getTable().equalsIgnoreCase(drop.getName())) {
                         throw new DataException("The data for this database table cannot be deleted because it is on the block chain.");
                     }
@@ -95,7 +95,7 @@ public class BMWStmtInterceptor implements Interceptor {
 
                 // 上区块链的字段信息不能修改
                 Alter alter = (Alter) stmt;
-                for(Source source : sourceList) {
+                for (Source source : sourceList) {
                     if (source.getTable().equalsIgnoreCase(alter.getTable().getName())) {
 
                         //修改表名报错
@@ -104,7 +104,7 @@ public class BMWStmtInterceptor implements Interceptor {
                         }
 
                         //修改上链的表列名报错
-                        for(Field field : source.getFields()) {
+                        for (Field field : source.getFields()) {
                             if (alter.getColumnName().equalsIgnoreCase(field.getColumn())) {
                                 throw new DataException("The data for this database table cannot be alter because it is on the block chain.");
                             }

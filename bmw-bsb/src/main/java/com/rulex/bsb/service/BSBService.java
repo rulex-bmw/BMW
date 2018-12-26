@@ -19,7 +19,6 @@ public class BSBService {
         try {
             LevelDBDao.origin();
             LevelDBDao.set(data, orgPKHash);
-            System.out.println("producer thread id " + Thread.currentThread().getId());
         } catch (IOException e) {
             e.printStackTrace();
         }

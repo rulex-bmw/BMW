@@ -55,7 +55,7 @@ public class XmlUtil {
             source.setGroupable(Boolean.valueOf(s.attributeValue("groupable")));
             source.setTable(s.attributeValue("table"));
             source.setPojo(s.attributeValue("pojo"));
-            source.setConProperties(parseConnection(s.element("connection")));
+            source.setConProperties(parseConnection(s.element("connection")));// 解析数据库连接信息
             source.setKeys(parsePrimary(s.elements("key")));// 解析所有主键
             source.setFields(parseFields(s.elements("field")));// 解析所有上链信息
             sourceList.add(source);
