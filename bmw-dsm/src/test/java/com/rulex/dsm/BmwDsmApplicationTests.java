@@ -183,7 +183,7 @@ public class BmwDsmApplicationTests {
     }
 
 
-    @Test
+   /* @Test
     public void test2() {
         com.rulex.dsm.pojo.Test test = new com.rulex.dsm.pojo.Test();
         test.setPhone(1312222222l);
@@ -195,7 +195,7 @@ public class BmwDsmApplicationTests {
         System.out.println(i);
 
 
-    }
+    }*/
 
 
     @Test
@@ -241,7 +241,7 @@ public class BmwDsmApplicationTests {
     }
 
 
-    @Test
+    /*@Test
     public void test() {
         com.rulex.dsm.pojo.Test test = new com.rulex.dsm.pojo.Test();
         test.setWallet(300.00);
@@ -250,7 +250,7 @@ public class BmwDsmApplicationTests {
         System.out.println(i);
 
 
-    }
+    }*/
 
 
     @Test
