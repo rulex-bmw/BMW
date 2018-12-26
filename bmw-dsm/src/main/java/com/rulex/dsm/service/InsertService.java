@@ -9,6 +9,9 @@ import com.rulex.dsm.bean.Field;
 import com.rulex.dsm.bean.Primary;
 import com.rulex.dsm.bean.Source;
 import com.rulex.dsm.pojo.DataTypes;
+import net.sf.jsqlparser.expression.DoubleValue;
+import net.sf.jsqlparser.expression.LongValue;
+import net.sf.jsqlparser.expression.StringValue;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.insert.Insert;
@@ -40,23 +43,24 @@ public class InsertService {
                 if (source.getTable().equalsIgnoreCase(tableName)) {
 
                     // 获取payload和复合主键
-                    Map<String, byte[]> payloadKeyMap = createPayload(insert, source, boundSql, column);
-                    byte[] payload = payloadKeyMap.get("payload");
+                    Map<String, Object> payloadKeyMap = createPayload(insert, source, boundSql, column);
+                    byte[] payload = (byte[]) payloadKeyMap.get("payload");
+                    if (payload != null) {
+                        // 获取PrimaryId
+                        if (source.getKeys().size() == 1 && source.getKeys().get(0).getIsAuto()) {
 
-                    // 获取PrimaryId
-                    if (source.getKeys().size() == 1) {
+                            Thread insertThread = new InsertThread(source, payload, tableName, (List<String>) payloadKeyMap.get("where"));
 
-                        Thread insertThread = new InsertThread(connection, payload);
+                            insertThread.start();
 
-                        insertThread.start();
+                        } else {
+                            String orgPKHash = Base64.getEncoder().encodeToString((byte[]) payloadKeyMap.get("keys"));
 
-                    } else {
-                        String orgPKHash = Base64.getEncoder().encodeToString(payloadKeyMap.get("keys"));
-                        if (payload != null) {
                             // 调用bsb执行上链
                             DataBean.Data data = DataBean.Data.newBuilder().setPayload(ByteString.copyFrom(payload)).build();
                             BSBService.producer(data, orgPKHash);
                             BSBService.Consumer();
+
                         }
                     }
                 }
@@ -76,33 +80,43 @@ public class InsertService {
      * @param columnNames 数据库字段名
      * @return Map<String, byte[]> 返回payload值和处理后的复合主键
      */
-    public static Map<String, byte[]> createPayload(Insert insert, Source source, BoundSql boundSql, List<String> columnNames) throws Exception {
+    public static Map<String, Object> createPayload(Insert insert, Source source, BoundSql boundSql, List<String> columnNames) throws Exception {
 
         // 生成payload
         DataBean.Alteration.Builder alteration = DataBean.Alteration.newBuilder();
         alteration.setOperationValue(1);
         alteration.setRecordid(source.getId());
 
+        // 处理返回结果
+        Map<String, Object> returnMap = new HashMap();
+
         // 处理拦截的数据
         Map<String, List> map = processParam(insert, boundSql, columnNames, source);
 
-        alteration.addAllFields(map.get("Values"));
 
-        // 处理复合主键
-        byte[] initial = new byte[0];
-        int length;
-        for (Object key : map.get("Values")) {
-            byte[] byteKey = TypeUtils.objectToByte(key);
-            length = initial.length;
-            initial = Arrays.copyOf(initial, byteKey.length + length);
-            System.arraycopy(byteKey, 0, initial, length, byteKey.length);
+        if (map.get("values").size() != 0) {
+            alteration.addAllFields(map.get("values"));
+            returnMap.put("payload", alteration.build().toByteArray());
+            byte[] byteKeys = null;
+            if (map.get("keys").size() != 0) {
+                // 处理复合主键
+                byte[] initial = new byte[0];
+                int length;
+                for (Object key : map.get("keys")) {
+                    byte[] byteKey = TypeUtils.objectToByte(key);
+                    length = initial.length;
+                    initial = Arrays.copyOf(initial, byteKey.length + length);
+                    System.arraycopy(byteKey, 0, initial, length, byteKey.length);
+                }
+                byteKeys = SHA256.getSHA256Bytes(initial);
+                returnMap.put("keys", byteKeys);
+            } else {
+                returnMap.put("where", map.get("where"));
+            }
+
+        } else {
+            map.put("payload", null);
         }
-        byte[] byteKeys = SHA256.getSHA256Bytes(initial);
-
-        // 处理返回结果
-        Map<String, byte[]> returnMap = new HashMap();
-        returnMap.put("payload", alteration.build().toByteArray());
-        returnMap.put("keys", byteKeys);
         return returnMap;
 
     }
@@ -121,22 +135,34 @@ public class InsertService {
         // fields的集合
         List<DataBean.FieldValue> fieldValues = new ArrayList<>();
 
+        // 数据库where查询条件的集合
+        List<String> whereValues = new ArrayList<>();
+
         Object parameter = boundSql.getParameterObject();
 
         // 复合主键集合
         List<Primary> primaries = source.getKeys();
-        List<Object> primaryKeys = new ArrayList<>(primaries.size());
-
+        List<Object> primaryKeys = new ArrayList<>();
+        if (!(primaries.size() == 1 && primaries.get(0).getIsAuto())) {
+            for (Primary primary : primaries) {
+                primaryKeys.add(primary);
+            }
+        }
         Class clazz = parameter.getClass();
-        // 如果执行sql的方法参数类型是对象
 
-        for (Field field : source.getFields()) {
-            for (String columnName : columnNames) {
+        int index = -1;
+        for (String columnName : columnNames) {
+
+            //处理ParameterMappings下标
+            ExpressionList expression = (ExpressionList) insert.getItemsList();
+            Object expressionValue = expression.getExpressions().get(columnNames.indexOf(columnName));
+            if (expressionValue.toString().equals("?")) {
+                index = index + 1;
+            }
+
+            for (Field field : source.getFields()) {
                 // 获取上链的column
                 if (field.getColumn().equalsIgnoreCase(columnName)) {
-
-                    ExpressionList expression = (ExpressionList) insert.getItemsList();
-                    Object expressionValue = expression.getExpressions().get(columnNames.indexOf(columnName));
 
                     // 用对象给sql占位符赋值
                     if (expressionValue.toString().equals("?")) {
@@ -147,9 +173,10 @@ public class InsertService {
                             Method method = clazz.getMethod("get" + fieldName);
                             Object value = method.invoke(parameter);
 
-                            fieldValues.add(typeHandle(field.getType(), value, field.getFieldId()));
+                            Map<String, Object> map = typeHandle(field.getType(), value, field.getFieldId());
+                            fieldValues.add((DataBean.FieldValue) map.get("FieldValue"));
 
-                            if (primaries.size() != 1) {
+                            if (!(primaries.size() == 1 && primaries.get(0).getIsAuto())) {
                                 for (Primary primary : primaries) {
                                     // 获取复合主键的其中一项的值
                                     if (columnName.equalsIgnoreCase(primary.getColumn())) {
@@ -158,42 +185,66 @@ public class InsertService {
 
                                     }
                                 }
+                            } else {
+                                //自增主键查数据库的条件
+                                if (value instanceof String) {
+                                    whereValues.add(columnName + "='" + value + "'");
+                                } else {
+                                    whereValues.add(columnName + "=" + value.toString());
+                                }
                             }
                         }
                         // 如果执行sql的方法参数类型是map
                         else if (parameter instanceof java.util.HashMap) {
 
-                            String property = boundSql.getParameterMappings().get(columnNames.indexOf(columnName)).getProperty();
+                            String property = boundSql.getParameterMappings().get(index).getProperty();
 
                             Map<Object, Object> map = (Map<Object, Object>) parameter;
 
-                            fieldValues.add(typeHandle(field.getType(), map.get(property), field.getFieldId()));
+                            Map<String, Object> retMap = typeHandle(field.getType(), map.get(property), field.getFieldId());
+                            fieldValues.add((DataBean.FieldValue) retMap.get("FieldValue"));
 
-                            if (primaries.size() != 1) {
+                            if (!(primaries.size() == 1 && primaries.get(0).getIsAuto())) {
                                 for (Primary primary : primaries) {
                                     // 获取复合主键的其中一项的值
                                     if (columnName.equalsIgnoreCase(primary.getColumn())) {
 
-                                        primaryKeys.set(primaries.indexOf(primary), map.get(property));
+                                        primaryKeys.set(primaries.indexOf(primary), retMap.get("value"));
 
                                     }
                                 }
+
+                            } else {
+                                //自增主键查数据库的条件
+                                if (retMap.get("value") instanceof String) {
+                                    whereValues.add(columnName + "='" + retMap.get("value") + "'");
+                                } else {
+                                    whereValues.add(columnName + "=" + retMap.get("value").toString());
+                                }
+
                             }
                         }
                     }
                     // 直接是在sql中定义值
                     else {
-                        fieldValues.add(typeHandle(field.getType(), expressionValue, field.getFieldId()));
+                        Map<String, Object> map = typeHandle(field.getType(), expressionValue, field.getFieldId());
 
-                        if (primaries.size() != 1) {
+                        fieldValues.add((DataBean.FieldValue) map.get("FieldValue"));
+
+                        if ((primaries.size() == 1 && primaries.get(0).getIsAuto())) {
+                            //自增主键查数据库的条件
+                            whereValues.add(columnName + "=" + expressionValue);
+                        } else {
+
                             for (Primary primary : primaries) {
                                 // 获取复合主键的其中一项的值
                                 if (columnName.equalsIgnoreCase(primary.getColumn())) {
 
-                                    primaryKeys.set(primaries.indexOf(primary), expressionValue);
+                                    primaryKeys.set(primaries.indexOf(primary), map.get("value"));
 
                                 }
                             }
+
                         }
                     }
                 }
@@ -203,7 +254,8 @@ public class InsertService {
         // 处理返回结果
         Map<String, List> returnMap = new HashMap();
         returnMap.put("keys", primaryKeys);
-        returnMap.put("Values", fieldValues);
+        returnMap.put("values", fieldValues);
+        returnMap.put("where", whereValues);
         return returnMap;
 
     }
@@ -213,32 +265,64 @@ public class InsertService {
      *
      * @param fieldType field的type
      * @param value     Builder对象的属性值
-     * @return DataBean.FieldValue 处理后的Builder对象
+     * @return Map<String,Object> 处理后的Builder对象和value值
      */
-    public static DataBean.FieldValue typeHandle(String fieldType, Object value, int fieldId) {
+    public static Map<String, Object> typeHandle(String fieldType, Object value, int fieldId) {
 
         DataBean.FieldValue.Builder fieldValue = DataBean.FieldValue.newBuilder().setField(fieldId);
 
+        Map<String, Object> map = new HashMap();
+
         if (DataTypes.wrapper_Int.getName().equals(fieldType) || DataTypes.primeval_int.getName().equals(fieldType)) {
-            return fieldValue.setIntValue((int) value).build();
+            if (value instanceof LongValue) {
+                map.put("FieldValue", fieldValue.setIntValue((int) (((LongValue) value).getValue())).build());
+                map.put("value", (int) ((LongValue) value).getValue());
+                return map;
+            }
+
+            map.put("FieldValue", fieldValue.setIntValue((int) value).build());
+            map.put("value", value);
+            return map;
         } else if (DataTypes.wrapper_Long.getName().equals(fieldType) || DataTypes.primeval_long.getName().equals(fieldType)) {
-
-            return fieldValue.setLongValue((long) value).build();
+            if (value instanceof LongValue) {
+                map.put("FieldValue", fieldValue.setLongValue(((LongValue) value).getValue()).build());
+                map.put("value", ((LongValue) value).getValue());
+                return map;
+            }
+            map.put("FieldValue", fieldValue.setLongValue((long) value).build());
+            map.put("value", value);
+            return map;
         } else if (DataTypes.wrapper_Double.getName().equals(fieldType) || DataTypes.primeval_double.getName().equals(fieldType)) {
-
-            return fieldValue.setDoubleValue((double) value).build();
+            if (value instanceof DoubleValue) {
+                map.put("FieldValue", fieldValue.setDoubleValue(((DoubleValue) value).getValue()).build());
+                map.put("value", ((DoubleValue) value).getValue());
+                return map;
+            }
+            map.put("FieldValue", fieldValue.setDoubleValue((double) value).build());
+            map.put("value", value);
+            return map;
         } else if (DataTypes.wrapper_Float.getName().equals(fieldType) || DataTypes.primeval_float.getName().equals(fieldType)) {
-
-            return fieldValue.setFloatValue((float) value).build();
+            map.put("FieldValue", fieldValue.setFloatValue((float) value).build());
+            map.put("value", value);
+            return map;
         } else if (DataTypes.primeval_string.getName().equals(fieldType)) {
+            if (value instanceof StringValue) {
+                map.put("FieldValue", fieldValue.setStringValue(((StringValue) value).getValue()).build());
+                map.put("value", ((StringValue) value).getValue());
+                return map;
+            }
+            map.put("FieldValue", fieldValue.setStringValue((String) value).build());
+            map.put("value", value);
+            return map;
 
-            return fieldValue.setStringValue((String) value).build();
         } else if (DataTypes.primeval_boolean.getName().equals(fieldType)) {
-
-            return fieldValue.setBooleanValue((boolean) value).build();
+            map.put("FieldValue", fieldValue.setBooleanValue((boolean) value).build());
+            map.put("value", value);
+            return map;
         } else if (DataTypes.primeval_ByteString.getName().equals(fieldType)) {
-
-            return fieldValue.setBytesValue(ByteString.copyFrom((byte[]) value)).build();
+            map.put("FieldValue", fieldValue.setBytesValue(ByteString.copyFrom((byte[]) value)).build());
+            map.put("value", value);
+            return map;
         }
         return null;
     }
