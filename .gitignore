@@ -3,6 +3,8 @@
 .idea
 *target/
 *data/
+*flag/
+*meta/
 .classpath
 .project
 .settings
