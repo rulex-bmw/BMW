@@ -85,14 +85,14 @@ public class LevelDBDao {
             //Save a data , data = payload, ts, prevhash, serial, sign, flag
             record.setSign(sign).setFalg(false);
             LevelDBUtil.getDataDB().put(hashkey, record.build().toByteArray());
-            System.out.println("=====================================");
-            System.out.println("orgPKHash   "+orgPKHash);
+//            System.out.println("=====================================");
+//            System.out.println("orgPKHash   "+orgPKHash);
             if (orgPKHash != null) {
                 //将PrimaryId和hashkey索引信息存入Sqlite数据库
                 SqliteUtils.edit(new Object[]{orgPKHash, Base64.getEncoder().encodeToString(hashkey), 1, System.currentTimeMillis()}, "insert into key_indexes (orgPKHash,typeHash,type,ts) values(?,?,?,?)");
             }
-            System.out.println("=====================================");
-            System.out.println("hashkey  "+Base64.getEncoder().encodeToString(hashkey));
+//            System.out.println("=====================================");
+//            System.out.println("hashkey  "+Base64.getEncoder().encodeToString(hashkey));
             LevelDBUtil.getMataDB().put(WRITEPOSITION, DataBean.Position.newBuilder().setDataKey(ByteString.copyFrom(hashkey)).setSerial(s).build().toByteArray());
         } finally {
             LevelDBUtil.closeDB();
@@ -167,16 +167,16 @@ public class LevelDBDao {
     /**
      * Verify the offset structure header
      *
-     * @return Map<byte[], byte[]>
+     * @return Map<String, byte[]>
      * The value of the key.
      * map of the data base is the key of the database data, and the key of the map is the key of the last database data
      * @throws IOException
      */
-    public Map<byte[], byte[]> verifyHeaderData() throws IOException {
+    public Map<String, byte[]> verifyHeaderData() throws IOException {
 
         byte[] startValue = null;
         byte[] headerValue = null;
-        Map<byte[], byte[]> map = new HashMap<>();
+        Map<String, byte[]> map = new HashMap<>();
         try {
 
             // Read the key of the last record from the database
@@ -222,7 +222,7 @@ public class LevelDBDao {
 
                 // Save the key of LevelDB database into map
                 if (flag) {
-                    map.put(preKey, mapValue);
+                    map.put(Base64.getEncoder().encodeToString(preKey), mapValue);
                 }
 
                 // Exclude data that is already on the blockChain
@@ -272,14 +272,14 @@ public class LevelDBDao {
     /**
      * Get the hash map to make it easier to find the next key
      *
-     * @return Map<byte[], byte[]>
+     * @return Map<String, byte[]>
      * The value of the key.
      * map of the data base is the key of the database data, and the key of the map is the key of the last database data
      * @throws IOException
      */
-    public static Map<byte[], byte[]> getHashMap() throws IOException {
+    public static Map<String, byte[]> getHashMap() throws IOException {
 
-        Map<byte[], byte[]> map = new HashMap<>();
+        Map<String, byte[]> map = new HashMap<>();
         try {
 
             // Read the key of the last record from the database
@@ -312,7 +312,7 @@ public class LevelDBDao {
 
                 // Save the key of LevelDB database into map
                 if (flag) {
-                    map.put(preKey, mapValue);
+                    map.put(Base64.getEncoder().encodeToString(preKey), mapValue);
                 }
 
                 // Exclude data that is already on the blockChain

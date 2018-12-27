@@ -240,31 +240,31 @@ public class BmwDsmApplicationTests {
 
     @Test
     public void insert() {
-//        com.rulex.dsm.pojo.Test test = new com.rulex.dsm.pojo.Test();
-//        test.setPhone(731442342352353l);
-//        test.setWallet(75.13);
-//        test.setUsername("wangwu7");
-//        test.setAge(17);
-//        test.setTall(167);
-//        int i = testDao.insertTest(test);
+        com.rulex.dsm.pojo.Test test = new com.rulex.dsm.pojo.Test();
+        test.setPhone(16566789786l);
+        test.setWallet(33.55);
+        test.setUsername("chenliu");
+        test.setAge(15);
+        test.setTall(134);
+        int i = testDao.insertTest(test);
 
-        Map map=new HashMap();
-
-        map.put("phone2",888888888l);
-        map.put("wallet",88.88);
-        map.put("username","asd88");
-        map.put("age2",88);
-        map.put("tall2",188);
-
-        int i = testDao.insertMapTest(map);
-
-
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        Map map=new HashMap();
+//
+//        map.put("phone2",888888888l);
+//        map.put("wallet",88.88);
+//        map.put("username","asd88");
+//        map.put("age2",88);
+//        map.put("tall2",188);
+//
+//        int i = testDao.insertMapTest(map);
+//
+//
+//
+//        try {
+//            Thread.sleep(1000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         List<Map<String, Object>> maps = SqliteUtils.query("select * from key_indexes", null);
         System.out.println("索引信息条数" + maps.size());
         System.out.println("最近新增索引信息" + maps.get(maps.size() - 1));
@@ -291,13 +291,13 @@ public class BmwDsmApplicationTests {
         com.rulex.dsm.pojo.Test test = new com.rulex.dsm.pojo.Test();
         test.setUsername("fin11");
         test.setWallet(111.00);
-        test.setId(337);
+//        test.setId(337);
         test.setTall(111);
 
-        test.setPhone(731442342352353l);
-//        int i = testDao.editUsername(test);
+//        test.setPhone(731442342352353l);
+        int i = testDao.editUsername(test);
 
-        int i = testDao.editById(test);
+//        int i = testDao.editById(test);
 
 
 //        List<Map<String, Object>> maps = SqliteUtils.query("select * from key_indexes", null);
