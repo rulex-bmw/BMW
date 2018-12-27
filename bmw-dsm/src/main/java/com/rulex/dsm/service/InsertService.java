@@ -18,7 +18,6 @@ import net.sf.jsqlparser.statement.insert.Insert;
 import org.apache.ibatis.mapping.BoundSql;
 
 import java.lang.reflect.Method;
-import java.sql.Connection;
 import java.util.*;
 
 public class InsertService {
@@ -45,14 +44,12 @@ public class InsertService {
                     Map<String, Object> payloadKeyMap = createPayload(insert, source, boundSql, column);
                     byte[] payload = (byte[]) payloadKeyMap.get("payload");
                     if (payload != null) {
-                        // 获取PrimaryId
+                        // 获取PrimaryKey
                         if (source.getKeys().size() == 1 && source.getKeys().get(0).getIsAuto()) {
 
                             Thread insertThread = new InsertThread(source, payload, tableName, (List<String>) payloadKeyMap.get("where"));
 
                             insertThread.start();
-
-                            insertThread.join();
 
                         } else {
                             String orgPKHash = Base64.getEncoder().encodeToString((byte[]) payloadKeyMap.get("keys"));

@@ -250,15 +250,21 @@ public class BmwDsmApplicationTests {
 
         Map map=new HashMap();
 
-        map.put("phone2",1111111111118l);
-        map.put("wallet",11.18);
-        map.put("username","wnag1118");
-        map.put("age2",18);
-        map.put("tall2",118);
+        map.put("phone2",888888888l);
+        map.put("wallet",88.88);
+        map.put("username","asd88");
+        map.put("age2",88);
+        map.put("tall2",188);
 
         int i = testDao.insertMapTest(map);
 
 
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         List<Map<String, Object>> maps = SqliteUtils.query("select * from key_indexes", null);
         System.out.println("索引信息条数" + maps.size());
         System.out.println("最近新增索引信息" + maps.get(maps.size() - 1));
@@ -283,9 +289,10 @@ public class BmwDsmApplicationTests {
     @Test
     public void editTest() {
         com.rulex.dsm.pojo.Test test = new com.rulex.dsm.pojo.Test();
-        test.setUsername("ceshi8");
-        test.setWallet(10.81);
-        test.setId(293);
+        test.setUsername("fin11");
+        test.setWallet(111.00);
+        test.setId(337);
+        test.setTall(111);
 
         test.setPhone(731442342352353l);
 //        int i = testDao.editUsername(test);
@@ -293,8 +300,8 @@ public class BmwDsmApplicationTests {
         int i = testDao.editById(test);
 
 
-        List<Map<String, Object>> maps = SqliteUtils.query("select * from key_indexes", null);
-        System.out.println("索引信息条数" + maps.size());
-        System.out.println("最近新增索引信息" + maps.get(maps.size() - 1));
+//        List<Map<String, Object>> maps = SqliteUtils.query("select * from key_indexes", null);
+//        System.out.println("索引信息条数" + maps.size());
+//        System.out.println("最近新增索引信息" + maps.get(maps.size() - 1));
     }
 }

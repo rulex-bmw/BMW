@@ -47,6 +47,6 @@
     </update>
 
     <update id="editById" parameterType="com.rulex.dsm.pojo.Test">
-        UPDATE bmw_test set username=#{username},wallet=#{wallet},phone=#{phone} where id= #{id};
+        UPDATE bmw_test set username=#{username},wallet=#{wallet},tall=#{tall} where id= #{id};
     </update>
 </mapper>

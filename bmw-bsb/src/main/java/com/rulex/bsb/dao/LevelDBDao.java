@@ -85,12 +85,14 @@ public class LevelDBDao {
             //Save a data , data = payload, ts, prevhash, serial, sign, flag
             record.setSign(sign).setFalg(false);
             LevelDBUtil.getDataDB().put(hashkey, record.build().toByteArray());
-
+            System.out.println("=====================================");
+            System.out.println("orgPKHash   "+orgPKHash);
             if (orgPKHash != null) {
-                System.out.println(Base64.getEncoder().encodeToString(hashkey));
                 //将PrimaryId和hashkey索引信息存入Sqlite数据库
                 SqliteUtils.edit(new Object[]{orgPKHash, Base64.getEncoder().encodeToString(hashkey), 1, System.currentTimeMillis()}, "insert into key_indexes (orgPKHash,typeHash,type,ts) values(?,?,?,?)");
             }
+            System.out.println("=====================================");
+            System.out.println("hashkey  "+Base64.getEncoder().encodeToString(hashkey));
             LevelDBUtil.getMataDB().put(WRITEPOSITION, DataBean.Position.newBuilder().setDataKey(ByteString.copyFrom(hashkey)).setSerial(s).build().toByteArray());
         } finally {
             LevelDBUtil.closeDB();
