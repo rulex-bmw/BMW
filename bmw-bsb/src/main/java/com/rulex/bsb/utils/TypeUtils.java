@@ -312,6 +312,7 @@ public class TypeUtils {
      * @return
      */
     public static byte[] objectToByte(Object obj) {
+
         byte[] bytes = null;
         try {
             // object to bytearray
