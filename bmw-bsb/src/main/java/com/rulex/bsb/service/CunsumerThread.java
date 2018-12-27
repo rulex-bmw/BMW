@@ -1,7 +1,5 @@
 package com.rulex.bsb.service;
 
-import java.io.IOException;
-
 public class CunsumerThread extends Thread {
 
 
@@ -10,14 +8,13 @@ public class CunsumerThread extends Thread {
         while (!this.isInterrupted()) {// 线程未中断执行循环
             try {
 
-                BSBService.Consumer();
                 Thread.sleep(10); //每隔10ms执行一次
+                BSBService.Consumer();
+
             } catch (InterruptedException e) {
 
                 e.printStackTrace();
 
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
     }
