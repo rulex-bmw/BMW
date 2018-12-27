@@ -45,10 +45,15 @@ public class BmwDsmApplicationTests {
     @Test
     public void testEntity() {
         com.rulex.dsm.pojo.Test test = new com.rulex.dsm.pojo.Test();
-        test.setWallet(0.0);
+        test.setWallet(7000.00);
         test.setAge(20);
         int i = testDao.editWithEntity(test);
         System.out.println("受影响的条数： " + i);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -147,6 +152,7 @@ public class BmwDsmApplicationTests {
         int i = curriculumDao.modifyPrimary(curriculum);
         System.out.println("受影响的条数： " + i);
     }
+
 
     // 联合主键删除数据
     @Test
