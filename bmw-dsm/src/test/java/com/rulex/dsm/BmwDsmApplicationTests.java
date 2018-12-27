@@ -5,8 +5,6 @@ import com.rulex.bsb.pojo.DataBean;
 import com.rulex.bsb.utils.LevelDBUtil;
 import com.rulex.bsb.utils.SqliteUtils;
 import com.rulex.dsm.bean.CurriculumDao;
-import com.rulex.bsb.dao.LevelDBDao;
-import com.rulex.bsb.utils.SqliteUtils;
 import com.rulex.dsm.bean.TestDao;
 import com.rulex.dsm.bean.UserDao;
 import com.rulex.dsm.pojo.Curriculum;
@@ -18,15 +16,9 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
-import sun.misc.BASE64Encoder;
 
 import javax.annotation.Resource;
 import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -168,14 +160,12 @@ public class BmwDsmApplicationTests {
     }
 
 
-
-
     @Test
     public void sqliteTest() {
         String sql = "SELECT * FROM key_indexes";
 
         List<Map<String, Object>> query = SqliteUtils.query(sql, null);
-        for(Map<String, Object> map : query) {
+        for (Map<String, Object> map : query) {
             System.out.println(map);
         }
         System.out.println("索引总条数： " + query.size());
@@ -264,10 +254,10 @@ public class BmwDsmApplicationTests {
     @Test
     public void insert() {
         com.rulex.dsm.pojo.Test test = new com.rulex.dsm.pojo.Test();
-        test.setPhone(13144234235235l);
-        test.setWallet(45.11);
-        test.setUsername("lisi2");
-        test.setAge(12);
+        test.setPhone(131442342352353l);
+        test.setWallet(45.13);
+        test.setUsername("wangwu3");
+        test.setAge(13);
         test.setTall(163);
         int i = testDao.insertTest(test);
 
@@ -285,7 +275,6 @@ public class BmwDsmApplicationTests {
         List<Map<String, Object>> maps = SqliteUtils.query("select * from key_indexes", null);
         System.out.println("索引信息条数" + maps.size());
         System.out.println("最近新增索引信息" + maps.get(maps.size() - 1));
-        System.out.println("上条索引信息" + maps.get(maps.size() - 2));
     }
 
 
@@ -301,10 +290,5 @@ public class BmwDsmApplicationTests {
             e.printStackTrace();
         }
 
-
-//        List<Map<String, Object>> maps = SqliteUtils.query("select * from key_indexes", null);
-//        System.out.println("索引信息条数" + maps.size());
-//        System.out.println("最近新增索引信息" + maps.get(maps.size() - 1));
-//        System.out.println("上条索引信息" + maps.get(maps.size() - 2));
     }
 }

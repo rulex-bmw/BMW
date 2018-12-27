@@ -31,23 +31,37 @@ public class QueryService {
             DataBean.Alteration alteration = DataBean.Alteration.parseFrom(data.getPayload().toByteArray());
             ByteString orgHashKey = alteration.getOrgHashKey();
             int recordid = alteration.getRecordid();
+
+            //获取所有与该块相关的payload
+            List<byte[]> payloads = new ArrayList();
             byte[] preHash = data.getPrevHash().toByteArray();
 
-            List<byte[]> payloads = new ArrayList();
-            while (preHash != null && preHash.length != 0) {
+            //该块为新增块，直接添加，无修改记录
+            if (orgHashKey.size() == 0) {
 
-                data = DataBean.Data.parseFrom(LevelDBUtil.getDataDB().get(preHash));
-                preHash = data.getPrevHash().toByteArray();
+                payloads.add(data.getPayload().toByteArray());
 
-                // 对比当前数据与所查块的首块hashKey是否相等,若相等保存在payloads中
-                if (preHash.length != 0) {
-                    if (orgHashKey.equals(DataBean.Alteration.parseFrom(data.getPayload().toByteArray()).getOrgHashKey())) {
+            } else {
 
-                        payloads.add(data.getPayload().toByteArray());
+                boolean flag = true;
+                while (flag) {
+                    //此为新增块，添加到payloads，停止循环
+                    if (orgHashKey.equals(ByteString.copyFrom(preHash))) {
+                        payloads.add(DataBean.Data.parseFrom(LevelDBUtil.getDataDB().get(preHash)).getPayload().toByteArray());
+                        flag = false;
+                    } else {
+                        data = DataBean.Data.parseFrom(LevelDBUtil.getDataDB().get(preHash));
+                        preHash = data.getPrevHash().toByteArray();
+
+                        // 对比当前数据与所查块的首块hashKey是否相等,若相等保存在payloads中
+                        if (orgHashKey.equals(DataBean.Alteration.parseFrom(data.getPayload().toByteArray()).getOrgHashKey())) {
+
+                            payloads.add(data.getPayload().toByteArray());
+                        }
                     }
                 }
-            }
 
+            }
 
             // 获取上链数据规则
             List<Source> sourceList = XmlUtil.parseXML();
