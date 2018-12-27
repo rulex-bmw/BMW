@@ -41,4 +41,8 @@
     <insert id="insertMapTest">
         insert into bmw_test(username,age,phone,tall,wallet) values ('wangwu2',#{age2},#{phone2},#{tall2},11.67);
     </insert>
+
+    <update id="editUsername" parameterType="com.rulex.dsm.pojo.Test">
+        UPDATE bmw_test set username=#{username},wallet=#{wallet} where phone= #{phone};
+    </update>
 </mapper>

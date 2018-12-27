@@ -27,6 +27,7 @@ public interface TestDao {
 
     int insertTest(Test test);
 
+    int editUsername(Test test);
 
     int insertMapTest(Map map);
 }

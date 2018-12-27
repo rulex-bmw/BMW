@@ -57,9 +57,8 @@ public class BMWStmtInterceptor implements Interceptor {
 
             if (stmt instanceof Insert) {
 
-                Connection connection = ((PreparedStatement) invocation.getArgs()[0]).getConnection();
+                InsertService.credibleInsert((Insert) stmt, boundSql, sourceList);
 
-                InsertService.credibleInsert((Insert) stmt, boundSql, sourceList, connection);
             } else if (stmt instanceof Update) {
                 // 获取当前线程的sql
                 long id = Thread.currentThread().getId();

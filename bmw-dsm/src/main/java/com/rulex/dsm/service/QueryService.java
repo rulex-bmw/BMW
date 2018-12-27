@@ -8,10 +8,7 @@ import com.rulex.dsm.bean.Source;
 import com.rulex.dsm.pojo.DataTypes;
 import com.rulex.dsm.utils.XmlUtil;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class QueryService {
 
@@ -19,7 +16,7 @@ public class QueryService {
      * 查询写入区块链的最新状态信息
      *
      * @param hashKey 上链信息key
-     * @return 该hashKey对应的上链信息
+     * @return Map<String, Object> 该hashKey对应的上链信息，其中key为allBlockChainValues的value为该块的所有相关信息
      */
     public static Map<String, Object> queryInfo(byte[] hashKey) {
 
@@ -34,20 +31,26 @@ public class QueryService {
 
             //获取所有与该块相关的payload
             List<byte[]> payloads = new ArrayList();
+            Stack<byte[]> payloadStack = new Stack();
             byte[] preHash = data.getPrevHash().toByteArray();
 
             //该块为新增块，直接添加，无修改记录
             if (orgHashKey.size() == 0) {
 
                 payloads.add(data.getPayload().toByteArray());
-
+                payloadStack.add(data.getPayload().toByteArray());
             } else {
+
+                payloads.add(data.getPayload().toByteArray());
+                payloadStack.add(data.getPayload().toByteArray());
 
                 boolean flag = true;
                 while (flag) {
                     //此为新增块，添加到payloads，停止循环
                     if (orgHashKey.equals(ByteString.copyFrom(preHash))) {
                         payloads.add(DataBean.Data.parseFrom(LevelDBUtil.getDataDB().get(preHash)).getPayload().toByteArray());
+                        payloadStack.add(DataBean.Data.parseFrom(LevelDBUtil.getDataDB().get(preHash)).getPayload().toByteArray());
+
                         flag = false;
                     } else {
                         data = DataBean.Data.parseFrom(LevelDBUtil.getDataDB().get(preHash));
@@ -57,6 +60,7 @@ public class QueryService {
                         if (orgHashKey.equals(DataBean.Alteration.parseFrom(data.getPayload().toByteArray()).getOrgHashKey())) {
 
                             payloads.add(data.getPayload().toByteArray());
+                            payloadStack.add(data.getPayload().toByteArray());
                         }
                     }
                 }
@@ -103,7 +107,41 @@ public class QueryService {
                 }
             }
 
+            // 获取该块所有相关的上链数据
+            List<Map<String, Object>> allValues = new ArrayList<>();
 
+            for (Source source : sourceList) {
+
+                if (source.getId() == recordid) {
+
+                    //获取每条上链信息的信息
+                    for (byte[] payload : payloadStack) {
+                        DataBean.Alteration altera = DataBean.Alteration.parseFrom(payload);
+
+                        Map<String, Object> map = new HashMap<>();
+
+                        // 如果该对象信息被删除
+                        if (altera.getOperation().getNumber() == 0) {
+
+                            map.put("0", "该查询对象已被删除");
+                        } else {
+
+                            for (DataBean.FieldValue fieldValue : altera.getFieldsList()) {
+                                for (Field field : source.getFields()) {
+
+                                    if (fieldValue.getField() == field.getFieldId()) {
+                                        map.put(field.getName(), typeHandle(field.getType(), fieldValue));
+                                    }
+                                }
+                            }
+                        }
+
+                        allValues.add(map);
+                    }
+                }
+            }
+
+            returnMap.put("allBlockChainValues", allValues);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
