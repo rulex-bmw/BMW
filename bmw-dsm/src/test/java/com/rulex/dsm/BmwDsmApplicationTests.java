@@ -247,31 +247,24 @@ public class BmwDsmApplicationTests {
 
     @Test
     public void insert() {
-        com.rulex.dsm.pojo.Test test = new com.rulex.dsm.pojo.Test();
-        test.setPhone(16566789786l);
-        test.setWallet(33.55);
-        test.setUsername("chenliu");
-        test.setAge(15);
-        test.setTall(134);
-        int i = testDao.insertTest(test);
 
-//        Map map=new HashMap();
-//
-//        map.put("phone2",888888888l);
-//        map.put("wallet",88.88);
-//        map.put("username","asd88");
-//        map.put("age2",88);
-//        map.put("tall2",188);
-//
-//        int i = testDao.insertMapTest(map);
-//
-//
-//
-//        try {
-//            Thread.sleep(1000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
+
+        Map map=new HashMap();
+
+        map.put("phone",15133118672l);
+        map.put("wallet",11.88);
+        map.put("username","zj");
+        map.put("age",18);
+        map.put("tall",180);
+
+        int i = testDao.insertMapTest(map);
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         List<Map<String, Object>> maps = SqliteUtils.query("select * from key_indexes", null);
         System.out.println("索引信息条数" + maps.size());
         System.out.println("最近新增索引信息" + maps.get(maps.size() - 1));
@@ -298,17 +291,11 @@ public class BmwDsmApplicationTests {
         com.rulex.dsm.pojo.Test test = new com.rulex.dsm.pojo.Test();
         test.setUsername("fin12");
         test.setWallet(112.00);
-//        test.setId(337);
+        test.setId(345);
         test.setTall(112);
+        test.setAge(18);
 
-        test.setPhone(16566789786l);
-        int i = testDao.editUsername(test);
+        int i = testDao.editById(test);
 
-//        int i = testDao.editById(test);
-
-
-//        List<Map<String, Object>> maps = SqliteUtils.query("select * from key_indexes", null);
-//        System.out.println("索引信息条数" + maps.size());
-//        System.out.println("最近新增索引信息" + maps.get(maps.size() - 1));
     }
 }
