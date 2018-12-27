@@ -87,6 +87,7 @@ public class LevelDBDao {
             LevelDBUtil.getDataDB().put(hashkey, record.build().toByteArray());
 
             if (orgPKHash != null) {
+                System.out.println(Base64.getEncoder().encodeToString(hashkey));
                 //将PrimaryId和hashkey索引信息存入Sqlite数据库
                 SqliteUtils.edit(new Object[]{orgPKHash, Base64.getEncoder().encodeToString(hashkey), 1, System.currentTimeMillis()}, "insert into key_indexes (orgPKHash,typeHash,type,ts) values(?,?,?,?)");
             }
@@ -163,10 +164,10 @@ public class LevelDBDao {
 
     /**
      * Verify the offset structure header
-     * <p>
+     *
+     * @return Map<byte[], byte[]>
      * The value of the key.
      * map of the data base is the key of the database data, and the key of the map is the key of the last database data
-     *
      * @throws IOException
      */
     public Map<byte[], byte[]> verifyHeaderData() throws IOException {
@@ -268,10 +269,10 @@ public class LevelDBDao {
 
     /**
      * Get the hash map to make it easier to find the next key
-     * <p>
+     *
+     * @return Map<byte[], byte[]>
      * The value of the key.
      * map of the data base is the key of the database data, and the key of the map is the key of the last database data
-     *
      * @throws IOException
      */
     public static Map<byte[], byte[]> getHashMap() throws IOException {

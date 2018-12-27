@@ -1,13 +1,15 @@
 package com.rulex.dsm;
 
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.rulex.bsb.pojo.DataBean;
+import com.rulex.bsb.utils.LevelDBUtil;
 import com.rulex.bsb.utils.SqliteUtils;
 import com.rulex.dsm.bean.CurriculumDao;
-import com.rulex.bsb.dao.LevelDBDao;
-import com.rulex.bsb.utils.SqliteUtils;
 import com.rulex.dsm.bean.TestDao;
 import com.rulex.dsm.bean.UserDao;
 import com.rulex.dsm.pojo.Curriculum;
 import com.rulex.dsm.pojo.User;
+import com.rulex.dsm.service.QueryService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mybatis.spring.annotation.MapperScan;
@@ -16,15 +18,13 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.io.IOException;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.rulex.bsb.dao.LevelDBDao.getHashMap;
+import static com.rulex.bsb.dao.LevelDBDao.WRITEPOSITION;
+
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -160,14 +160,12 @@ public class BmwDsmApplicationTests {
     }
 
 
-
-
     @Test
     public void sqliteTest() {
         String sql = "SELECT * FROM key_indexes";
 
         List<Map<String, Object>> query = SqliteUtils.query(sql, null);
-        for(Map<String, Object> map : query) {
+        for (Map<String, Object> map : query) {
             System.out.println(map);
         }
         System.out.println("索引总条数： " + query.size());
@@ -254,29 +252,43 @@ public class BmwDsmApplicationTests {
 
 
     @Test
-    public void test2() {
-//        com.rulex.dsm.pojo.Test test = new com.rulex.dsm.pojo.Test();
-//        test.setPhone(13222222332l);
-//        test.setWallet(12.11);
-//        test.setUsername("zhangsan");
-//        test.setAge(23);
-//        test.setTall(170);
-//        int i = testDao.insertTest(test);
+    public void insert() {
+        com.rulex.dsm.pojo.Test test = new com.rulex.dsm.pojo.Test();
+        test.setPhone(131442342352353l);
+        test.setWallet(45.13);
+        test.setUsername("wangwu3");
+        test.setAge(13);
+        test.setTall(163);
+        int i = testDao.insertTest(test);
 
-        Map map=new HashMap();
+//        Map map=new HashMap();
+//
+//        map.put("phone2",13222222322l);
+//        map.put("wallet",12.10);
+//        map.put("username","zhangsan2");
+//        map.put("age2",15);
+//        map.put("tall2",170);
 
-        map.put("phone2",13222222322l);
-        map.put("wallet",12.10);
-        map.put("username","zhangsan2");
-        map.put("age2",15);
-        map.put("tall2",170);
-
-      int i = testDao.insertMapTest(map);
+//        int i = testDao.insertMapTest(map);
 
 
         List<Map<String, Object>> maps = SqliteUtils.query("select * from key_indexes", null);
         System.out.println("索引信息条数" + maps.size());
         System.out.println("最近新增索引信息" + maps.get(maps.size() - 1));
-        System.out.println("上条索引信息" + maps.get(maps.size() - 2));
+    }
+
+
+    @Test
+    public void query() {
+
+        try {
+            byte[] writeKey = DataBean.Position.parseFrom(LevelDBUtil.getMataDB().get(WRITEPOSITION)).getDataKey().toByteArray();
+            System.out.println(Base64.getEncoder().encodeToString(writeKey));
+            QueryService.queryInfo(writeKey);
+
+        } catch (InvalidProtocolBufferException e) {
+            e.printStackTrace();
+        }
+
     }
 }
