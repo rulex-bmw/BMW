@@ -250,11 +250,11 @@ public class BmwDsmApplicationTests {
 
         Map map=new HashMap();
 
-        map.put("phone2",1111111111112l);
-        map.put("wallet",11.12);
-        map.put("username","wnag1112");
-        map.put("age2",12);
-        map.put("tall2",112);
+        map.put("phone2",1111111111118l);
+        map.put("wallet",11.18);
+        map.put("username","wnag1118");
+        map.put("age2",18);
+        map.put("tall2",118);
 
         int i = testDao.insertMapTest(map);
 
@@ -283,11 +283,14 @@ public class BmwDsmApplicationTests {
     @Test
     public void editTest() {
         com.rulex.dsm.pojo.Test test = new com.rulex.dsm.pojo.Test();
-        test.setUsername("maqi3");
-        test.setWallet(15.03);
+        test.setUsername("ceshi8");
+        test.setWallet(10.81);
+        test.setId(293);
 
         test.setPhone(731442342352353l);
-        int i = testDao.editUsername(test);
+//        int i = testDao.editUsername(test);
+
+        int i = testDao.editById(test);
 
 
         List<Map<String, Object>> maps = SqliteUtils.query("select * from key_indexes", null);
