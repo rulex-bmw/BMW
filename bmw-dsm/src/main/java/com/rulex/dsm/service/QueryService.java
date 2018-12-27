@@ -20,7 +20,6 @@ public class QueryService {
      */
     public static Map<String, Object> queryInfo(byte[] hashKey) {
 
-
         Map<String, Object> returnMap = new HashMap<>();
         try {
 
@@ -116,7 +115,10 @@ public class QueryService {
                 if (source.getId() == recordid) {
 
                     //获取每条上链信息的信息
-                    for (byte[] payload : payloadStack) {
+
+                    while (!payloadStack.isEmpty()) {
+                        byte[] payload = payloadStack.pop();
+
                         DataBean.Alteration altera = DataBean.Alteration.parseFrom(payload);
 
                         Map<String, Object> map = new HashMap<>();

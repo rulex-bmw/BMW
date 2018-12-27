@@ -37,7 +37,7 @@ public class InsertThread extends Thread {
     }
 
     @Override
-    public void run() {
+    public synchronized void  run() {
         Object priKey = null;
         try {
             Map<String, String> map = source.getConProperties().getField();
