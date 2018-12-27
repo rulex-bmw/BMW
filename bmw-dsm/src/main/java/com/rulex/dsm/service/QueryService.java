@@ -41,6 +41,9 @@ public class QueryService {
                 payloadStack.add(data.getPayload().toByteArray());
             } else {
 
+                payloads.add(data.getPayload().toByteArray());
+                payloadStack.add(data.getPayload().toByteArray());
+
                 boolean flag = true;
                 while (flag) {
                     //此为新增块，添加到payloads，停止循环

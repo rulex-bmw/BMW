@@ -2,9 +2,9 @@
 <schema version="1.0">
     <record id="1" name="Test" groupable="false" table="bmw_test" pojo="com.rulex.dsm.pojo.Test">
         <!--只是规定primaryKey，不上链-->
-        <!--<key name="id" column="id" type="Integer" isAuto="true"/>-->
-        <key name="phone" column="phone" type="Long" isAuto="false"/>
-        <key name="age" column="age" type="Integer" isAuto="false"/>
+        <key name="id" column="id" type="Integer" isAuto="true"/>
+        <!--<key name="phone" column="phone" type="Long" isAuto="false"/>-->
+        <!--<key name="age" column="age" type="Integer" isAuto="false"/>-->
         <!--上链信息-->
         <field name="username" column="username" type="String" isnull="false" fieldId="1"></field>
         <field name="age" column="age" type="Integer" isnull="false" fieldId="2"></field>

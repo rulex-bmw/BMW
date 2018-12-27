@@ -29,9 +29,8 @@ public class InsertService {
      * @param insert     拦截的insert对象
      * @param boundSql   获取sql参数
      * @param sourceList xml解析拦截规则
-     * @param connection 获取数据库连接信息
      */
-    public static void credibleInsert(Insert insert, BoundSql boundSql, List<Source> sourceList, Connection connection) {
+    public static void credibleInsert(Insert insert, BoundSql boundSql, List<Source> sourceList) {
 
         try {
             String tableName = insert.getTable().getName();
@@ -52,6 +51,8 @@ public class InsertService {
                             Thread insertThread = new InsertThread(source, payload, tableName, (List<String>) payloadKeyMap.get("where"));
 
                             insertThread.start();
+
+                            insertThread.join();
 
                         } else {
                             String orgPKHash = Base64.getEncoder().encodeToString((byte[]) payloadKeyMap.get("keys"));
