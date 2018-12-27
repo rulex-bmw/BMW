@@ -3,6 +3,7 @@ package com.rulex.dsm.service;
 import com.google.protobuf.ByteString;
 import com.rulex.bsb.pojo.DataBean;
 import com.rulex.bsb.service.BSBService;
+import com.rulex.bsb.utils.SHA256;
 import com.rulex.bsb.utils.SqliteUtils;
 import com.rulex.bsb.utils.TypeUtils;
 import com.rulex.dsm.bean.Field;
@@ -56,6 +57,8 @@ public class UpdateService {
 
                             Map<String, String> orgHash = getOrgHash(getPrimayKey(key, source));// 获取orgPKHash和typeHash
 
+                            if (null == orgHash) continue;// 未找到原始hash，不执行上链
+
                             if (b) {
                                 // 修改主键
                                 String sql = "insert into key_indexes (orgPKHash,typeHash,type,ts) values(?,?,?,?);";
@@ -66,6 +69,7 @@ public class UpdateService {
                             // 生成payload
                             byte[] payload = generatePayload(params.get(0), orgHash.get("typeHash"), source);
 
+                            System.out.println(DataBean.Alteration.parseFrom(payload));
                             // 执行上链
                             BSBService.producer(DataBean.Data.newBuilder().setPayload(ByteString.copyFrom(payload)).build(), null);
 
@@ -211,8 +215,8 @@ public class UpdateService {
                 }
             }
         }
-        results.add(primaryKeys);
         results.add(params);
+        results.add(primaryKeys);
         return results;
     }
 
@@ -227,13 +231,14 @@ public class UpdateService {
     public static Object getExpressionValue(String type, Expression expression) throws Exception {
 
         if (DataTypes.wrapper_Int.getName().equals(type) || DataTypes.primeval_int.getName().equals(type)) {
-            return ((LongValue) expression).getValue();
+            return Math.toIntExact(((LongValue) expression).getValue());
         } else if (DataTypes.wrapper_Long.getName().equals(type) || DataTypes.primeval_long.getName().equals(type)) {
             return ((LongValue) expression).getValue();
         } else if (DataTypes.wrapper_Double.getName().equals(type) || DataTypes.primeval_double.getName().equals(type)) {
             return ((DoubleValue) expression).getValue();
         } else if (DataTypes.wrapper_Float.getName().equals(type) || DataTypes.primeval_float.getName().equals(type)) {
-            return ((DoubleValue) expression).getValue();
+            Double value = ((DoubleValue) expression).getValue();
+            return value.floatValue();
         } else if (DataTypes.primeval_string.getName().equals(type)) {
             return ((StringValue) expression).getValue();
         } else if (DataTypes.primeval_timestamp.getName().equals(type)) {
@@ -258,7 +263,7 @@ public class UpdateService {
     public static List<Map<String, Object>> executerSql(Invocation invocation, Source source, String tablename, String where) throws Exception {
         List<Map<String, Object>> primarykeys = new ArrayList<>();
         // 编写查询语句
-        String select = "selce * from " + tablename + " where " + where;
+        String select = "select * from " + tablename + " where " + where;
         // 获取查询结果中，所有的primarykey
         PreparedStatement pps = ((PreparedStatement) invocation.getArgs()[0])
                 .getConnection().prepareStatement(select, Statement.RETURN_GENERATED_KEYS);
@@ -274,13 +279,14 @@ public class UpdateService {
             int count = metaData.getColumnCount();
 
             // get all primarykey column
-            for(int j = 0; j < count; j++) {
+            for(int j = 1; j <= count; j++) {
                 String cn = metaData.getColumnName(j);
 
                 for(int i = 0; i < size; i++) {
                     String column = keyList.get(i).getColumn();
                     if (cn.equalsIgnoreCase(column)) {
-                        keys.put(cn, TypeUtils.objectToByte(rs.getObject(j)));
+                        keys.put(cn, rs.getObject(j));
+//                        keys.put(cn, TypeUtils.objectToByte(rs.getObject(j)));
                     }
                 }
             }
@@ -302,9 +308,10 @@ public class UpdateService {
         int size = keys.size();
         byte[][] k = new byte[size][];
         for(int i = 0; i < size; i++) {
-            k[i] = TypeUtils.objectToByte(key.get(keys.get(i)));
+            k[i] = TypeUtils.objectToByte(key.get(keys.get(i).getColumn()));
         }
-        return Base64.getEncoder().encodeToString(TypeUtils.concatByteArrays(k));
+
+        return Base64.getEncoder().encodeToString(SHA256.getSHA256Bytes(TypeUtils.concatByteArrays(k)));
     }
 
 
@@ -318,16 +325,22 @@ public class UpdateService {
         Map<String, String> index = new HashMap<>();
         String sqliteSql = "select typeHash from key_indexes where orgPKHash = ?;";
         List<Map<String, Object>> query = SqliteUtils.query(sqliteSql, new Object[]{hash});
+
         if (query.size() == 0) {
+
+            // 根据最新keyHash查找orgPKHash
             sqliteSql = "select orgPKHash from key_indexes where typeHash = ?;";
             query = SqliteUtils.query(sqliteSql, new Object[]{hash});
-            getOrgHash((String) query.get(1).get("orgPKHash"));
+
+            if (query.size() == 0) return null;// 未找到orgPKHash，返回null
+
+            return getOrgHash((String) query.get(0).get("orgPKHash"));
         } else {
+
             index.put("orgPKHash", hash);
-            index.put("typeHash", (String) query.get(1).get("typeHash"));
+            index.put("typeHash", (String) query.get(0).get("typeHash"));
             return index;
         }
-        return null;
     }
 
 
@@ -352,7 +365,7 @@ public class UpdateService {
                 k[i] = TypeUtils.objectToByte(o);
             }
         }
-        return Base64.getEncoder().encodeToString(TypeUtils.concatByteArrays(k));
+        return Base64.getEncoder().encodeToString(SHA256.getSHA256Bytes(TypeUtils.concatByteArrays(k)));
     }
 
 
@@ -365,7 +378,7 @@ public class UpdateService {
      * @return payload
      */
     public static byte[] generatePayload(Map<String, Object> params, String typeHash, Source source)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+            throws Exception {
 
         DataBean.Alteration.Builder alteration = DataBean.Alteration.newBuilder();
         List<Field> fields = source.getFields();
@@ -377,8 +390,10 @@ public class UpdateService {
             if (value != null) {
                 f.setField(field.getFieldId());
                 setParamter(f, value, field.getType()); // 设置value
-
-                alteration.addFields(f.build());
+                DataBean.FieldValue build = f.build();
+                System.out.println("------------------------------------------------------");
+                System.out.println(build);
+                alteration.addFields(build);
             }
         }
 
@@ -400,11 +415,29 @@ public class UpdateService {
      * @throws IllegalAccessException
      */
     public static void setParamter(DataBean.FieldValue.Builder field, Object value, String type)
-            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+            throws Exception {
 
         Class<? extends DataBean.FieldValue.Builder> aClass = field.getClass();
-        Method method = aClass.getMethod("set" + TypeUtils.InitialsLow2Up(type) + "Value", Object.class);
-        method.invoke(field, value);
+        if (DataTypes.wrapper_Int.getName().equals(type) || DataTypes.primeval_int.getName().equals(type)) {
+            Method method = aClass.getMethod("setIntValue", int.class);
+            method.invoke(field, value);
+        } else if (DataTypes.wrapper_Long.getName().equals(type) || DataTypes.primeval_long.getName().equals(type)) {
+            Method method = aClass.getMethod("setLongValue", long.class);
+            method.invoke(field, value);
+        } else if (DataTypes.wrapper_Double.getName().equals(type) || DataTypes.primeval_double.getName().equals(type)) {
+            Method method = aClass.getMethod("setDoubleValue", double.class);
+            method.invoke(field, value);
+        } else if (DataTypes.wrapper_Float.getName().equals(type) || DataTypes.primeval_float.getName().equals(type)) {
+            Method method = aClass.getMethod("setFloatValue", float.class);
+            method.invoke(field, value);
+        } else if (DataTypes.primeval_string.getName().equals(type)) {
+            Method method = aClass.getMethod("setStringValue", String.class);
+            method.invoke(field, value);
+        } else if (DataTypes.primeval_boolean.getName().equals(type) || DataTypes.wrapper_boolean.getName().equals(type)) {
+            Method method = aClass.getMethod("setBooleanValue", boolean.class);
+            method.invoke(field, value);
+        }
     }
+
 
 }

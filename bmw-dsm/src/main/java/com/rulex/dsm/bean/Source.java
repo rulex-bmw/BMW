@@ -11,6 +11,7 @@ public class Source {
     private Boolean groupable;  // 是否可合并
     private List<Field> fields; // 成员变量
     private List<Primary> keys; // 所有主键:autoincrement或者联合主键
+    private ConnectionProperties conProperties; // 数据库连接属性
 
 
     public String getName() {
@@ -70,6 +71,14 @@ public class Source {
     }
 
 
+    public ConnectionProperties getConProperties() {
+        return conProperties;
+    }
+
+    public void setConProperties(ConnectionProperties conProperties) {
+        this.conProperties = conProperties;
+    }
+
     @Override
     public String toString() {
         return "Source{" +
@@ -80,6 +89,7 @@ public class Source {
                 ", groupable=" + groupable +
                 ", fields=" + fields +
                 ", keys=" + keys +
+                ", conProperties=" + conProperties +
                 '}';
     }
 }

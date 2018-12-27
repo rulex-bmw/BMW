@@ -5,6 +5,7 @@ public class Primary {
     private String name;    // 成员变量名称
     private String type;    // 数据类型
     private String column;  // 列名
+    private Boolean isAuto;  // 是否是自增主键
 
 
     public String getName() {
@@ -30,4 +31,13 @@ public class Primary {
     public void setColumn(String column) {
         this.column = column;
     }
+
+    public Boolean getIsAuto() {
+        return isAuto;
+    }
+
+    public void setIsAuto(Boolean isAuto) {
+        this.isAuto = isAuto;
+    }
+
 }

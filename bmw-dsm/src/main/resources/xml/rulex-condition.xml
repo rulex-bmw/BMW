@@ -1,29 +1,41 @@
 <!--拦截规则和数据库信息-->
 <schema version="1.0">
-    <!--<record name="UserCount" groupable="true" table="user_count" pojo="cn.javaex.uscat.view.UserCount">-->
-    <!--<field name="userId" column="user_id" type="String" isnull="false" transforable="true" length="11"></field>-->
-    <!--<field name="extcredits1" column="extcredits1" type="Integer" isnull="false" transforable="false" length="4"></field>-->
-    <!--</record>-->
-    <record id="1" name="UserInfo" groupable="true" table="user_info" pojo="cn.javaex.uscat.view.UserInfo">
+    <record id="1" name="Test" groupable="false" table="bmw_test" pojo="com.rulex.dsm.pojo.Test">
         <!--只是规定primaryKey，不上链-->
-        <primary>
-            <key name="" column="" type=""/>
-            <key name="" column="" type=""/>
-            <key name="" column="" type=""/>
-        </primary>
-        <!--<id name="id" column="id" type="String"></id>-->
+        <!--<key name="id" column="id" type="Integer" isAuto="true"/>-->
+        <key name="phone" column="phone" type="Long" isAuto="false"/>
+        <key name="age" column="age" type="Integer" isAuto="false"/>
         <!--上链信息-->
-        <field name="id" column="id" type="String" isnull="false" transforable="false" length="4" fieldId="1"
-               isprimaykey="true"></field>
-        <field name="loginName" column="login_name" type="String" isnull="false" transforable="false"
-               length="20" fieldId="2"></field>
-        <field name="email" column="email" type="String" isnull="false" transforable="false" length="50"
-               fieldId="3"></field>
-        <field name="status" column="status" type="String" isnull="false" transforable="false" length="1"
-               fieldId="4"></field>
-        <field name="registerIp" column="register_ip" type="String" isnull="false" transforable="false"
-               length="50" fieldId="5"></field>
-        <field name="registerTime" column="register_time" type="String" isnull="false" transforable="false"
-               length="20" fieldId="6"></field>
+        <field name="username" column="username" type="String" isnull="false" fieldId="1"></field>
+        <field name="age" column="age" type="Integer" isnull="false" fieldId="2"></field>
+        <field name="phone" column="phone" type="Long" isnull="false" fieldId="3"></field>
+        <field name="wallet" column="wallet" type="Double" isnull="false" fieldId="4"></field>
+        <connection>
+            <field name="url" value="jdbc:mysql://localhost:3306/test"></field>
+            <field name="driver" value="com.mysql.jdbc.Driver"></field>
+            <field name="username" value="root"></field>
+            <field name="password" value="root"></field>
+        </connection>
     </record>
+    <!--<record id="2" name="Curriculum" groupable="false" table="curriculum" pojo="com.rulex.dsm.pojo.Curriculum">-->
+        <!--&lt;!&ndash;只是规定primaryKey，不上链&ndash;&gt;-->
+        <!--<key name="teacher" column="teacher" type="String"/>-->
+        <!--<key name="classroom" column="classroom" type="Integer"/>-->
+        <!--<key name="project" column="project" type="String"/>-->
+        <!--&lt;!&ndash;上链信息&ndash;&gt;-->
+        <!--<field name="teacher" column="teacher" type="String" isnull="false" fieldId="1" isprimaykey="true"></field>-->
+        <!--<field name="project" column="project" type="String" isnull="false" fieldId="2" isprimaykey="true"></field>-->
+        <!--<field name="stuNum" column="stu_num" type="Integer" isnull="false" fieldId="3"></field>-->
+        <!--<field name="credit" column="credit" type="Integer" isnull="false" fieldId="4"></field>-->
+        <!--<field name="username" column="username" type="String" isnull="false" fieldId="1"></field>-->
+        <!--<field name="age" column="age" type="Integer" isnull="false" fieldId="2"></field>-->
+        <!--<field name="phone" column="phone" type="Long" isnull="false" fieldId="3"></field>-->
+        <!--<field name="wallet" column="wallet" type="Double" isnull="false" fieldId="4"></field>-->
+        <!--<connection>-->
+            <!--<field name="url" value="jdbc:mysql://localhost:3306/test"></field>-->
+            <!--<field name="driver" value="com.mysql.jdbc.Driver"></field>-->
+            <!--<field name="username" value="root"></field>-->
+            <!--<field name="password" value="root"></field>-->
+        <!--</connection>-->
+    <!--</record>-->
 </schema>

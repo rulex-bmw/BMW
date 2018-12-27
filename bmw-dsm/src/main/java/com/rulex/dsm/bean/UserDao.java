@@ -26,4 +26,6 @@ public interface UserDao {
 
     void alderTable();
 
+    void delUser(Integer id);
+
 }

@@ -2,6 +2,7 @@ package com.rulex.dsm.interceptor;
 
 
 import com.rulex.dsm.bean.Source;
+import com.rulex.dsm.service.DelService;
 import com.rulex.dsm.service.UpdateService;
 import com.rulex.dsm.utils.XmlUtil;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
@@ -16,9 +17,9 @@ import org.springframework.stereotype.Component;
 import java.io.StringReader;
 import java.util.*;
 
-@Intercepts(
-        {@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})}
-)
+@Intercepts({
+        @Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})
+})
 @Component
 public class BMWExecutorInterceptor implements Interceptor {
 
@@ -63,7 +64,11 @@ public class BMWExecutorInterceptor implements Interceptor {
 
             } else if (stmt instanceof Delete) {
 
-//                sqls.put(id, UpdateService.getsql(boundSql, mappedStatement.getConfiguration()));
+                // 判断是否需要拦截
+                if (DelService.decideTointerceptor((Delete) stmt, sourceList)) {
+                    // 解析sql
+                    sqls.put(Thread.currentThread().getId(), UpdateService.getsql(boundSql, mappedStatement.getConfiguration()));
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

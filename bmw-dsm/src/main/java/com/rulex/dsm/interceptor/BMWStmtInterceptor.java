@@ -3,10 +3,9 @@ package com.rulex.dsm.interceptor;
 import com.rulex.bsb.utils.DataException;
 import com.rulex.dsm.bean.Field;
 import com.rulex.dsm.bean.Source;
+import com.rulex.dsm.service.DelService;
 import com.rulex.dsm.service.InsertService;
 import com.rulex.dsm.service.UpdateService;
-import com.rulex.dsm.utils.XmlUtil;
-import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.statement.alter.Alter;
 import net.sf.jsqlparser.statement.delete.Delete;
@@ -22,14 +21,16 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.StringReader;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Properties;
 
-@Intercepts(
-        {@Signature(type = StatementHandler.class, method = "update", args = {Statement.class})}
-)
+@Intercepts({
+        @Signature(type = StatementHandler.class, method = "update", args = {Statement.class})
+})
 @Component
 public class BMWStmtInterceptor implements Interceptor {
 
@@ -51,17 +52,19 @@ public class BMWStmtInterceptor implements Interceptor {
         BoundSql boundSql = statementHandler.getBoundSql();
         List<Source> sourceList = bmwExecutorInterceptor.sourceList;
 
-
         try {
             net.sf.jsqlparser.statement.Statement stmt = parser.parse(new StringReader(boundSql.getSql()));
 
             if (stmt instanceof Insert) {
-                InsertService.credibleInsert((Insert) stmt, boundSql, sourceList);
+
+                Connection connection = ((PreparedStatement) invocation.getArgs()[0]).getConnection();
+
+                InsertService.credibleInsert((Insert) stmt, boundSql, sourceList, connection);
             } else if (stmt instanceof Update) {
                 // 获取当前线程的sql
                 long id = Thread.currentThread().getId();
                 String sql = bmwExecutorInterceptor.sqls.get(id);
-                if (null != sql && StringUtils.isBlank(sql)) {
+                if (null != sql && !StringUtils.isBlank(sql)) {
                     bmwExecutorInterceptor.sqls.remove(id);
 
                     // 将修改变为可信数据
@@ -69,12 +72,21 @@ public class BMWStmtInterceptor implements Interceptor {
                 }
 
             } else if (stmt instanceof Delete) {
+                long id = Thread.currentThread().getId();
+                String sql = bmwExecutorInterceptor.sqls.get(id);
+                if (null != sql && !StringUtils.isBlank(sql)) {
+                    bmwExecutorInterceptor.sqls.remove(id);
+
+                    // 标记数据已删除
+                    DelService.credibleDel((Delete) parser.parse(new StringReader(sql)), invocation, sourceList);
+
+                }
 
             } else if (stmt instanceof Drop) {
 
                 // 上区块链的表不能删除
                 Drop drop = (Drop) stmt;
-                for(Source source : sourceList) {
+                for (Source source : sourceList) {
                     if (source.getTable().equalsIgnoreCase(drop.getName())) {
                         throw new DataException("The data for this database table cannot be deleted because it is on the block chain.");
                     }
@@ -83,7 +95,7 @@ public class BMWStmtInterceptor implements Interceptor {
 
                 // 上区块链的字段信息不能修改
                 Alter alter = (Alter) stmt;
-                for(Source source : sourceList) {
+                for (Source source : sourceList) {
                     if (source.getTable().equalsIgnoreCase(alter.getTable().getName())) {
 
                         //修改表名报错
@@ -92,7 +104,7 @@ public class BMWStmtInterceptor implements Interceptor {
                         }
 
                         //修改上链的表列名报错
-                        for(Field field : source.getFields()) {
+                        for (Field field : source.getFields()) {
                             if (alter.getColumnName().equalsIgnoreCase(field.getColumn())) {
                                 throw new DataException("The data for this database table cannot be alter because it is on the block chain.");
                             }
@@ -102,6 +114,7 @@ public class BMWStmtInterceptor implements Interceptor {
                 }
 
             }
+
             return invocation.proceed();
         } catch (Exception e) {
             e.printStackTrace();

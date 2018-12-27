@@ -6,7 +6,7 @@ public enum DataTypes {
     primeval_long("long"), wrapper_Long("Long"),
     primeval_double("double"), wrapper_Double("Double"),
     primeval_float("float"), wrapper_Float("Float"),
-    primeval_string("String"),
+    primeval_string("String"),wrapper_boolean("Boolean"),
     primeval_boolean("boolean"),
     primeval_ByteString("byte[]"),
     primeval_timestamp("timestamp"),
