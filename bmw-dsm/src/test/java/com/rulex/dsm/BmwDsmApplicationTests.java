@@ -296,12 +296,12 @@ public class BmwDsmApplicationTests {
     @Test
     public void editTest() {
         com.rulex.dsm.pojo.Test test = new com.rulex.dsm.pojo.Test();
-        test.setUsername("fin11");
-        test.setWallet(111.00);
+        test.setUsername("fin12");
+        test.setWallet(112.00);
 //        test.setId(337);
-        test.setTall(111);
+        test.setTall(112);
 
-//        test.setPhone(731442342352353l);
+        test.setPhone(16566789786l);
         int i = testDao.editUsername(test);
 
 //        int i = testDao.editById(test);
