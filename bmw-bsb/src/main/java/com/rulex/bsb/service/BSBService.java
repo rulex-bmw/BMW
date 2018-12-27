@@ -22,7 +22,6 @@ public class BSBService {
         try {
             LevelDBDao.origin();
             LevelDBDao.set(data, orgPKHash);
-
             if (openThread) {
                 new CunsumerThread().start();
                 openThread = false;
@@ -39,7 +38,7 @@ public class BSBService {
      * m:已经上链，m+1:未上链
      * 从levelDB中取出DATA,将不可变信息存入数据库
      */
-    public static Integer Consumer() throws IOException {
+    public static Integer Consumer() {
         try {
             if (null == LevelDBUtil.getMataDB().get(LevelDBDao.WRITEPOSITION)) {
                 return -1;
@@ -63,10 +62,10 @@ public class BSBService {
                     prevHash = currentHash;
                 }
             }
-            return 1;
-        } finally {
-            LevelDBUtil.closeDB();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return 1;
     }
 
 

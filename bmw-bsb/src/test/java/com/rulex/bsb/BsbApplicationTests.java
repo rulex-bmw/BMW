@@ -1,10 +1,8 @@
 package com.rulex.bsb;
 
-import com.google.protobuf.ByteString;
 import com.rulex.bsb.dao.LevelDBDao;
 import com.rulex.bsb.pojo.DataBean;
 import com.rulex.bsb.service.BSBService;
-import com.rulex.bsb.service.Verify;
 import com.rulex.bsb.utils.LevelDBUtil;
 import com.rulex.bsb.utils.TypeUtils;
 import org.iq80.leveldb.DBIterator;
@@ -17,7 +15,6 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import static org.fusesource.leveldbjni.JniDBFactory.asString;
-import static org.fusesource.leveldbjni.JniDBFactory.bytes;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -57,11 +54,7 @@ public class BsbApplicationTests {
     @Test
     public void blockChain() {
 //        new Verify();
-        try {
-            BSBService.Consumer();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        BSBService.Consumer();
     }
 
 

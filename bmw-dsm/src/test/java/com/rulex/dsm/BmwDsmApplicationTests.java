@@ -47,8 +47,9 @@ public class BmwDsmApplicationTests {
         com.rulex.dsm.pojo.Test test = new com.rulex.dsm.pojo.Test();
         test.setWallet(7000.00);
         test.setAge(20);
-        int i = testDao.editWithEntity(test);
-        System.out.println("受影响的条数： " + i);
+        for(int i = 0; i < 10; i++) {
+            System.out.println("受影响的条数： " + testDao.editWithEntity(test));
+        }
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {

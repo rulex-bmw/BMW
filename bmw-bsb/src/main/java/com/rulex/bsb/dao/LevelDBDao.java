@@ -35,22 +35,18 @@ public class LevelDBDao {
             return;
         }
         //生成创世数据
-        try {
-            DataBean.Data.Builder origin = DataBean.Data.newBuilder().setPayload(ByteString.copyFrom(CREATION_DATA))
-                    .setTs(System.currentTimeMillis())
-                    .setSerial(0);
-            DataBean.Header.Builder header = DataBean.Header.newBuilder().setPayload(origin.getPayload()).setSerial(origin.getSerial()).setTs(origin.getTs());
-            byte[] data = origin.build().toByteArray();
-            byte[] key = SHA256.getSHA256Bytes(data);
-            //生成标签
-            DataBean.Position position = DataBean.Position.newBuilder().setDataKey(ByteString.copyFrom(key)).setSerial(0).build();
-            LevelDBUtil.getMataDB().put(WRITEPOSITION, position.toByteArray());
-            LevelDBDao.setHeaderData(header, LevelDBUtil.getDataDB());
-            LevelDBUtil.getDataDB().put(key, data);
-            LevelDBUtil.getMataDB().put(READPOSITION, position.toByteArray());
-        } finally {
-            LevelDBUtil.closeDB();
-        }
+        DataBean.Data.Builder origin = DataBean.Data.newBuilder().setPayload(ByteString.copyFrom(CREATION_DATA))
+                .setTs(System.currentTimeMillis())
+                .setSerial(0);
+        DataBean.Header.Builder header = DataBean.Header.newBuilder().setPayload(origin.getPayload()).setSerial(origin.getSerial()).setTs(origin.getTs());
+        byte[] data = origin.build().toByteArray();
+        byte[] key = SHA256.getSHA256Bytes(data);
+        //生成标签
+        DataBean.Position position = DataBean.Position.newBuilder().setDataKey(ByteString.copyFrom(key)).setSerial(0).build();
+        LevelDBUtil.getMataDB().put(WRITEPOSITION, position.toByteArray());
+        LevelDBDao.setHeaderData(header, LevelDBUtil.getDataDB());
+        LevelDBUtil.getDataDB().put(key, data);
+        LevelDBUtil.getMataDB().put(READPOSITION, position.toByteArray());
     }
 
 
@@ -67,37 +63,35 @@ public class LevelDBDao {
         if (null == param.getPayload() && !(param.getPayload().toByteArray().length <= 256)) {
             return;
         }
-        try {
-            //获取上一个hash
-            DataBean.Position writeposition = DataBean.Position.parseFrom(LevelDBUtil.getMataDB().get(WRITEPOSITION));
-            Long s = writeposition.getSerial();
-            s++;
-            //Set up herderVelue
-            DataBean.Data.Builder record = DataBean.Data.newBuilder().setPayload(param.getPayload()).setTs(System.currentTimeMillis()).setSerial(s);
-            DataBean.Header.Builder header = DataBean.Header.newBuilder().setTs(record.getTs()).setSerial(record.getSerial()).setPayload(record.getPayload());
-            setHeaderData(header, LevelDBUtil.getDataDB());
-            //seek key=HASH(payload,ts,serial,prevHash)
-            // Take a hash of data
-            record.setPrevHash(writeposition.getDataKey());
-            byte[] hashkey = SHA256.getSHA256Bytes(record.build().toByteArray());
-            //从signature获取签名
-            ByteString sign = ByteString.copyFrom(bytes("1"));
-            //Save a data , data = payload, ts, prevhash, serial, sign, flag
-            record.setSign(sign).setFalg(false);
-            LevelDBUtil.getDataDB().put(hashkey, record.build().toByteArray());
+        //获取上一个hash
+        DataBean.Position writeposition = DataBean.Position.parseFrom(LevelDBUtil.getMataDB().get(WRITEPOSITION));
+        Long s = writeposition.getSerial();
+        s++;
+        //Set up herderVelue
+        DataBean.Data.Builder record = DataBean.Data.newBuilder().setPayload(param.getPayload()).setTs(System.currentTimeMillis()).setSerial(s);
+        DataBean.Header.Builder header = DataBean.Header.newBuilder().setTs(record.getTs()).setSerial(record.getSerial()).setPayload(record.getPayload());
+        setHeaderData(header, LevelDBUtil.getDataDB());
+        //seek key=HASH(payload,ts,serial,prevHash)
+        // Take a hash of data
+        record.setPrevHash(writeposition.getDataKey());
+        byte[] hashkey = SHA256.getSHA256Bytes(record.build().toByteArray());
+        //从signature获取签名
+        ByteString sign = ByteString.copyFrom(bytes("1"));
+        //Save a data , data = payload, ts, prevhash, serial, sign, flag
+        record.setSign(sign).setFalg(false);
+        LevelDBUtil.getDataDB().put(hashkey, record.build().toByteArray());
 //            System.out.println("=====================================");
 //            System.out.println("orgPKHash   "+orgPKHash);
-            if (orgPKHash != null) {
-                //将PrimaryId和hashkey索引信息存入Sqlite数据库
-                SqliteUtils.edit(new Object[]{orgPKHash, Base64.getEncoder().encodeToString(hashkey), 1, System.currentTimeMillis()}, "insert into key_indexes (orgPKHash,typeHash,type,ts) values(?,?,?,?)");
-            }
+        if (orgPKHash != null) {
+            //将PrimaryId和hashkey索引信息存入Sqlite数据库
+            SqliteUtils.edit(new Object[]{orgPKHash, Base64.getEncoder().encodeToString(hashkey), 1, System.currentTimeMillis()}, "insert into key_indexes (orgPKHash,typeHash,type,ts) values(?,?,?,?)");
+        }
 //            System.out.println("=====================================");
 //            System.out.println("hashkey  "+Base64.getEncoder().encodeToString(hashkey));
-            LevelDBUtil.getMataDB().put(WRITEPOSITION, DataBean.Position.newBuilder().setDataKey(ByteString.copyFrom(hashkey)).setSerial(s).build().toByteArray());
-        } finally {
-            LevelDBUtil.closeDB();
-        }
+        LevelDBUtil.getMataDB().put(WRITEPOSITION, DataBean.Position.newBuilder().setDataKey(ByteString.copyFrom(hashkey)).setSerial(s).build().toByteArray());
     }
+
+
 
     /**
      * Preserving partial order structure head
@@ -126,8 +120,6 @@ public class LevelDBDao {
             data = DataBean.Position.parseFrom(readposition);
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            LevelDBUtil.closeDB();
         }
         return data;
     }
@@ -158,8 +150,6 @@ public class LevelDBDao {
             e.printStackTrace();
         } catch (DataException e) {
             e.printStackTrace();
-        } finally {
-            LevelDBUtil.closeDB();
         }
         return false;
     }
@@ -251,8 +241,6 @@ public class LevelDBDao {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            LevelDBUtil.closeDB();
         }
 
         // If the calculated header value is different from what is stored in the database, the data is tampered with and an error is thrown
@@ -323,8 +311,6 @@ public class LevelDBDao {
 
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            LevelDBUtil.closeDB();
         }
         return map;
     }
