@@ -245,10 +245,9 @@ public class BmwDsmApplicationTests {
     }*/
 
 
+    //主键自增
     @Test
     public void insert() {
-
-
         Map map=new HashMap();
 
         map.put("phone",15133118672l);
@@ -270,7 +269,7 @@ public class BmwDsmApplicationTests {
         System.out.println("最近新增索引信息" + maps.get(maps.size() - 1));
     }
 
-
+    //主键自增
     @Test
     public void query() {
 
@@ -285,17 +284,50 @@ public class BmwDsmApplicationTests {
 
     }
 
-
+    //主键自增
     @Test
     public void editTest() {
         com.rulex.dsm.pojo.Test test = new com.rulex.dsm.pojo.Test();
-        test.setUsername("fin12");
-        test.setWallet(112.00);
-        test.setId(345);
-        test.setTall(112);
-        test.setAge(18);
+        test.setUsername("qq");
+        test.setWallet(13.00);
+        test.setId(349);
+        test.setTall(189);
+        test.setAge(21);
 
         int i = testDao.editById(test);
 
     }
+
+    //复合自增
+    @Test
+    public void insertTest() {
+        Curriculum curriculum = new Curriculum();
+        curriculum.setClassroom(102);
+        curriculum.setTeacher("张三2");
+        curriculum.setProject("地理2");
+        curriculum.setCredit(102);
+        curriculum.setStuNum(10002);
+
+        int i = curriculumDao.insertProject(curriculum);
+
+
+        List<Map<String, Object>> maps = SqliteUtils.query("select * from key_indexes", null);
+        System.out.println("索引信息条数" + maps.size());
+        System.out.println("最近新增索引信息" + maps.get(maps.size() - 1));
+    }
+
+
+    // 复合自增修改
+    @Test
+    public void modifyTest() {
+        Curriculum curriculum = new Curriculum();
+        curriculum.setClassroom(102);
+        curriculum.setTeacher("张三2");
+        curriculum.setProject("地理2");
+        curriculum.setCredit(124);
+        curriculum.setStuNum(144);
+        int i = curriculumDao.modifyParam(curriculum);
+        System.out.println("受影响的条数： " + i);
+    }
+
 }
