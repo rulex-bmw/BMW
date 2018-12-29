@@ -76,8 +76,6 @@ public class InsertThread extends Thread {
                 // 调用bsb执行上链，建立主键索引表
                 DataBean.Data data = DataBean.Data.newBuilder().setPayload(ByteString.copyFrom(payload)).build();
                 BSBService.producer(data, orgPKHash);
-                BSBService.Consumer();
-
             }
 
         } catch (Exception e) {

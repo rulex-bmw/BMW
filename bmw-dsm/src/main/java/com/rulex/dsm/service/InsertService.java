@@ -57,7 +57,6 @@ public class InsertService {
                             // 调用bsb执行上链
                             DataBean.Data data = DataBean.Data.newBuilder().setPayload(ByteString.copyFrom(payload)).build();
                             BSBService.producer(data, orgPKHash);
-                            BSBService.Consumer();
 
                         }
                     }

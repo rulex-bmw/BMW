@@ -251,10 +251,10 @@ public class BmwDsmApplicationTests {
         Map map=new HashMap();
 
         map.put("phone",15133118672l);
-        map.put("wallet",11.88);
+        map.put("wallet",11.84);
         map.put("username","zj");
         map.put("age",18);
-        map.put("tall",180);
+        map.put("tall",185);
 
         int i = testDao.insertMapTest(map);
 
@@ -324,6 +324,7 @@ public class BmwDsmApplicationTests {
         List<Map<String, Object>> maps = SqliteUtils.query("select * from key_indexes", null);
         System.out.println("索引信息条数" + maps.size());
         System.out.println("最近新增索引信息" + maps.get(maps.size() - 1));
+
     }
 
 

@@ -25,9 +25,9 @@ public class BMWExecutorInterceptor implements Interceptor {
 
     CCJSqlParserManager parser = new CCJSqlParserManager();
 
-    public List<Source> sourceList = new ArrayList<>();
+    public static List<Source> sourceList = new ArrayList<>();
 
-    public Map<Long, String> sqls = new HashMap<>();
+    public static Map<Long, String> sqls = new HashMap<>();
 
     /**
      * 拦截器执行方法
