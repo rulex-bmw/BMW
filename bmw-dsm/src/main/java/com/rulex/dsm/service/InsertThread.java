@@ -72,6 +72,7 @@ public class InsertThread extends Thread {
             //base64处理主键
             String orgPKHash = Base64.getEncoder().encodeToString(SHA256.getSHA256Bytes(TypeUtils.objectToByte(priKey)));
 
+            con.close();
             if (payload != null) {
                 // 调用bsb执行上链，建立主键索引表
                 DataBean.Data data = DataBean.Data.newBuilder().setPayload(ByteString.copyFrom(payload)).build();
