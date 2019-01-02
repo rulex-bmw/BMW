@@ -1,6 +1,7 @@
 package com.rulex.bsb.dao;
 
 import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.rulex.bsb.pojo.DataBean;
 import com.rulex.bsb.utils.DataException;
 import com.rulex.bsb.utils.LevelDBUtil;
@@ -88,7 +89,6 @@ public class LevelDBDao {
     }
 
 
-
     /**
      * Preserving partial order structure head
      *
@@ -132,7 +132,14 @@ public class LevelDBDao {
             byte[] bytes = LevelDBUtil.getDataDB().get(key);
             DataBean.Data data = DataBean.Data.parseFrom(bytes);
             int edit = BlockChainDao.putStatus(key, data.getPayload().toByteArray());
+
+
             if (edit == 1) {
+                //将区块链的id与数据的orgPKHash关联起来
+                if (key.length != 0 && key != null) {
+                    setIdIndex(bytes, "74596322");
+                }
+
                 //修改readposition
                 DataBean.Position readposition = DataBean.Position.newBuilder().setDataKey(ByteString.copyFrom(key)).setSerial(data.getSerial()).build();
                 LevelDBUtil.getMataDB().put(READPOSITION, readposition.toByteArray());
@@ -148,6 +155,36 @@ public class LevelDBDao {
             e.printStackTrace();
         }
         return false;
+    }
+
+
+    /**
+     * 将区块链的id与数据的orgPKHash关联起来，用以查询区块链id
+     *
+     * @param bytes 缓存的上链信息的key
+     * @param id    区块链id
+     */
+    public static void setIdIndex(byte[] bytes, String id) {
+
+        List<Map<String, Object>> mapList = SqliteUtils.query("select orgPKHash from key_indexes where typeHash = ?", new Object[]{Base64.getEncoder().encodeToString(bytes)});
+
+        if (mapList.size() == 1) {
+            String orgPKHash = (String) mapList.get(0).get("orgPKHash");
+            SqliteUtils.edit(new Object[]{orgPKHash, id, System.currentTimeMillis()}, "insert into id_indexes (orgPKHash,blockChainId,ts) values(?,?,?)");
+
+        } else {
+
+            DataBean.Alteration alteration = null;
+            try {
+                alteration = DataBean.Alteration.parseFrom(DataBean.Data.parseFrom(bytes).getPayload().toByteArray());
+            } catch (InvalidProtocolBufferException e) {
+                e.printStackTrace();
+            }
+            ByteString orgHashKey = alteration.getOrgHashKey();
+            String orgPKHash = Base64.getEncoder().encodeToString(orgHashKey.toByteArray());
+            SqliteUtils.edit(new Object[]{orgPKHash, id, System.currentTimeMillis()}, "insert into id_indexes (orgPKHash,blockChainId,ts) values(?,?,?)");
+
+        }
     }
 
     /**

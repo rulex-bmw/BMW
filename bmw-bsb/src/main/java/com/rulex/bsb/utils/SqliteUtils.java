@@ -23,12 +23,22 @@ public class SqliteUtils {
                 + "	type integer NOT NULL,\n"
                 + "	ts integer NOT NULL\n"
                 + ");";
+
+        String IdSql = "CREATE TABLE IF NOT EXISTS id_indexes (\n"
+                + "	id integer PRIMARY KEY,\n"
+                + "	orgPKHash string NOT NULL,\n"
+                + "	blockChainId string NOT NULL,\n"
+                + "	ts integer NOT NULL\n"
+                + ");";
         PreparedStatement stmt = null;
         Connection conn = null;
         try {
             conn = connect();
             stmt = conn.prepareStatement(sql);
             // create a new table
+            stmt.executeUpdate();
+
+            stmt = conn.prepareStatement(IdSql);
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

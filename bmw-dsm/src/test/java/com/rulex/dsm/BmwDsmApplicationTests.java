@@ -266,7 +266,10 @@ public class BmwDsmApplicationTests {
 
         List<Map<String, Object>> maps = SqliteUtils.query("select * from key_indexes", null);
         System.out.println("索引信息条数" + maps.size());
-        System.out.println("最近新增索引信息" + maps.get(maps.size() - 1));
+
+        List<Map<String, Object>> maps2 = SqliteUtils.query("select * from id_indexes", null);
+        System.out.println("id索引信息条数" + maps2.size());
+
     }
 
     //查看最新数据
@@ -289,8 +292,8 @@ public class BmwDsmApplicationTests {
     public void editTest() {
         com.rulex.dsm.pojo.Test test = new com.rulex.dsm.pojo.Test();
         test.setUsername("qq");
-        test.setWallet(13.00);
-        test.setId(349);
+        test.setWallet(12.00);
+        test.setId(386);
         test.setTall(189);
         test.setAge(21);
 
@@ -313,8 +316,8 @@ public class BmwDsmApplicationTests {
     public void insertTest() {
         Curriculum curriculum = new Curriculum();
         curriculum.setClassroom(102);
-        curriculum.setTeacher("张三2");
-        curriculum.setProject("地理2");
+        curriculum.setTeacher("张三");
+        curriculum.setProject("地理");
         curriculum.setCredit(102);
         curriculum.setStuNum(10002);
 
@@ -323,7 +326,6 @@ public class BmwDsmApplicationTests {
 
         List<Map<String, Object>> maps = SqliteUtils.query("select * from key_indexes", null);
         System.out.println("索引信息条数" + maps.size());
-        System.out.println("最近新增索引信息" + maps.get(maps.size() - 1));
 
     }
 

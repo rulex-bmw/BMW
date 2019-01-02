@@ -116,35 +116,13 @@ public class QueryService {
                 if (source.getId() == recordid) {
 
                     //获取每条上链信息的信息
-
+                    List<byte[]> payList = new ArrayList<>();
                     while (!payloadStack.isEmpty()) {
-                        byte[] payload = payloadStack.pop();
-
-                        DataBean.Alteration altera = DataBean.Alteration.parseFrom(payload);
-
-                        Map<String, Object> map = new HashMap<>();
-
-                        // 如果该对象信息被删除
-                        if (altera.getOperation().getNumber() == 0) {
-
-                            map.put("0", "该查询对象已被删除");
-                        } else {
-
-                            for (DataBean.FieldValue fieldValue : altera.getFieldsList()) {
-                                for (Field field : source.getFields()) {
-
-                                    if (fieldValue.getField() == field.getFieldId()) {
-                                        map.put(field.getName(), typeHandle(field.getType(), fieldValue));
-                                    }
-                                }
-                            }
-                        }
-
-                        allValues.add(map);
+                        payList.add(payloadStack.pop());
                     }
+                    allValues = parsePayload(payList, source);
                 }
             }
-
             returnMap.put("allBlockChainValues", allValues);
         } catch (Exception e) {
             e.printStackTrace();
@@ -153,6 +131,48 @@ public class QueryService {
         }
 
         return returnMap;
+    }
+
+
+    /**
+     * 解析payload
+     *
+     * @param payloads 待解析数据
+     * @param source   拦截信息
+     * @return List<Map<String, Object>> 解析后的值
+     */
+    public static List<Map<String, Object>> parsePayload(List<byte[]> payloads, Source source) {
+        List<Map<String, Object>> allValues = new ArrayList<>();
+        try {
+            for (byte[] payload : payloads) {
+
+                DataBean.Alteration altera = DataBean.Alteration.parseFrom(payload);
+
+
+                Map<String, Object> map = new HashMap<>();
+
+                // 如果该对象信息被删除
+                if (altera.getOperation().getNumber() == 0) {
+
+                    map.put("0", "该查询对象已被删除");
+                } else {
+
+                    for (DataBean.FieldValue fieldValue : altera.getFieldsList()) {
+                        for (Field field : source.getFields()) {
+
+                            if (fieldValue.getField() == field.getFieldId()) {
+                                map.put(field.getName(), typeHandle(field.getType(), fieldValue));
+                            }
+                        }
+                    }
+                }
+
+                allValues.add(map);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return allValues;
     }
 
 
