@@ -3,10 +3,7 @@ package com.rulex.bsb.dao;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.rulex.bsb.pojo.DataBean;
-import com.rulex.bsb.utils.DataException;
-import com.rulex.bsb.utils.LevelDBUtil;
-import com.rulex.bsb.utils.SHA256;
-import com.rulex.bsb.utils.SqliteUtils;
+import com.rulex.bsb.utils.*;
 import org.iq80.leveldb.DB;
 
 import java.io.IOException;
@@ -131,15 +128,13 @@ public class LevelDBDao {
         try {
             byte[] bytes = LevelDBUtil.getDataDB().get(key);
             DataBean.Data data = DataBean.Data.parseFrom(bytes);
-            int edit = BlockChainDao.putStatus(key, data.getPayload().toByteArray());
+            String id = BlockChainDao.postData(TypeUtils.bytesToHexString(data.getPayload().toByteArray()));
 
-
-            if (edit == 1) {
+            if (id != null) {
                 //将区块链的id与数据的orgPKHash关联起来
                 if (key.length != 0 && key != null) {
-                    setIdIndex(bytes, "74596322");
+                    setIdIndex(bytes, id);
                 }
-
                 //修改readposition
                 DataBean.Position readposition = DataBean.Position.newBuilder().setDataKey(ByteString.copyFrom(key)).setSerial(data.getSerial()).build();
                 LevelDBUtil.getMataDB().put(READPOSITION, readposition.toByteArray());
