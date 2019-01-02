@@ -169,14 +169,20 @@ public class BlockChainDao {
     }
 
 
-    public static void main(String[] args) {
+   /* public static void main(String[] args) {
         try {
-            String s = postData("68656C6C6F20576F726C6421");
+            String data="CAESHAgBGhggTWF0ZSAyMCBYIOS6rum7keiJsiA2R0ISCwgCIQAAAAAAzrNAEikIAxoleyLpopzoibIiOiLkuq7pu5HoibIiLCLlhoXlrZgiOiI2R0IifRogK4o5DOyqFr8YzJPn/6qIKrl1ii4Njm+hMy5UvpZObL0gAQ==";
+            byte[] decode = Base64.getDecoder().decode(data);
+            System.out.println(DataBean.Alteration.parseFrom(decode));
+
+            String s1 = TypeUtils.bytesToHexString(decode);
+            System.out.println(s1);
+            String s = postData(s1);
             System.out.println(s);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
 }
