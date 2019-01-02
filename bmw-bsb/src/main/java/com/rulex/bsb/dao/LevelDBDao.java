@@ -132,7 +132,7 @@ public class LevelDBDao {
 
             if (id != null) {
                 //将区块链的id与数据的orgPKHash关联起来
-                if (key.length != 0 && key != null) {
+                if (bytes.length != 0 && bytes != null) {
                     setIdIndex(bytes, id);
                 }
                 //修改readposition
