@@ -5,7 +5,7 @@
         <key name="id" column="id" type="Integer" isAuto="true"/>
         <!--上链信息-->
         <field name="name" column="skuname" type="String" isnull="false" fieldId="1"></field>
-        <field name="price" column="age" type="Double" isnull="false" fieldId="2"></field>
+        <field name="price" column="price" type="Double" isnull="false" fieldId="2"></field>
         <field name="standards" column="standards" type="String" isnull="false" fieldId="3"></field>
         <field name="status" column="status" type="Integer" isnull="false" fieldId="4"></field>
         <connection>
