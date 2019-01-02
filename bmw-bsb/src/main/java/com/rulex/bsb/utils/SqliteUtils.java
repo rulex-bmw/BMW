@@ -57,8 +57,11 @@ public class SqliteUtils {
         Connection conn = null;
         try {
             // create a connection to the database
+            Class.forName("org.sqlite.JDBC");
             conn = DriverManager.getConnection(getSqlitePath());
         } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
         return conn;
@@ -79,7 +82,7 @@ public class SqliteUtils {
             conn = connect();
             pstmt = conn.prepareStatement(sql);
             if (obj != null) {
-                for(int i = 0; i < obj.length; i++) {
+                for (int i = 0; i < obj.length; i++) {
                     pstmt.setObject(i + 1, obj[i]);
                 }
             }
@@ -109,7 +112,7 @@ public class SqliteUtils {
             // 解析sql语句
             ps = con.prepareStatement(sql);
             if (obj != null) {
-                for(int i = 0; i < obj.length; i++) {
+                for (int i = 0; i < obj.length; i++) {
                     // 编译sql语句
                     ps.setObject(i + 1, obj[i]);
                 }
@@ -123,7 +126,7 @@ public class SqliteUtils {
                 Map<String, Object> ma = new HashMap<>();
                 // 获取键值和每一行的各列存入map集合
                 int count = rsmd.getColumnCount();
-                for(int i = 1; i <= count; i++) {
+                for (int i = 1; i <= count; i++) {
                     // 将 列名 和 列值 存入集合
                     ma.put(rsmd.getColumnName(i), rs.getObject(i));
                 }

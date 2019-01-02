@@ -16,4 +16,8 @@
         DELETE FROM curriculum WHERE teacher=#{teacher} and classroom=#{classroom} and project=#{project};
     </delete>
 
+    <insert id="insertProject" parameterType="com.rulex.dsm.pojo.Curriculum">
+        INSERT INTO curriculum (teacher,classroom,project,stu_num,credit) VALUES (#{teacher},#{classroom},#{project},#{stuNum},#{credit});
+    </insert>
+
 </mapper>

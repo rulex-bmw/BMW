@@ -71,6 +71,7 @@ public class QueryService {
             List<Source> sourceList = XmlUtil.parseXML();
 
             // 获取所需的上链数据
+            sourceOk:
             for (Source source : sourceList) {
 
                 if (source.getId() == recordid) {
@@ -86,7 +87,7 @@ public class QueryService {
                             if (altera.getOperation().getNumber() == 0) {
 
                                 returnMap.put("0", "该查询对象已被删除");
-                                return returnMap;
+                                break sourceOk;
 
                             } else {
 

@@ -245,17 +245,16 @@ public class BmwDsmApplicationTests {
     }*/
 
 
+    //主键自增新增
     @Test
     public void insert() {
-
-
         Map map=new HashMap();
 
         map.put("phone",15133118672l);
-        map.put("wallet",11.88);
+        map.put("wallet",11.84);
         map.put("username","zj");
         map.put("age",18);
-        map.put("tall",180);
+        map.put("tall",185);
 
         int i = testDao.insertMapTest(map);
 
@@ -270,7 +269,7 @@ public class BmwDsmApplicationTests {
         System.out.println("最近新增索引信息" + maps.get(maps.size() - 1));
     }
 
-
+    //查看最新数据
     @Test
     public void query() {
 
@@ -285,17 +284,72 @@ public class BmwDsmApplicationTests {
 
     }
 
-
+    //主键自增修改
     @Test
     public void editTest() {
         com.rulex.dsm.pojo.Test test = new com.rulex.dsm.pojo.Test();
-        test.setUsername("fin12");
-        test.setWallet(112.00);
-        test.setId(345);
-        test.setTall(112);
-        test.setAge(18);
+        test.setUsername("qq");
+        test.setWallet(13.00);
+        test.setId(349);
+        test.setTall(189);
+        test.setAge(21);
 
         int i = testDao.editById(test);
 
     }
+
+
+    // 主键自增删除
+    @Test
+    public void delAuto() {
+        com.rulex.dsm.pojo.Test test = new com.rulex.dsm.pojo.Test();
+        test.setId(349);
+        int i = testDao.del(test);
+        System.out.println("受影响的条数： " + i);
+    }
+
+    //复合主键新增
+    @Test
+    public void insertTest() {
+        Curriculum curriculum = new Curriculum();
+        curriculum.setClassroom(102);
+        curriculum.setTeacher("张三2");
+        curriculum.setProject("地理2");
+        curriculum.setCredit(102);
+        curriculum.setStuNum(10002);
+
+        int i = curriculumDao.insertProject(curriculum);
+
+
+        List<Map<String, Object>> maps = SqliteUtils.query("select * from key_indexes", null);
+        System.out.println("索引信息条数" + maps.size());
+        System.out.println("最近新增索引信息" + maps.get(maps.size() - 1));
+
+    }
+
+
+    // 复合主键修改
+    @Test
+    public void modifyTest() {
+        Curriculum curriculum = new Curriculum();
+        curriculum.setClassroom(102);
+        curriculum.setTeacher("张三2");
+        curriculum.setProject("地理2");
+        curriculum.setCredit(124);
+        curriculum.setStuNum(144);
+        int i = curriculumDao.modifyParam(curriculum);
+        System.out.println("受影响的条数： " + i);
+    }
+
+    // 复合主键删除
+    @Test
+    public void delTest() {
+        Curriculum curriculum = new Curriculum();
+        curriculum.setClassroom(102);
+        curriculum.setTeacher("张三2");
+        curriculum.setProject("地理2");
+        int i = curriculumDao.delProject(curriculum);
+        System.out.println("受影响的条数： " + i);
+    }
+
 }

@@ -57,7 +57,6 @@ public class InsertService {
                             // 调用bsb执行上链
                             DataBean.Data data = DataBean.Data.newBuilder().setPayload(ByteString.copyFrom(payload)).build();
                             BSBService.producer(data, orgPKHash);
-                            BSBService.Consumer();
 
                         }
                     }
@@ -90,43 +89,45 @@ public class InsertService {
 
         // 处理拦截的数据
         Map<String, List> map = processParam(insert, boundSql, columnNames, source);
-
-
         if (map.get("values").size() != 0) {
             alteration.addAllFields(map.get("values"));
             returnMap.put("payload", alteration.build().toByteArray());
-            byte[] byteKeys = null;
-            if (map.get("keys").size() != 0) {
+
+            if ((source.getKeys().size() == 1 && source.getKeys().get(0).getIsAuto())) {
+                returnMap.put("where", map.get("where"));
+            } else {
+
+                List<Object> keys = primaryKeyHandle(insert, boundSql, columnNames, source);
+
                 // 处理复合主键
+
                 byte[] initial = new byte[0];
                 int length;
-                for (Object key : map.get("keys")) {
+                for (Object key : keys) {
                     byte[] byteKey = TypeUtils.objectToByte(key);
                     length = initial.length;
                     initial = Arrays.copyOf(initial, byteKey.length + length);
                     System.arraycopy(byteKey, 0, initial, length, byteKey.length);
                 }
-                byteKeys = SHA256.getSHA256Bytes(initial);
+                byte[] byteKeys = SHA256.getSHA256Bytes(initial);
                 returnMap.put("keys", byteKeys);
-            } else {
-                returnMap.put("where", map.get("where"));
             }
 
         } else {
-            map.put("payload", null);
+            returnMap.put("payload", null);
         }
         return returnMap;
 
     }
 
     /**
-     * 处理Parameter值,获取复合主键的值和payload中的fields的值
+     * 处理Parameter值,获取payload中的fields的值和查询自增主键的where条件值
      *
      * @param insert      拦截的insert对象
      * @param boundSql    获取参数
      * @param columnNames 数据库字段名
      * @param source      xml解析拦截对象
-     * @return map fields和复合主键集合
+     * @return map fields和自增主键的where条件值集合
      */
     public static Map<String, List> processParam(Insert insert, BoundSql boundSql, List<String> columnNames, Source source) throws Exception {
 
@@ -135,17 +136,9 @@ public class InsertService {
 
         // 数据库where查询条件的集合
         List<String> whereValues = new ArrayList<>();
+        List<Primary> primaries = source.getKeys();
 
         Object parameter = boundSql.getParameterObject();
-
-        // 复合主键集合
-        List<Primary> primaries = source.getKeys();
-        List<Object> primaryKeys = new ArrayList<>();
-        if (!(primaries.size() == 1 && primaries.get(0).getIsAuto())) {
-            for (Primary primary : primaries) {
-                primaryKeys.add(primary);
-            }
-        }
         Class clazz = parameter.getClass();
 
         int index = -1;
@@ -174,16 +167,7 @@ public class InsertService {
                             Map<String, Object> map = typeHandle(field.getType(), value, field.getFieldId());
                             fieldValues.add((DataBean.FieldValue) map.get("FieldValue"));
 
-                            if (!(primaries.size() == 1 && primaries.get(0).getIsAuto())) {
-                                for (Primary primary : primaries) {
-                                    // 获取复合主键的其中一项的值
-                                    if (columnName.equalsIgnoreCase(primary.getColumn())) {
-
-                                        primaryKeys.set(primaries.indexOf(primary), value);
-
-                                    }
-                                }
-                            } else {
+                            if ((primaries.size() == 1 && primaries.get(0).getIsAuto())) {
                                 //自增主键查数据库的条件
                                 if (value instanceof String) {
                                     whereValues.add(columnName + "='" + value + "'");
@@ -202,24 +186,13 @@ public class InsertService {
                             Map<String, Object> retMap = typeHandle(field.getType(), map.get(property), field.getFieldId());
                             fieldValues.add((DataBean.FieldValue) retMap.get("FieldValue"));
 
-                            if (!(primaries.size() == 1 && primaries.get(0).getIsAuto())) {
-                                for (Primary primary : primaries) {
-                                    // 获取复合主键的其中一项的值
-                                    if (columnName.equalsIgnoreCase(primary.getColumn())) {
-
-                                        primaryKeys.set(primaries.indexOf(primary), retMap.get("value"));
-
-                                    }
-                                }
-
-                            } else {
+                            if ((primaries.size() == 1 && primaries.get(0).getIsAuto())) {
                                 //自增主键查数据库的条件
                                 if (retMap.get("value") instanceof String) {
                                     whereValues.add(columnName + "='" + retMap.get("value") + "'");
                                 } else {
                                     whereValues.add(columnName + "=" + retMap.get("value").toString());
                                 }
-
                             }
                         }
                     }
@@ -232,17 +205,6 @@ public class InsertService {
                         if ((primaries.size() == 1 && primaries.get(0).getIsAuto())) {
                             //自增主键查数据库的条件
                             whereValues.add(columnName + "=" + expressionValue);
-                        } else {
-
-                            for (Primary primary : primaries) {
-                                // 获取复合主键的其中一项的值
-                                if (columnName.equalsIgnoreCase(primary.getColumn())) {
-
-                                    primaryKeys.set(primaries.indexOf(primary), map.get("value"));
-
-                                }
-                            }
-
                         }
                     }
                 }
@@ -251,12 +213,92 @@ public class InsertService {
 
         // 处理返回结果
         Map<String, List> returnMap = new HashMap();
-        returnMap.put("keys", primaryKeys);
         returnMap.put("values", fieldValues);
         returnMap.put("where", whereValues);
         return returnMap;
 
     }
+
+
+    /**
+     * 处理Parameter值,获取复合主键的值
+     *
+     * @param insert      拦截的insert对象
+     * @param boundSql    获取参数
+     * @param columnNames 数据库字段名
+     * @param source      xml解析拦截对象
+     * @return List<Object> 复合主键集合
+     */
+    public static List<Object> primaryKeyHandle(Insert insert, BoundSql boundSql, List<String> columnNames, Source source) throws Exception {
+
+        Object parameter = boundSql.getParameterObject();
+
+        // 复合主键集合
+        List<Primary> primaries = source.getKeys();
+        List<Object> primaryKeys = new ArrayList<>();
+
+        for (Primary primary : primaries) {
+            primaryKeys.add(primary);
+        }
+
+        Class clazz = parameter.getClass();
+
+        int index = -1;
+        for (String columnName : columnNames) {
+
+            //处理ParameterMappings下标
+            ExpressionList expression = (ExpressionList) insert.getItemsList();
+            Object expressionValue = expression.getExpressions().get(columnNames.indexOf(columnName));
+            if (expressionValue.toString().equals("?")) {
+                index = index + 1;
+            }
+
+            for (Primary primary : primaries) {
+                // 获取复合主键的值
+                if (columnName.equalsIgnoreCase(primary.getColumn())) {
+
+                    // 用对象给sql占位符赋值
+                    if (expressionValue.toString().equals("?")) {
+
+                        if (Class.forName(source.getPojo()) == clazz) {
+
+                            String fieldName = TypeUtils.InitialsLow2Up(primary.getName());
+                            Method method = clazz.getMethod("get" + fieldName);
+                            Object value = method.invoke(parameter);
+
+                            primaryKeys.set(primaries.indexOf(primary), value);
+                        }
+                    }
+
+                    // 如果执行sql的方法参数类型是map
+                    else if (parameter instanceof java.util.HashMap) {
+
+                        String property = boundSql.getParameterMappings().get(index).getProperty();
+
+                        Map<Object, Object> map = (Map<Object, Object>) parameter;
+
+                        Object value = typeHandle(primary.getType(), map.get(property));
+
+
+                        primaryKeys.set(primaries.indexOf(primary), value);
+
+                    }
+
+                    // 直接是在sql中定义值
+                    else {
+                        Object value = typeHandle(primary.getType(), expressionValue);
+
+                        primaryKeys.set(primaries.indexOf(primary), value);
+                    }
+
+                }
+            }
+        }
+
+        return primaryKeys;
+
+    }
+
 
     /**
      * 设置fieldValue的Builder对象的属性
@@ -324,4 +366,49 @@ public class InsertService {
         }
         return null;
     }
+
+
+    /**
+     * 设置复合主键的值
+     *
+     * @param type  primaryKey的type
+     * @param value primaryKey的值
+     * @return Object 处理后的primaryKey的值
+     */
+    public static Object typeHandle(String type, Object value) {
+
+        if (DataTypes.wrapper_Int.getName().equals(type) || DataTypes.primeval_int.getName().equals(type)) {
+            if (value instanceof LongValue) {
+                return (int) ((LongValue) value).getValue();
+            }
+            return value;
+        } else if (DataTypes.wrapper_Long.getName().equals(type) || DataTypes.primeval_long.getName().equals(type)) {
+            if (value instanceof LongValue) {
+                return ((LongValue) value).getValue();
+            }
+            return value;
+        } else if (DataTypes.wrapper_Double.getName().equals(type) || DataTypes.primeval_double.getName().equals(type)) {
+            if (value instanceof DoubleValue) {
+                return ((DoubleValue) value).getValue();
+            }
+            return value;
+        } else if (DataTypes.wrapper_Float.getName().equals(type) || DataTypes.primeval_float.getName().equals(type)) {
+            if (value instanceof DoubleValue) {
+                return (float) ((DoubleValue) value).getValue();
+            }
+            return value;
+        } else if (DataTypes.primeval_string.getName().equals(type)) {
+            if (value instanceof StringValue) {
+                return ((StringValue) value).getValue();
+            }
+            return value;
+        } else if (DataTypes.primeval_boolean.getName().equals(type)) {
+            return value;
+        } else if (DataTypes.primeval_ByteString.getName().equals(type)) {
+            return value;
+        }
+        return null;
+    }
+
+
 }

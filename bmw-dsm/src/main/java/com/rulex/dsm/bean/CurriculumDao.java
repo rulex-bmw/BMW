@@ -12,4 +12,6 @@ public interface CurriculumDao {
     int modifyPrimary(Curriculum curriculum);
 
     int delProject(Curriculum curriculum);
+
+    int insertProject(Curriculum curriculum);
 }

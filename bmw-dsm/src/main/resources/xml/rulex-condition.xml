@@ -1,32 +1,15 @@
 <!--拦截规则和数据库信息-->
 <schema version="1.0">
-    <record id="1" name="Test" groupable="false" table="bmw_test" pojo="com.rulex.dsm.pojo.Test">
+    <record id="1" name="Sku" groupable="false" table="sku" pojo="com.ooway.core.pojo.Sku">
         <!--只是规定primaryKey，不上链-->
         <key name="id" column="id" type="Integer" isAuto="true"/>
         <!--上链信息-->
-        <field name="username" column="username" type="String" isnull="false" fieldId="1"></field>
-        <field name="age" column="age" type="Integer" isnull="false" fieldId="2"></field>
-        <field name="phone" column="phone" type="Long" isnull="false" fieldId="3"></field>
-        <field name="wallet" column="wallet" type="Double" isnull="false" fieldId="4"></field>
+        <field name="name" column="skuname" type="String" isnull="false" fieldId="1"></field>
+        <field name="price" column="age" type="Double" isnull="false" fieldId="2"></field>
+        <field name="standards" column="standards" type="String" isnull="false" fieldId="3"></field>
+        <field name="status" column="status" type="Integer" isnull="false" fieldId="4"></field>
         <connection>
-            <field name="url" value="jdbc:mysql://localhost:3306/test"></field>
-            <field name="driver" value="com.mysql.jdbc.Driver"></field>
-            <field name="username" value="root"></field>
-            <field name="password" value="root"></field>
-        </connection>
-    </record>
-    <record id="2" name="Curriculum" groupable="false" table="curriculum" pojo="com.rulex.dsm.pojo.Curriculum">
-        <!--只是规定primaryKey，不上链-->
-        <key name="teacher" column="teacher" type="String"  isAuto="false"/>
-        <key name="classroom" column="classroom" type="Integer"  isAuto="false"/>
-        <key name="project" column="project" type="String"  isAuto="false"/>
-        <!--上链信息-->
-        <field name="teacher" column="teacher" type="String" isnull="false" fieldId="1" isprimaykey="true"></field>
-        <field name="project" column="project" type="String" isnull="false" fieldId="2" isprimaykey="true"></field>
-        <field name="stuNum" column="stu_num" type="Integer" isnull="false" fieldId="3"></field>
-        <field name="credit" column="credit" type="Integer" isnull="false" fieldId="4"></field>
-        <connection>
-            <field name="url" value="jdbc:mysql://localhost:3306/test"></field>
+            <field name="url" value="jdbc:mysql://127.0.0.1:3306/ims"></field>
             <field name="driver" value="com.mysql.jdbc.Driver"></field>
             <field name="username" value="root"></field>
             <field name="password" value="root"></field>
