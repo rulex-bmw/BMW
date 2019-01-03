@@ -70,7 +70,7 @@ public class UpdateService {
                             if (params.get(0).size() > 0) {
 
                                 byte[] payload = generatePayload(params.get(0), orgHash.get("typeHash"), source);
-                                System.out.println(DataBean.Alteration.parseFrom(payload));
+                                System.out.println(Base64.getEncoder().encodeToString(payload));
 
                                 // 执行上链
                                 BSBService.producer(DataBean.Data.newBuilder().setPayload(ByteString.copyFrom(payload)).build(), null);

@@ -43,6 +43,7 @@ public class InsertService {
                     // 获取payload和复合主键
                     Map<String, Object> payloadKeyMap = createPayload(insert, source, boundSql, column);
                     byte[] payload = (byte[]) payloadKeyMap.get("payload");
+                    System.out.println(Base64.getEncoder().encodeToString(payload));
                     if (payload != null) {
                         // 获取PrimaryKey
                         if (source.getKeys().size() == 1 && source.getKeys().get(0).getIsAuto()) {
@@ -81,7 +82,7 @@ public class InsertService {
 
         // 生成payload
         DataBean.Alteration.Builder alteration = DataBean.Alteration.newBuilder();
-        alteration.setOperationValue(1);
+//        alteration.setOperationValue(1);
         alteration.setRecordid(source.getId());
 
         // 处理返回结果

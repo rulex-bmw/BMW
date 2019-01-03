@@ -293,7 +293,7 @@ public class BmwDsmApplicationTests {
         com.rulex.dsm.pojo.Test test = new com.rulex.dsm.pojo.Test();
         test.setUsername("qq");
         test.setWallet(12.00);
-        test.setId(386);
+        test.setId(403);
         test.setTall(189);
         test.setAge(21);
 
