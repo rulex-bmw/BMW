@@ -132,8 +132,8 @@ public class LevelDBDao {
 
             if (id != null) {
                 //将区块链的id与数据的orgPKHash关联起来
-                if (bytes.length != 0 && bytes != null) {
-                    setIdIndex(bytes, id);
+                if (key.length != 0 && key != null) {
+                    setIdIndex(key, bytes, id);
                 }
                 //修改readposition
                 DataBean.Position readposition = DataBean.Position.newBuilder().setDataKey(ByteString.copyFrom(key)).setSerial(data.getSerial()).build();
@@ -156,13 +156,12 @@ public class LevelDBDao {
     /**
      * 将区块链的id与数据的orgPKHash关联起来，用以查询区块链id
      *
-     * @param bytes 缓存的上链信息的key
-     * @param id    区块链id
+     * @param key 缓存的上链信息的key
+     * @param id  区块链id
      */
-    public static void setIdIndex(byte[] bytes, String id) {
+    public static void setIdIndex(byte[] key, byte[] bytes, String id) {
 
-        List<Map<String, Object>> mapList = SqliteUtils.query("select orgPKHash from key_indexes where typeHash = ?", new Object[]{Base64.getEncoder().encodeToString(bytes)});
-
+        List<Map<String, Object>> mapList = SqliteUtils.query("select orgPKHash from key_indexes where typeHash = ?", new Object[]{Base64.getEncoder().encodeToString(key)});
         if (mapList.size() == 1) {
             String orgPKHash = (String) mapList.get(0).get("orgPKHash");
             SqliteUtils.edit(new Object[]{orgPKHash, id, System.currentTimeMillis()}, "insert into id_indexes (orgPKHash,blockChainId,ts) values(?,?,?)");
@@ -176,7 +175,10 @@ public class LevelDBDao {
                 e.printStackTrace();
             }
             ByteString orgHashKey = alteration.getOrgHashKey();
-            String orgPKHash = Base64.getEncoder().encodeToString(orgHashKey.toByteArray());
+
+            List<Map<String, Object>> mapsList = SqliteUtils.query("select orgPKHash from key_indexes where typeHash = ?", new Object[]{Base64.getEncoder().encodeToString(orgHashKey.toByteArray())});
+
+            String orgPKHash = (String) mapsList.get(0).get("orgPKHash");
             SqliteUtils.edit(new Object[]{orgPKHash, id, System.currentTimeMillis()}, "insert into id_indexes (orgPKHash,blockChainId,ts) values(?,?,?)");
 
         }
