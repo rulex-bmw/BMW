@@ -82,7 +82,7 @@ public class InsertService {
 
         // 生成payload
         DataBean.Alteration.Builder alteration = DataBean.Alteration.newBuilder();
-//        alteration.setOperationValue(1);
+        alteration.setOperationValue(1);
         alteration.setRecordid(source.getId());
 
         // 处理返回结果
