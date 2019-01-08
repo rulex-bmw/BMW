@@ -38,7 +38,7 @@ public class BSBService {
      * m:已经上链，m+1:未上链
      * 从levelDB中取出DATA,将不可变信息存入数据库
      */
-    public static Integer Consumer() {
+    public synchronized static Integer Consumer() {
         try {
             if (null == LevelDBUtil.getMataDB().get(LevelDBDao.WRITEPOSITION)) {
                 return -1;
