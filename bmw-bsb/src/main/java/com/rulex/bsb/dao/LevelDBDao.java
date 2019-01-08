@@ -1,11 +1,9 @@
 package com.rulex.bsb.dao;
 
 import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.rulex.bsb.pojo.DataBean;
-import com.rulex.bsb.utils.DataException;
-import com.rulex.bsb.utils.LevelDBUtil;
-import com.rulex.bsb.utils.SHA256;
-import com.rulex.bsb.utils.SqliteUtils;
+import com.rulex.bsb.utils.*;
 import org.iq80.leveldb.DB;
 
 import java.io.IOException;
@@ -35,22 +33,18 @@ public class LevelDBDao {
             return;
         }
         //生成创世数据
-        try {
-            DataBean.Data.Builder origin = DataBean.Data.newBuilder().setPayload(ByteString.copyFrom(CREATION_DATA))
-                    .setTs(System.currentTimeMillis())
-                    .setSerial(0);
-            DataBean.Header.Builder header = DataBean.Header.newBuilder().setPayload(origin.getPayload()).setSerial(origin.getSerial()).setTs(origin.getTs());
-            byte[] data = origin.build().toByteArray();
-            byte[] key = SHA256.getSHA256Bytes(data);
-            //生成标签
-            DataBean.Position position = DataBean.Position.newBuilder().setDataKey(ByteString.copyFrom(key)).setSerial(0).build();
-            LevelDBUtil.getMataDB().put(WRITEPOSITION, position.toByteArray());
-            LevelDBDao.setHeaderData(header, LevelDBUtil.getDataDB());
-            LevelDBUtil.getDataDB().put(key, data);
-            LevelDBUtil.getMataDB().put(READPOSITION, position.toByteArray());
-        } finally {
-            LevelDBUtil.closeDB();
-        }
+        DataBean.Data.Builder origin = DataBean.Data.newBuilder().setPayload(ByteString.copyFrom(CREATION_DATA))
+                .setTs(System.currentTimeMillis())
+                .setSerial(0);
+        DataBean.Header.Builder header = DataBean.Header.newBuilder().setPayload(origin.getPayload()).setSerial(origin.getSerial()).setTs(origin.getTs());
+        byte[] data = origin.build().toByteArray();
+        byte[] key = SHA256.getSHA256Bytes(data);
+        //生成标签
+        DataBean.Position position = DataBean.Position.newBuilder().setDataKey(ByteString.copyFrom(key)).setSerial(0).build();
+        LevelDBUtil.getMataDB().put(WRITEPOSITION, position.toByteArray());
+        LevelDBDao.setHeaderData(header, LevelDBUtil.getDataDB());
+        LevelDBUtil.getDataDB().put(key, data);
+        LevelDBUtil.getMataDB().put(READPOSITION, position.toByteArray());
     }
 
 
@@ -67,35 +61,30 @@ public class LevelDBDao {
         if (null == param.getPayload() && !(param.getPayload().toByteArray().length <= 256)) {
             return;
         }
-        try {
-            //获取上一个hash
-            DataBean.Position writeposition = DataBean.Position.parseFrom(LevelDBUtil.getMataDB().get(WRITEPOSITION));
-            Long s = writeposition.getSerial();
-            s++;
-            //Set up herderVelue
-            DataBean.Data.Builder record = DataBean.Data.newBuilder().setPayload(param.getPayload()).setTs(System.currentTimeMillis()).setSerial(s);
-            DataBean.Header.Builder header = DataBean.Header.newBuilder().setTs(record.getTs()).setSerial(record.getSerial()).setPayload(record.getPayload());
-            setHeaderData(header, LevelDBUtil.getDataDB());
-            //seek key=HASH(payload,ts,serial,prevHash)
-            // Take a hash of data
-            record.setPrevHash(writeposition.getDataKey());
-            byte[] hashkey = SHA256.getSHA256Bytes(record.build().toByteArray());
-            //从signature获取签名
-            ByteString sign = ByteString.copyFrom(bytes("1"));
-            //Save a data , data = payload, ts, prevhash, serial, sign, flag
-            record.setSign(sign).setFalg(false);
-            LevelDBUtil.getDataDB().put(hashkey, record.build().toByteArray());
-
-            if (orgPKHash != null) {
-                System.out.println(Base64.getEncoder().encodeToString(hashkey));
-                //将PrimaryId和hashkey索引信息存入Sqlite数据库
-                SqliteUtils.edit(new Object[]{orgPKHash, Base64.getEncoder().encodeToString(hashkey), 1, System.currentTimeMillis()}, "insert into key_indexes (orgPKHash,typeHash,type,ts) values(?,?,?,?)");
-            }
-            LevelDBUtil.getMataDB().put(WRITEPOSITION, DataBean.Position.newBuilder().setDataKey(ByteString.copyFrom(hashkey)).setSerial(s).build().toByteArray());
-        } finally {
-            LevelDBUtil.closeDB();
+        //获取上一个hash
+        DataBean.Position writeposition = DataBean.Position.parseFrom(LevelDBUtil.getMataDB().get(WRITEPOSITION));
+        Long s = writeposition.getSerial();
+        s++;
+        //Set up herderVelue
+        DataBean.Data.Builder record = DataBean.Data.newBuilder().setPayload(param.getPayload()).setTs(System.currentTimeMillis()).setSerial(s);
+        DataBean.Header.Builder header = DataBean.Header.newBuilder().setTs(record.getTs()).setSerial(record.getSerial()).setPayload(record.getPayload());
+        setHeaderData(header, LevelDBUtil.getDataDB());
+        //seek key=HASH(payload,ts,serial,prevHash)
+        // Take a hash of data
+        record.setPrevHash(writeposition.getDataKey());
+        byte[] hashkey = SHA256.getSHA256Bytes(record.build().toByteArray());
+        //从signature获取签名
+        ByteString sign = ByteString.copyFrom(bytes("1"));
+        //Save a data , data = payload, ts, prevhash, serial, sign, flag
+        record.setSign(sign).setFalg(false);
+        LevelDBUtil.getDataDB().put(hashkey, record.build().toByteArray());
+        if (orgPKHash != null) {
+            //将PrimaryId和hashkey索引信息存入Sqlite数据库
+            SqliteUtils.edit(new Object[]{orgPKHash, Base64.getEncoder().encodeToString(hashkey), 1, System.currentTimeMillis()}, "insert into key_indexes (orgPKHash,typeHash,type,ts) values(?,?,?,?)");
         }
+        LevelDBUtil.getMataDB().put(WRITEPOSITION, DataBean.Position.newBuilder().setDataKey(ByteString.copyFrom(hashkey)).setSerial(s).build().toByteArray());
     }
+
 
     /**
      * Preserving partial order structure head
@@ -124,8 +113,6 @@ public class LevelDBDao {
             data = DataBean.Position.parseFrom(readposition);
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            LevelDBUtil.closeDB();
         }
         return data;
     }
@@ -141,8 +128,13 @@ public class LevelDBDao {
         try {
             byte[] bytes = LevelDBUtil.getDataDB().get(key);
             DataBean.Data data = DataBean.Data.parseFrom(bytes);
-            int edit = BlockChainDao.putStatus(key, data.getPayload().toByteArray());
-            if (edit == 1) {
+            String id = BlockChainDao.postData(TypeUtils.bytesToHexString(data.getPayload().toByteArray()));
+
+            if (id != null) {
+                //将区块链的id与数据的orgPKHash关联起来
+                if (key.length != 0 && key != null) {
+                    setIdIndex(key, bytes, id);
+                }
                 //修改readposition
                 DataBean.Position readposition = DataBean.Position.newBuilder().setDataKey(ByteString.copyFrom(key)).setSerial(data.getSerial()).build();
                 LevelDBUtil.getMataDB().put(READPOSITION, readposition.toByteArray());
@@ -156,25 +148,55 @@ public class LevelDBDao {
             e.printStackTrace();
         } catch (DataException e) {
             e.printStackTrace();
-        } finally {
-            LevelDBUtil.closeDB();
         }
         return false;
+    }
+
+
+    /**
+     * 将区块链的id与数据的orgPKHash关联起来，用以查询区块链id
+     *
+     * @param key 缓存的上链信息的key
+     * @param id  区块链id
+     */
+    public static void setIdIndex(byte[] key, byte[] bytes, String id) {
+
+        List<Map<String, Object>> mapList = SqliteUtils.query("select orgPKHash from key_indexes where typeHash = ?", new Object[]{Base64.getEncoder().encodeToString(key)});
+        if (mapList.size() == 1) {
+            String orgPKHash = (String) mapList.get(0).get("orgPKHash");
+            SqliteUtils.edit(new Object[]{orgPKHash, id, System.currentTimeMillis()}, "insert into id_indexes (orgPKHash,blockChainId,ts) values(?,?,?)");
+
+        } else {
+
+            DataBean.Alteration alteration = null;
+            try {
+                alteration = DataBean.Alteration.parseFrom(DataBean.Data.parseFrom(bytes).getPayload().toByteArray());
+            } catch (InvalidProtocolBufferException e) {
+                e.printStackTrace();
+            }
+            ByteString orgHashKey = alteration.getOrgHashKey();
+
+            List<Map<String, Object>> mapsList = SqliteUtils.query("select orgPKHash from key_indexes where typeHash = ?", new Object[]{Base64.getEncoder().encodeToString(orgHashKey.toByteArray())});
+
+            String orgPKHash = (String) mapsList.get(0).get("orgPKHash");
+            SqliteUtils.edit(new Object[]{orgPKHash, id, System.currentTimeMillis()}, "insert into id_indexes (orgPKHash,blockChainId,ts) values(?,?,?)");
+
+        }
     }
 
     /**
      * Verify the offset structure header
      *
-     * @return Map<byte[], byte[]>
+     * @return Map<String, byte[]>
      * The value of the key.
      * map of the data base is the key of the database data, and the key of the map is the key of the last database data
      * @throws IOException
      */
-    public Map<byte[], byte[]> verifyHeaderData() throws IOException {
+    public Map<String, byte[]> verifyHeaderData() throws IOException {
 
         byte[] startValue = null;
         byte[] headerValue = null;
-        Map<byte[], byte[]> map = new HashMap<>();
+        Map<String, byte[]> map = new HashMap<>();
         try {
 
             // Read the key of the last record from the database
@@ -220,7 +242,7 @@ public class LevelDBDao {
 
                 // Save the key of LevelDB database into map
                 if (flag) {
-                    map.put(preKey, mapValue);
+                    map.put(Base64.getEncoder().encodeToString(preKey), mapValue);
                 }
 
                 // Exclude data that is already on the blockChain
@@ -249,8 +271,6 @@ public class LevelDBDao {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            LevelDBUtil.closeDB();
         }
 
         // If the calculated header value is different from what is stored in the database, the data is tampered with and an error is thrown
@@ -270,14 +290,14 @@ public class LevelDBDao {
     /**
      * Get the hash map to make it easier to find the next key
      *
-     * @return Map<byte[], byte[]>
+     * @return Map<String, byte[]>
      * The value of the key.
      * map of the data base is the key of the database data, and the key of the map is the key of the last database data
      * @throws IOException
      */
-    public static Map<byte[], byte[]> getHashMap() throws IOException {
+    public static Map<String, byte[]> getHashMap() throws IOException {
 
-        Map<byte[], byte[]> map = new HashMap<>();
+        Map<String, byte[]> map = new HashMap<>();
         try {
 
             // Read the key of the last record from the database
@@ -310,7 +330,7 @@ public class LevelDBDao {
 
                 // Save the key of LevelDB database into map
                 if (flag) {
-                    map.put(preKey, mapValue);
+                    map.put(Base64.getEncoder().encodeToString(preKey), mapValue);
                 }
 
                 // Exclude data that is already on the blockChain
@@ -321,8 +341,6 @@ public class LevelDBDao {
 
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            LevelDBUtil.closeDB();
         }
         return map;
     }

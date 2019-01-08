@@ -66,13 +66,15 @@ public class UpdateService {
                                 SqliteUtils.edit(obj, sql);
                             }
 
-                            // 生成payload
-                            byte[] payload = generatePayload(params.get(0), orgHash.get("typeHash"), source);
+                            // 有上链信息执行上链
+                            if (params.get(0).size() > 0) {
 
-                            System.out.println(DataBean.Alteration.parseFrom(payload));
-                            // 执行上链
-                            BSBService.producer(DataBean.Data.newBuilder().setPayload(ByteString.copyFrom(payload)).build(), null);
+                                byte[] payload = generatePayload(params.get(0), orgHash.get("typeHash"), source);
+                                System.out.println(Base64.getEncoder().encodeToString(payload));
 
+                                // 执行上链
+                                BSBService.producer(DataBean.Data.newBuilder().setPayload(ByteString.copyFrom(payload)).build(), null);
+                            }
                         }
                     }
                 }

@@ -5,6 +5,7 @@ import com.rulex.bsb.pojo.DataBean;
 import com.rulex.bsb.utils.LevelDBUtil;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.Map;
 
 /**
@@ -14,11 +15,18 @@ import java.util.Map;
  */
 public class BSBService {
 
+    private static boolean openThread = true;
+
 
     public static void producer(DataBean.Data data, String orgPKHash) {
         try {
             LevelDBDao.origin();
             LevelDBDao.set(data, orgPKHash);
+            if (openThread) {
+                new CunsumerThread().start();
+                openThread = false;
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -30,12 +38,12 @@ public class BSBService {
      * m:已经上链，m+1:未上链
      * 从levelDB中取出DATA,将不可变信息存入数据库
      */
-    public static Integer Consumer() throws IOException {
+    public static Integer Consumer() {
         try {
             if (null == LevelDBUtil.getMataDB().get(LevelDBDao.WRITEPOSITION)) {
                 return -1;
             }
-            Map<byte[], byte[]> keyMap = LevelDBDao.getHashMap();
+            Map<String, byte[]> keyMap = LevelDBDao.getHashMap();
             int size = keyMap.size();
             if (size == 0) {
                 return 0;
@@ -44,22 +52,20 @@ public class BSBService {
             DataBean.Position readposition = LevelDBDao.getReadposition();
             //从第m+1项上链
             byte[] prevHash = readposition.getDataKey().toByteArray();
-            int i;
-            for (i = 0; i < size; i++) {
-                byte[] currentHash = keyMap.get(prevHash);
+            for(int i = 0; i < size; i++) {
+                byte[] currentHash = keyMap.get(Base64.getEncoder().encodeToString(prevHash));
                 if (currentHash == null || currentHash.length == 0) {
                     break;
                 }
                 if (LevelDBDao.setStatus(currentHash)) {
                     //调用消息通知机制，提示其他线程完成上链
                     prevHash = currentHash;
-                    System.out.println("customer thread id: " + Thread.currentThread().getId() + "\ncustomer run with " + i);
                 }
             }
-            return ++i;
-        } finally {
-            LevelDBUtil.closeDB();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return 1;
     }
 
 

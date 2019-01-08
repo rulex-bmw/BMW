@@ -19,10 +19,7 @@ import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.plugin.*;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.io.StringReader;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
@@ -36,9 +33,6 @@ public class BMWStmtInterceptor implements Interceptor {
 
     CCJSqlParserManager parser = new CCJSqlParserManager();
 
-    @Resource
-    private BMWExecutorInterceptor bmwExecutorInterceptor;
-
     /**
      * 拦截器执行方法
      *
@@ -50,22 +44,21 @@ public class BMWStmtInterceptor implements Interceptor {
 
         RoutingStatementHandler statementHandler = (RoutingStatementHandler) invocation.getTarget();
         BoundSql boundSql = statementHandler.getBoundSql();
-        List<Source> sourceList = bmwExecutorInterceptor.sourceList;
+        List<Source> sourceList = BMWExecutorInterceptor.sourceList;
 
         try {
             net.sf.jsqlparser.statement.Statement stmt = parser.parse(new StringReader(boundSql.getSql()));
 
             if (stmt instanceof Insert) {
 
-                Connection connection = ((PreparedStatement) invocation.getArgs()[0]).getConnection();
+                InsertService.credibleInsert((Insert) stmt, boundSql, sourceList);
 
-                InsertService.credibleInsert((Insert) stmt, boundSql, sourceList, connection);
             } else if (stmt instanceof Update) {
                 // 获取当前线程的sql
                 long id = Thread.currentThread().getId();
-                String sql = bmwExecutorInterceptor.sqls.get(id);
+                String sql = BMWExecutorInterceptor.sqls.get(id);
                 if (null != sql && !StringUtils.isBlank(sql)) {
-                    bmwExecutorInterceptor.sqls.remove(id);
+                    BMWExecutorInterceptor.sqls.remove(id);
 
                     // 将修改变为可信数据
                     UpdateService.credibleUpdate((Update) parser.parse(new StringReader(sql)), invocation, sourceList);
@@ -73,9 +66,9 @@ public class BMWStmtInterceptor implements Interceptor {
 
             } else if (stmt instanceof Delete) {
                 long id = Thread.currentThread().getId();
-                String sql = bmwExecutorInterceptor.sqls.get(id);
+                String sql = BMWExecutorInterceptor.sqls.get(id);
                 if (null != sql && !StringUtils.isBlank(sql)) {
-                    bmwExecutorInterceptor.sqls.remove(id);
+                    BMWExecutorInterceptor.sqls.remove(id);
 
                     // 标记数据已删除
                     DelService.credibleDel((Delete) parser.parse(new StringReader(sql)), invocation, sourceList);
