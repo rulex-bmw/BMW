@@ -84,7 +84,7 @@ public class InsertService {
         DataBean.Alteration.Builder alteration = DataBean.Alteration.newBuilder();
         alteration.setOperationValue(1);
         alteration.setRecordid(source.getId());
-
+        alteration.setTs(System.currentTimeMillis());
         // 处理返回结果
         Map<String, Object> returnMap = new HashMap();
 
