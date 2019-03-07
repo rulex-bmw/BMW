@@ -10,7 +10,6 @@
     <packaging>pom</packaging>
     <description>A Blockchain Middleware</description>
 
-
     <modules>
         <module>../bmw-dba</module>
         <module>../bmw-bsb</module>
