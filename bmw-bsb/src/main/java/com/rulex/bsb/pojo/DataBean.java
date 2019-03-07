@@ -4031,6 +4031,11 @@ public final class DataBean {
      * <code>int32 recordid = 4;</code>
      */
     int getRecordid();
+
+    /**
+     * <code>int64 ts = 5;</code>
+     */
+    long getTs();
   }
   /**
    * Protobuf type {@code Alteration}
@@ -4049,6 +4054,7 @@ public final class DataBean {
       fields_ = java.util.Collections.emptyList();
       orgHashKey_ = com.google.protobuf.ByteString.EMPTY;
       recordid_ = 0;
+      ts_ = 0L;
     }
 
     @Override
@@ -4098,6 +4104,11 @@ public final class DataBean {
             case 32: {
 
               recordid_ = input.readInt32();
+              break;
+            }
+            case 40: {
+
+              ts_ = input.readInt64();
               break;
             }
             default: {
@@ -4206,6 +4217,15 @@ public final class DataBean {
       return recordid_;
     }
 
+    public static final int TS_FIELD_NUMBER = 5;
+    private long ts_;
+    /**
+     * <code>int64 ts = 5;</code>
+     */
+    public long getTs() {
+      return ts_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @Override
     public final boolean isInitialized() {
@@ -4232,6 +4252,9 @@ public final class DataBean {
       if (recordid_ != 0) {
         output.writeInt32(4, recordid_);
       }
+      if (ts_ != 0L) {
+        output.writeInt64(5, ts_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -4257,6 +4280,10 @@ public final class DataBean {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(4, recordid_);
       }
+      if (ts_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(5, ts_);
+      }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
@@ -4280,6 +4307,8 @@ public final class DataBean {
           .equals(other.getOrgHashKey());
       result = result && (getRecordid()
           == other.getRecordid());
+      result = result && (getTs()
+          == other.getTs());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -4301,6 +4330,9 @@ public final class DataBean {
       hash = (53 * hash) + getOrgHashKey().hashCode();
       hash = (37 * hash) + RECORDID_FIELD_NUMBER;
       hash = (53 * hash) + getRecordid();
+      hash = (37 * hash) + TS_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getTs());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -4447,6 +4479,8 @@ public final class DataBean {
 
         recordid_ = 0;
 
+        ts_ = 0L;
+
         return this;
       }
 
@@ -4487,6 +4521,7 @@ public final class DataBean {
         }
         result.orgHashKey_ = orgHashKey_;
         result.recordid_ = recordid_;
+        result.ts_ = ts_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -4570,6 +4605,9 @@ public final class DataBean {
         }
         if (other.getRecordid() != 0) {
           setRecordid(other.getRecordid());
+        }
+        if (other.getTs() != 0L) {
+          setTs(other.getTs());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -4940,6 +4978,32 @@ public final class DataBean {
         onChanged();
         return this;
       }
+
+      private long ts_ ;
+      /**
+       * <code>int64 ts = 5;</code>
+       */
+      public long getTs() {
+        return ts_;
+      }
+      /**
+       * <code>int64 ts = 5;</code>
+       */
+      public Builder setTs(long value) {
+        
+        ts_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 ts = 5;</code>
+       */
+      public Builder clearTs() {
+        
+        ts_ = 0L;
+        onChanged();
+        return this;
+      }
       @Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -5044,11 +5108,12 @@ public final class DataBean {
       "\n\013stringValue\030\003 \001(\tH\000\022\025\n\013doubleValue\030\004 \001" +
       "(\001H\000\022\024\n\nbytesValue\030\005 \001(\014H\000\022\026\n\014booleanVal" +
       "ue\030\006 \001(\010H\000\022\023\n\tlongValue\030\007 \001(\003H\000\022\024\n\nfloat" +
-      "Value\030\010 \001(\002H\000B\007\n\005value\"n\n\nAlteration\022\035\n\t" +
+      "Value\030\010 \001(\002H\000B\007\n\005value\"z\n\nAlteration\022\035\n\t" +
       "operation\030\001 \001(\0162\n.Operation\022\033\n\006fields\030\002 " +
       "\003(\0132\013.FieldValue\022\022\n\norgHashKey\030\003 \001(\014\022\020\n\010" +
-      "recordid\030\004 \001(\005*#\n\tOperation\022\n\n\006DELETE\020\000\022" +
-      "\n\n\006UPDATE\020\001B\nB\010DataBeanb\006proto3"
+      "recordid\030\004 \001(\005\022\n\n\002ts\030\005 \001(\003*#\n\tOperation\022" +
+      "\n\n\006DELETE\020\000\022\n\n\006UPDATE\020\001B\nB\010DataBeanb\006pro" +
+      "to3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -5097,7 +5162,7 @@ public final class DataBean {
     internal_static_Alteration_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_Alteration_descriptor,
-        new String[] { "Operation", "Fields", "OrgHashKey", "Recordid", });
+        new String[] { "Operation", "Fields", "OrgHashKey", "Recordid", "Ts", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

@@ -400,6 +400,7 @@ public class UpdateService {
         }
 
         return alteration.setRecordid(source.getId())
+                .setTs(System.currentTimeMillis())
                 .setOperation(DataBean.Operation.UPDATE)
                 .setOrgHashKey(ByteString.copyFrom(Base64.getDecoder().decode(typeHash)))
                 .build().toByteArray();

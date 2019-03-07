@@ -44,6 +44,7 @@ public class DelService {
 
                         // 生成payload
                         byte[] payload = DataBean.Alteration.newBuilder().setOperation(DataBean.Operation.DELETE)
+                                .setTs(System.currentTimeMillis())
                                 .setOrgHashKey(ByteString.copyFrom(Base64.getDecoder().decode(orgHash.get("typeHash"))))
                                 .setRecordid(source.getId())
                                 .build().toByteArray();

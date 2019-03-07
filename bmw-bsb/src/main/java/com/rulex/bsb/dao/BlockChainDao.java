@@ -19,7 +19,7 @@ public class BlockChainDao {
 
 
     /**
-     * 模拟写入区块链
+     * Simulate write block chain
      *
      * @param key
      * @param payload
@@ -33,7 +33,7 @@ public class BlockChainDao {
 
 
     /**
-     * 执行数据上链
+     * Perform data linking
      *
      * @param hexString
      * @return
@@ -59,7 +59,7 @@ public class BlockChainDao {
     /**
      * build transaction
      *
-     * @param arbitrary 上链数据
+     * @param arbitrary data
      * @return
      * @throws Exception
      */
@@ -167,22 +167,5 @@ public class BlockChainDao {
     public static String getSubmitData(String response) {
         return new Gson().fromJson(response, SubmitReturn.class).getData().getTx_id();
     }
-
-
-   /* public static void main(String[] args) {
-        try {
-            String data="CAESHAgBGhggTWF0ZSAyMCBYIOS6rum7keiJsiA2R0ISCwgCIQAAAAAAzrNAEikIAxoleyLpopzoibIiOiLkuq7pu5HoibIiLCLlhoXlrZgiOiI2R0IifRogK4o5DOyqFr8YzJPn/6qIKrl1ii4Njm+hMy5UvpZObL0gAQ==";
-            byte[] decode = Base64.getDecoder().decode(data);
-            System.out.println(DataBean.Alteration.parseFrom(decode));
-
-            String s1 = TypeUtils.bytesToHexString(decode);
-            System.out.println(s1);
-            String s = postData(s1);
-            System.out.println(s);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }*/
 
 }

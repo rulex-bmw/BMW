@@ -26,20 +26,20 @@ public class LevelDBDao {
 
 
     /**
-     * 设置创世区块
+     * Creation block
      */
     public static void origin() {
         if (null != LevelDBUtil.getDataDB().get(HEADER_KEY)) {
             return;
         }
-        //生成创世数据
+        // Generate creation data
         DataBean.Data.Builder origin = DataBean.Data.newBuilder().setPayload(ByteString.copyFrom(CREATION_DATA))
                 .setTs(System.currentTimeMillis())
                 .setSerial(0);
         DataBean.Header.Builder header = DataBean.Header.newBuilder().setPayload(origin.getPayload()).setSerial(origin.getSerial()).setTs(origin.getTs());
         byte[] data = origin.build().toByteArray();
         byte[] key = SHA256.getSHA256Bytes(data);
-        //生成标签
+        // generate tag
         DataBean.Position position = DataBean.Position.newBuilder().setDataKey(ByteString.copyFrom(key)).setSerial(0).build();
         LevelDBUtil.getMataDB().put(WRITEPOSITION, position.toByteArray());
         LevelDBDao.setHeaderData(header, LevelDBUtil.getDataDB());
@@ -61,25 +61,25 @@ public class LevelDBDao {
         if (null == param.getPayload() && !(param.getPayload().toByteArray().length <= 256)) {
             return;
         }
-        //获取上一个hash
+        // get prevhash
         DataBean.Position writeposition = DataBean.Position.parseFrom(LevelDBUtil.getMataDB().get(WRITEPOSITION));
         Long s = writeposition.getSerial();
         s++;
-        //Set up herderVelue
+        // Set up herderVelue
         DataBean.Data.Builder record = DataBean.Data.newBuilder().setPayload(param.getPayload()).setTs(System.currentTimeMillis()).setSerial(s);
         DataBean.Header.Builder header = DataBean.Header.newBuilder().setTs(record.getTs()).setSerial(record.getSerial()).setPayload(record.getPayload());
         setHeaderData(header, LevelDBUtil.getDataDB());
-        //seek key=HASH(payload,ts,serial,prevHash)
+        // seek key=HASH(payload,ts,serial,prevHash)
         // Take a hash of data
         record.setPrevHash(writeposition.getDataKey());
         byte[] hashkey = SHA256.getSHA256Bytes(record.build().toByteArray());
-        //从signature获取签名
+        // Get the signature from signature
         ByteString sign = ByteString.copyFrom(bytes("1"));
-        //Save a data , data = payload, ts, prevhash, serial, sign, flag
+        // Save a data , data = payload, ts, prevhash, serial, sign, flag
         record.setSign(sign).setFalg(false);
         LevelDBUtil.getDataDB().put(hashkey, record.build().toByteArray());
         if (orgPKHash != null) {
-            //将PrimaryId和hashkey索引信息存入Sqlite数据库
+            // PrimaryId and hashkey index information is stored in the Sqlite database
             SqliteUtils.edit(new Object[]{orgPKHash, Base64.getEncoder().encodeToString(hashkey), 1, System.currentTimeMillis()}, "insert into key_indexes (orgPKHash,typeHash,type,ts) values(?,?,?,?)");
         }
         LevelDBUtil.getMataDB().put(WRITEPOSITION, DataBean.Position.newBuilder().setDataKey(ByteString.copyFrom(hashkey)).setSerial(s).build().toByteArray());
@@ -102,7 +102,7 @@ public class LevelDBDao {
     }
 
     /**
-     * 获取readposition
+     * get readposition
      *
      * @return
      */
@@ -119,10 +119,10 @@ public class LevelDBDao {
 
 
     /**
-     * 根据key查询出当前值，并将记录加入区块链
+     * The current value is queried based on the key and records are added to the block chain
      *
-     * @param key leveldb数据的hashkey
-     * @return 是否上链成功
+     * @param key leveldb hashkey
+     * @return Whether the chain is successful
      */
     public static boolean setStatus(byte[] key) {
         try {
@@ -131,14 +131,14 @@ public class LevelDBDao {
             String id = BlockChainDao.postData(TypeUtils.bytesToHexString(data.getPayload().toByteArray()));
 
             if (id != null) {
-                //将区块链的id与数据的orgPKHash关联起来
+                // Associate the block chain id with the orgPKHash of the data
                 if (key.length != 0 && key != null) {
                     setIdIndex(key, bytes, id);
                 }
-                //修改readposition
+                // modify readposition
                 DataBean.Position readposition = DataBean.Position.newBuilder().setDataKey(ByteString.copyFrom(key)).setSerial(data.getSerial()).build();
                 LevelDBUtil.getMataDB().put(READPOSITION, readposition.toByteArray());
-                //修改flag
+                // modify flag
                 LevelDBUtil.getDataDB().put(key, data.toBuilder().setFalg(true).build().toByteArray());
                 return true;
             } else {
